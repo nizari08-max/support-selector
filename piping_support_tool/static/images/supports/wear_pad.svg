@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
+  <defs>
+    <radialGradient id="pg" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#E8ECF4"/>
+      <stop offset="100%" stop-color="#8FA0BB"/>
+    </radialGradient>
+    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6B7280"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </linearGradient>
+    <linearGradient id="wp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FB923C"/>
+      <stop offset="100%" stop-color="#EA580C"/>
+    </linearGradient>
+    <!-- Clip the wear pad arc to just below the pipe -->
+    <clipPath id="padClip">
+      <rect x="0" y="196" width="380" height="60"/>
+    </clipPath>
+  </defs>
+
+  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
+
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
+
+  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
+
+  <!-- I-beam -->
+  <rect x="68" y="218" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="182" y="228" width="16" height="20" fill="#374151"/>
+  <rect x="68" y="248" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+
+  <!-- Wear pad — orange arc wrapping bottom 120° of pipe -->
+  <!-- Pipe centre cy=132, r=64 → bottom at y=196 -->
+  <!-- Outer wear pad r=78 from cy=132: arc from 155° to 25° (going through bottom) -->
+  <path d="M 126,182 A 78 78 0 0 0 254,182 L 254,196 A 78 78 0 0 1 126,196 Z"
+        fill="url(#wp)" stroke="#C2410C" stroke-width="1.5"/>
+  <!-- Pad hatch lines for texture -->
+  <g stroke="rgba(255,255,255,0.3)" stroke-width="1" clip-path="url(#padClip)">
+    <line x1="126" y1="178" x2="116" y2="198"/>
+    <line x1="146" y1="178" x2="130" y2="198"/>
+    <line x1="166" y1="178" x2="148" y2="198"/>
+    <line x1="186" y1="178" x2="168" y2="198"/>
+    <line x1="206" y1="178" x2="190" y2="198"/>
+    <line x1="226" y1="178" x2="210" y2="198"/>
+    <line x1="246" y1="178" x2="230" y2="198"/>
+    <line x1="258" y1="185" x2="250" y2="198"/>
+  </g>
+
+  <!-- Pipe — cy=132, r=64 -->
+  <circle cx="190" cy="132" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
+  <ellipse cx="172" cy="114" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
+  <line x1="190" y1="117" x2="190" y2="147" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="175" y1="132" x2="205" y2="132" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Label callout -->
+  <text x="300" y="195" font-family="'Arial',sans-serif" font-size="8.5" fill="#EA580C" font-weight="700">WA01</text>
+  <line x1="256" y1="188" x2="296" y2="192" stroke="#EA580C" stroke-width="0.8"/>
+
+  <rect x="68" y="260" width="244" height="22" rx="4" fill="#003087"/>
+  <text x="190" y="276" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
+        fill="white" letter-spacing="1.5">WEAR PAD ASSEMBLY</text>
+</svg>
