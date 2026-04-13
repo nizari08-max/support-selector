@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
+  <defs>
+    <!-- FRP pipe gradient: slightly green/teal -->
+    <radialGradient id="frppg" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#D1FAE5"/>
+      <stop offset="100%" stop-color="#6EE7B7"/>
+    </radialGradient>
+    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6B7280"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </linearGradient>
+    <linearGradient id="clamp_g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <!-- Soft insert gradient (orange) -->
+    <linearGradient id="insert_g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FED7AA"/>
+      <stop offset="100%" stop-color="#FB923C"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
+
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
+
+  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
+
+  <!-- I-beam -->
+  <rect x="68" y="214" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="182" y="224" width="16" height="20" fill="#374151"/>
+  <rect x="68" y="244" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+
+  <!-- Base plate -->
+  <rect x="116" y="202" width="148" height="12" rx="2" fill="url(#clamp_g)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- Clamp lower half (below pipe equator) - soft insert orange, then steel blue shell -->
+  <path d="M 122,138 A 68 68 0 0 0 258,138 L 252,138 A 62 62 0 0 1 128,138 Z" fill="url(#insert_g)" stroke="#C2410C" stroke-width="1"/>
+  <path d="M 116,138 A 74 74 0 0 0 264,138 L 258,138 A 68 68 0 0 1 122,138 Z" fill="url(#clamp_g)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- FRP Pipe — cy=138, r=62 (slightly smaller to show inside insert) -->
+  <circle cx="190" cy="138" r="62" fill="url(#frppg)" stroke="#059669" stroke-width="2.5"/>
+  <!-- FRP laminate layers suggestion -->
+  <circle cx="190" cy="138" r="55" fill="none" stroke="rgba(5,150,105,0.2)" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <!-- Shine -->
+  <ellipse cx="172" cy="120" rx="18" ry="12" fill="rgba(255,255,255,0.5)"/>
+  <line x1="190" y1="123" x2="190" y2="153" stroke="#34D399" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="175" y1="138" x2="205" y2="138" stroke="#34D399" stroke-width="1" stroke-dasharray="3,3"/>
+
+  <!-- Clamp upper half — steel shell + soft insert -->
+  <path d="M 128,138 A 62 62 0 0 1 252,138 L 258,138 A 68 68 0 0 0 122,138 Z" fill="url(#insert_g)" stroke="#C2410C" stroke-width="1"/>
+  <path d="M 122,138 A 68 68 0 0 1 258,138 L 264,138 A 74 74 0 0 0 116,138 Z" fill="url(#clamp_g)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- Clamp bolt on right side -->
+  <rect x="258" y="108" width="20" height="60" rx="4" fill="url(#clamp_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <circle cx="268" cy="126" r="5" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <circle cx="268" cy="150" r="5" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <!-- Left bolt -->
+  <rect x="102" y="108" width="20" height="60" rx="4" fill="url(#clamp_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <circle cx="112" cy="126" r="5" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <circle cx="112" cy="150" r="5" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+
+  <!-- FRP label callout -->
+  <text x="300" y="110" font-family="'Arial',sans-serif" font-size="8.5" fill="#059669" font-weight="700">FRP PIPE</text>
+  <line x1="252" y1="107" x2="297" y2="108" stroke="#059669" stroke-width="0.8"/>
+  <text x="300" y="168" font-family="'Arial',sans-serif" font-size="8.5" fill="#EA580C" font-weight="700">SOFT INSERT</text>
+  <line x1="264" y1="165" x2="297" y2="165" stroke="#EA580C" stroke-width="0.8"/>
+
+  <rect x="68" y="258" width="244" height="22" rx="4" fill="#003087"/>
+  <text x="190" y="274" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
+        fill="white" letter-spacing="1.5">FRP CLAMP SHOE (CF)</text>
+</svg>

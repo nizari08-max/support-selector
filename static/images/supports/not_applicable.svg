@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
+  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
+
+  <!-- Muted grid -->
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.4">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
+
+  <!-- Not-applicable circle with diagonal -->
+  <circle cx="190" cy="132" r="72" fill="none" stroke="#CBD5E1" stroke-width="6"/>
+  <line x1="139" y1="81" x2="241" y2="183" stroke="#CBD5E1" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- N/A text -->
+  <text x="190" y="143" text-anchor="middle"
+        font-family="'Arial Black','Arial',sans-serif"
+        font-size="36" font-weight="900" fill="#94A3B8" letter-spacing="2">N/A</text>
+
+  <rect x="68" y="222" width="244" height="22" rx="4" fill="#94A3B8"/>
+  <text x="190" y="238" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
+        fill="white" letter-spacing="1.5">NOT APPLICABLE</text>
+
+  <text x="190" y="270" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="10" fill="#94A3B8">
+    No support assigned for this combination
+  </text>
+</svg>
