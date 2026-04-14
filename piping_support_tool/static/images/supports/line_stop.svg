@@ -1,169 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
   <defs>
-    <pattern id="h"  patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="5" stroke="#555" stroke-width="0.65"/>
-    </pattern>
-    <pattern id="sh" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="4" stroke="#334" stroke-width="0.8"/>
-    </pattern>
-    <!-- Stop plate hatching (denser, indicates hard stop) -->
-    <pattern id="sp" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(-45)">
-      <line x1="0" y1="0" x2="0" y2="4" stroke="#550000" stroke-width="0.8"/>
-    </pattern>
-    <radialGradient id="pg" cx="34%" cy="28%" r="68%">
-      <stop offset="0%"   stop-color="#E4EEF8"/>
-      <stop offset="100%" stop-color="#7A96B2"/>
+    <radialGradient id="pg" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#E8ECF4"/>
+      <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
-    <marker id="a"  markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
-      <polygon points="0,0 0,5 5,2.5" fill="#222"/>
-    </marker>
-    <marker id="ra"  markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
-      <polygon points="0,0 0,5 5,2.5" fill="#CC2200"/>
-    </marker>
-    <marker id="rra" markerWidth="5" markerHeight="5" refX="0" refY="2.5" orient="auto">
-      <polygon points="5,0 5,5 0,2.5" fill="#CC2200"/>
+    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6B7280"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </linearGradient>
+    <linearGradient id="stop_g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <!-- Arrow marker for force direction -->
+    <marker id="force_arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#EF4444"/>
     </marker>
   </defs>
 
-  <rect width="620" height="420" fill="#FAFAFA"/>
-  <rect x="4" y="4" width="612" height="412" fill="none" stroke="#333" stroke-width="1.2"/>
-  <rect x="8" y="8" width="604" height="376" fill="none" stroke="#BBB" stroke-width="0.4"/>
-  <line x1="312" y1="12" x2="312" y2="382" stroke="#CCC" stroke-width="0.8" stroke-dasharray="5,3"/>
+  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
 
-  <text x="159" y="21" text-anchor="middle" font-family="Courier New,monospace" font-size="8.5" fill="#555" letter-spacing="1.5">FRONT ELEVATION</text>
-  <text x="463" y="21" text-anchor="middle" font-family="Courier New,monospace" font-size="8.5" fill="#555" letter-spacing="1.5">END ELEVATION</text>
-  <line x1="93"  y1="24" x2="225" y2="24" stroke="#AAA" stroke-width="0.5"/>
-  <line x1="398" y1="24" x2="528" y2="24" stroke="#AAA" stroke-width="0.5"/>
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
 
-  <!-- ╔══════════════════════════════════════════════════════════════╗
-       ║  FRONT ELEVATION                                              ║
-       ║  Shoe + two stop plates sandwiching stop lug each side       ║
-       ║  Pipe runs left-to-right; stop mechanism shown in elevation   ║
-       ╚══════════════════════════════════════════════════════════════╝ -->
+  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
   <!-- I-beam -->
-  <rect x="28"  y="340" width="256" height="10" fill="url(#h)" stroke="#222" stroke-width="1"/>
-  <rect x="150" y="350" width="14"  height="20" fill="#AAAAAA" stroke="#222" stroke-width="1"/>
-  <rect x="28"  y="370" width="256" height="10" fill="url(#h)" stroke="#222" stroke-width="1"/>
+  <rect x="68" y="222" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="182" y="232" width="16" height="20" fill="#374151"/>
+  <rect x="68" y="252" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Base plate (shoe base) -->
-  <rect x="56" y="326" width="202" height="14" fill="url(#sh)" stroke="#222" stroke-width="1.2"/>
+  <!-- Shoe base plate -->
+  <rect x="114" y="208" width="136" height="14" rx="2" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Shoe sides -->
+  <rect x="114" y="178" width="16" height="30" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="234" y="178" width="16" height="30" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Saddle -->
+  <path d="M 130,178 Q 190,198 234,178" fill="none" stroke="#1B4DB8" stroke-width="2.5"/>
 
-  <!-- Shoe lower section (small saddle) -->
-  <rect x="80" y="300" width="16"  height="26" fill="url(#sh)" stroke="#222" stroke-width="1"/>
-  <rect x="216" y="300" width="16" height="26" fill="url(#sh)" stroke="#222" stroke-width="1"/>
+  <!-- Stop lug on left side — the axial stop element -->
+  <rect x="82" y="116" width="32" height="92" rx="3" fill="#1E3A8A" stroke="#001F5C" stroke-width="2"/>
+  <!-- Lug highlight -->
+  <rect x="84" y="118" width="8" height="88" rx="2" fill="rgba(96,165,250,0.2)"/>
+  <!-- Weld marks at base of lug -->
+  <polygon points="114,208 110,218 118,218" fill="#EF4444" opacity="0.75"/>
 
-  <!-- LEFT STOP PLATE: heavy vertical plate on left, x=56 to x=80, y=238 to y=326 -->
-  <rect x="56" y="238" width="24" height="88" fill="url(#sp)" stroke="#880000" stroke-width="1.5"/>
-  <!-- RIGHT STOP PLATE: x=232 to x=258, y=238 to y=326 -->
-  <rect x="232" y="238" width="24" height="88" fill="url(#sp)" stroke="#880000" stroke-width="1.5"/>
+  <!-- Pipe — cy=114, r=64 -->
+  <circle cx="190" cy="114" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
+  <ellipse cx="172" cy="96" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
+  <line x1="190" y1="99" x2="190" y2="129" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="175" y1="114" x2="205" y2="114" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
 
-  <!-- STOP LUG (welded to shoe / pipe): vertical plate in the GAP between stop plates -->
-  <!-- Lug sits between left stop plate (ends at x=80) and right stop plate (starts at x=232) -->
-  <!-- Lug at pipe mid-span: x=144 to x=168, y=238 to y=326 -->
-  <!-- Actually, the STOP LUG is what prevents movement. It is attached to the PIPE SHOE,
-       and the two stop plates are fixed to the structure. The lug sits between the two
-       stop plates, preventing axial movement in both directions. In FRONT VIEW we show
-       the stop plates on the left and right sides of a central lug. -->
-  <!-- Central stop lug (attached to shoe, moves with pipe) -->
-  <rect x="146" y="252" width="20" height="74" fill="url(#sh)" stroke="#222" stroke-width="1.5"/>
+  <!-- Force / restraint arrow -->
+  <line x1="60" y1="114" x2="80" y2="114" stroke="#EF4444" stroke-width="2.5" marker-end="url(#force_arr)"/>
+  <text x="24" y="110" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">AXIAL</text>
+  <text x="20" y="120" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">FORCE</text>
 
-  <!-- Pipe (side view): bottom at y=252, r=47, cy=205 -->
-  <!-- (pipe bottom at y=252 so it clears the stop plates) -->
-  <rect x="80" y="158" width="152" height="94" fill="url(#pg)"/>
-  <line x1="80"  y1="158" x2="232" y2="158" stroke="#4A6A8A" stroke-width="1.5"/>
-  <line x1="80"  y1="252" x2="232" y2="252" stroke="#4A6A8A" stroke-width="1.5"/>
-  <ellipse cx="80"  cy="205" rx="7" ry="47" fill="#AABCCE" stroke="#4A6A8A" stroke-width="1.5"/>
-  <ellipse cx="232" cy="205" rx="7" ry="47" fill="none"    stroke="#7A9AB8" stroke-width="1"   stroke-dasharray="3,2"/>
-  <rect x="86" y="160" width="139" height="14" rx="7" fill="rgba(255,255,255,0.40)"/>
-  <!-- Pipe centreline -->
-  <line x1="50" y1="205" x2="258" y2="205" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
+  <!-- Label callout -->
+  <text x="296" y="188" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">LS01–LS03</text>
+  <line x1="250" y1="184" x2="292" y2="184" stroke="#003087" stroke-width="0.8"/>
 
-  <!-- AXIAL LOAD ARROWS (both directions, blocked by stop plates) -->
-  <!-- Left arrow: force coming from left, blocked by left stop plate -->
-  <line x1="24" y1="205" x2="52" y2="205" stroke="#CC2200" stroke-width="2" marker-end="url(#ra)"/>
-  <!-- Right arrow: force coming from right, blocked by right stop plate -->
-  <line x1="288" y1="205" x2="264" y2="205" stroke="#CC2200" stroke-width="2" marker-end="url(#rra)"/>
-
-  <!-- WELD marks (stop lug to shoe) -->
-  <polygon points="146,326 138,336 154,336" fill="#CC2200" opacity="0.8"/>
-  <polygon points="166,326 158,336 174,336" fill="#CC2200" opacity="0.8"/>
-
-  <!-- ── Labels (front view) ── -->
-  <line x1="80"  y1="178" x2="50"  y2="162" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="11"   y="160"  font-family="Arial,sans-serif" font-size="9"   fill="#111" font-weight="700">PIPE</text>
-
-  <!-- Stop plate label -->
-  <line x1="56"  y1="275" x2="14"  y2="256" stroke="#880000" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="10"   y="253"  font-family="Arial,sans-serif" font-size="8.5" fill="#880000" font-weight="700">STOP</text>
-  <text x="10"   y="264"  font-family="Arial,sans-serif" font-size="8.5" fill="#880000" font-weight="700">PLATE</text>
-  <text x="12"   y="275"  font-family="Arial,sans-serif" font-size="7.5" fill="#880000">(TYP.)</text>
-
-  <!-- Stop lug label -->
-  <line x1="166" y1="265" x2="200" y2="248" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="202"  y="246"  font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">STOP LUG</text>
-  <text x="204"  y="257"  font-family="Arial,sans-serif" font-size="7.5" fill="#334477">(WELDED TO SHOE)</text>
-
-  <!-- Axial load label -->
-  <text x="11"   y="194"  font-family="Arial,sans-serif" font-size="8"   fill="#CC2200" font-weight="700">AXIAL</text>
-  <text x="11"   y="205"  font-family="Arial,sans-serif" font-size="8"   fill="#CC2200" font-weight="700">LOAD</text>
-  <text x="265"  y="194"  font-family="Arial,sans-serif" font-size="8"   fill="#CC2200" font-weight="700">AXIAL</text>
-  <text x="265"  y="205"  font-family="Arial,sans-serif" font-size="8"   fill="#CC2200" font-weight="700">LOAD</text>
-
-  <!-- ╔══════════════════════════════════════════╗
-       ║  END ELEVATION  (right panel)             ║
-       ║  Pipe end-on; stop collar visible         ║
-       ╚══════════════════════════════════════════╝ -->
-
-  <!-- I-beam end view -->
-  <rect x="408" y="340" width="110" height="10" fill="url(#h)"  stroke="#222" stroke-width="1"/>
-  <rect x="458" y="350" width="14"  height="20" fill="#AAAAAA"  stroke="#222" stroke-width="1"/>
-  <rect x="408" y="370" width="110" height="10" fill="url(#h)"  stroke="#222" stroke-width="1"/>
-
-  <!-- Base plate (end view) -->
-  <rect x="413" y="326" width="100" height="14" fill="url(#sh)" stroke="#222" stroke-width="1.2"/>
-
-  <!-- Stop plate (end view) — stop plates on each side of lug, seen as thick rectangles  -->
-  <!-- In END view, looking down the pipe axis, the stop plates appear as vertical plates
-       on the left side of the assembly (the lug sticks out to the left) -->
-  <!-- Left stop plate face (left of lug) -->
-  <rect x="394" y="252" width="14" height="74" fill="url(#sp)" stroke="#880000" stroke-width="1.5"/>
-  <!-- Lug protruding to the left of the pipe -->
-  <rect x="408" y="270" width="18" height="38" fill="url(#sh)" stroke="#222" stroke-width="1.5"/>
-  <!-- Right stop plate (right of lug) -->
-  <!-- In end view this would be behind the pipe... show as dashed -->
-  <rect x="426" y="252" width="14" height="74" fill="none" stroke="#880000" stroke-width="1" stroke-dasharray="4,2"/>
-
-  <!-- Pipe circle: cy=205, r=47, bottom at y=252 -->
-  <circle cx="463" cy="205" r="47" fill="url(#pg)" stroke="#4A6A8A" stroke-width="1.5"/>
-  <circle cx="463" cy="205" r="41" fill="none"     stroke="#7A9AB8" stroke-width="0.7" stroke-dasharray="2,2"/>
-  <ellipse cx="447" cy="188" rx="12" ry="8" fill="rgba(255,255,255,0.46)"/>
-  <line x1="463" y1="164" x2="463" y2="246" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
-  <line x1="416" y1="205" x2="510" y2="205" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
-
-  <!-- Stop ring / collar on pipe (shown as thicker circle) -->
-  <circle cx="463" cy="205" r="54" fill="none" stroke="#334477" stroke-width="3"/>
-
-  <!-- ── Labels (end view) ── -->
-  <line x1="504" y1="188" x2="530" y2="175" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="533" y="173" font-family="Arial,sans-serif" font-size="9"   fill="#111" font-weight="700">PIPE</text>
-
-  <line x1="394" y1="270" x2="372" y2="258" stroke="#880000" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="318" y="255" font-family="Arial,sans-serif" font-size="8.5" fill="#880000" font-weight="700">STOP PLATE</text>
-
-  <line x1="414" y1="280" x2="392" y2="296" stroke="#334477" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="318" y="305" font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">STOP LUG</text>
-
-  <line x1="504" y1="151" x2="526" y2="138" stroke="#334477" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="528" y="136" font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">COLLAR</text>
-
-  <!-- Note -->
-  <text x="318" y="344" font-family="Arial,sans-serif" font-size="7.5" fill="#666">NOTE: STOP PLATES FIXED TO STRUCTURE.</text>
-  <text x="318" y="354" font-family="Arial,sans-serif" font-size="7.5" fill="#880000">STOP LUG (ON PIPE) SANDWICHED BETWEEN PLATES.</text>
-  <text x="318" y="364" font-family="Arial,sans-serif" font-size="7.5" fill="#666">AXIAL MOVEMENT PREVENTED IN BOTH DIRECTIONS.</text>
-  <text x="318" y="374" font-family="Arial,sans-serif" font-size="7.5" fill="#CC2200">◄ AXIAL LOAD RESISTED BY HARD CONTACT ►</text>
-
-  <!-- Title block -->
-  <rect x="4" y="388" width="612" height="28" fill="#003087"/>
-  <text x="310" y="407" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="white" letter-spacing="2">LINE STOP SUPPORT  (LS)</text>
+  <rect x="68" y="264" width="244" height="22" rx="4" fill="#003087"/>
+  <text x="190" y="280" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
+        fill="white" letter-spacing="1.5">LINE STOP SUPPORT</text>
 </svg>

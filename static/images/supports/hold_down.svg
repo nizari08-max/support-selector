@@ -1,175 +1,73 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
   <defs>
-    <pattern id="h"  patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="5" stroke="#555" stroke-width="0.65"/>
-    </pattern>
-    <pattern id="bh" patternUnits="userSpaceOnUse" width="4" height="4" patternTransform="rotate(45)">
-      <line x1="0" y1="0" x2="0" y2="4" stroke="#334" stroke-width="0.8"/>
-    </pattern>
-    <radialGradient id="pg" cx="34%" cy="28%" r="68%">
-      <stop offset="0%"   stop-color="#E4EEF8"/>
-      <stop offset="100%" stop-color="#7A96B2"/>
+    <radialGradient id="pg" cx="38%" cy="32%" r="65%">
+      <stop offset="0%" stop-color="#E8ECF4"/>
+      <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
-    <!-- Hold-down bracket gradient (strong blue-steel) -->
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%"   stop-color="#6688BB"/>
-      <stop offset="100%" stop-color="#334477"/>
+    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6B7280"/>
+      <stop offset="100%" stop-color="#374151"/>
     </linearGradient>
-    <marker id="a"  markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
-      <polygon points="0,0 0,5 5,2.5" fill="#222"/>
-    </marker>
-    <!-- Upward arrow (uplift force) -->
-    <marker id="uu" markerWidth="6" markerHeight="6" refX="3" refY="5.5" orient="auto">
-      <polygon points="0,6 3,0 6,6" fill="#CC2200"/>
-    </marker>
-    <!-- Downward arrow (hold-down reaction) -->
-    <marker id="dd" markerWidth="6" markerHeight="6" refX="3" refY="0.5" orient="auto">
-      <polygon points="0,0 3,6 6,0" fill="#0044BB"/>
-    </marker>
-    <marker id="ba" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
-      <polygon points="0,0 0,5 5,2.5" fill="#334477"/>
+    <linearGradient id="hd" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <marker id="up_arr" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto">
+      <path d="M0,8 L4,0 L8,8 z" fill="#EF4444"/>
     </marker>
   </defs>
 
-  <rect width="620" height="420" fill="#FAFAFA"/>
-  <rect x="4" y="4" width="612" height="412" fill="none" stroke="#333" stroke-width="1.2"/>
-  <rect x="8" y="8" width="604" height="376" fill="none" stroke="#BBB" stroke-width="0.4"/>
-  <line x1="312" y1="12" x2="312" y2="382" stroke="#CCC" stroke-width="0.8" stroke-dasharray="5,3"/>
+  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
 
-  <text x="159" y="21" text-anchor="middle" font-family="Courier New,monospace" font-size="8.5" fill="#555" letter-spacing="1.5">FRONT ELEVATION</text>
-  <text x="463" y="21" text-anchor="middle" font-family="Courier New,monospace" font-size="8.5" fill="#555" letter-spacing="1.5">END ELEVATION</text>
-  <line x1="93"  y1="24" x2="225" y2="24" stroke="#AAA" stroke-width="0.5"/>
-  <line x1="398" y1="24" x2="528" y2="24" stroke="#AAA" stroke-width="0.5"/>
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
 
-  <!-- ╔══════════════════════════════════════════════════════════╗
-       ║  FRONT ELEVATION                                          ║
-       ║  U-bolt over pipe, legs into base plate on beam          ║
-       ╚══════════════════════════════════════════════════════════╝ -->
+  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
   <!-- I-beam -->
-  <rect x="28"  y="340" width="256" height="10" fill="url(#h)" stroke="#222" stroke-width="1"/>
-  <rect x="150" y="350" width="14"  height="20" fill="#AAAAAA" stroke="#222" stroke-width="1"/>
-  <rect x="28"  y="370" width="256" height="10" fill="url(#h)" stroke="#222" stroke-width="1"/>
+  <rect x="68" y="214" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="182" y="224" width="16" height="20" fill="#374151"/>
+  <rect x="68" y="244" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Base plate (hold-down base on beam top) -->
-  <rect x="68" y="326" width="176" height="14" fill="url(#bh)" stroke="#222" stroke-width="1.2"/>
+  <!-- Base plate -->
+  <rect x="108" y="202" width="164" height="12" rx="2" fill="url(#hd)" stroke="#001F5C" stroke-width="1.5"/>
 
-  <!-- Pipe (side view): bottom at y=285, r=47, cy=238 -->
-  <rect x="80" y="191" width="152" height="94" fill="url(#pg)"/>
-  <line x1="80"  y1="191" x2="232" y2="191" stroke="#4A6A8A" stroke-width="1.5"/>
-  <line x1="80"  y1="285" x2="232" y2="285" stroke="#4A6A8A" stroke-width="1.5"/>
-  <ellipse cx="80"  cy="238" rx="7" ry="47" fill="#AABCCE" stroke="#4A6A8A" stroke-width="1.5"/>
-  <ellipse cx="232" cy="238" rx="7" ry="47" fill="none"    stroke="#7A9AB8" stroke-width="1"   stroke-dasharray="3,2"/>
-  <rect x="86" y="193" width="139" height="14" rx="7" fill="rgba(255,255,255,0.40)"/>
-  <!-- Pipe centreline -->
-  <line x1="50" y1="238" x2="258" y2="238" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
+  <!-- Pipe — cy=138, r=64 → bottom at y=202 -->
+  <circle cx="190" cy="138" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
+  <ellipse cx="172" cy="120" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
+  <line x1="190" y1="123" x2="190" y2="153" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <line x1="175" y1="138" x2="205" y2="138" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
 
-  <!-- U-BOLT: LEFT LEG + RIGHT LEG + TOP BAR, going OVER the pipe -->
-  <!-- Pipe top at y=191. U-bolt top bar sits above pipe. -->
-  <!-- Left leg: x=96 to x=108 (12px wide), y=167 to y=326 -->
-  <rect x="96"  y="167" width="12" height="159" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-  <!-- Right leg: x=204 to x=216 -->
-  <rect x="204" y="167" width="12" height="159" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-  <!-- Top bar (horizontal bridge over pipe): x=96 to x=216, y=154 to y=167 -->
-  <rect x="96"  y="154" width="120" height="13" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
+  <!-- Hold-down U-bolt going OVER the pipe -->
+  <!-- Left leg -->
+  <rect x="150" y="74" width="14" height="128" rx="5" fill="url(#hd)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Right leg -->
+  <rect x="216" y="74" width="14" height="128" rx="5" fill="url(#hd)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Top bar (horizontal bridge) -->
+  <rect x="150" y="70" width="80" height="14" rx="5" fill="url(#hd)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Highlight on bar -->
+  <rect x="154" y="72" width="72" height="5" rx="3" fill="rgba(147,197,253,0.25)"/>
 
-  <!-- Nut + washer at base of each leg (sits on base plate) -->
-  <!-- Left nut -->
-  <rect x="90"  y="322" width="24" height="12" rx="2" fill="#333" stroke="#334477" stroke-width="1.2"/>
-  <line x1="102" y1="322" x2="102" y2="334" stroke="#666" stroke-width="1"/>
-  <!-- Right nut -->
-  <rect x="198" y="322" width="24" height="12" rx="2" fill="#333" stroke="#334477" stroke-width="1.2"/>
-  <line x1="210" y1="322" x2="210" y2="334" stroke="#666" stroke-width="1"/>
+  <!-- Nut/washer at base of legs -->
+  <rect x="146" y="200" width="22" height="10" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <rect x="212" y="200" width="22" height="10" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
 
-  <!-- UPLIFT force arrow (red, upward) — pipe trying to lift -->
-  <line x1="156" y1="175" x2="156" y2="148" stroke="#CC2200" stroke-width="2" marker-end="url(#uu)"/>
-  <text x="161" y="155" font-family="Arial,sans-serif" font-size="8" fill="#CC2200" font-weight="700">UPLIFT</text>
+  <!-- Uplift force arrow -->
+  <line x1="190" y1="62" x2="190" y2="40" stroke="#EF4444" stroke-width="2.5" marker-end="url(#up_arr)"/>
+  <text x="196" y="50" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">UPLIFT</text>
 
-  <!-- Hold-down reaction arrow (blue, downward) — bracket resists uplift -->
-  <line x1="140" y1="163" x2="140" y2="185" stroke="#0044BB" stroke-width="2" marker-end="url(#dd)"/>
+  <!-- Label callout -->
+  <text x="300" y="140" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">GH01 / GH02</text>
+  <line x1="258" y1="138" x2="297" y2="138" stroke="#003087" stroke-width="0.8"/>
 
-  <!-- ── Labels (front view) ── -->
-  <line x1="80"  y1="213" x2="48"  y2="196" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="11"   y="194"  font-family="Arial,sans-serif" font-size="9"   fill="#111" font-weight="700">PIPE</text>
-
-  <!-- U-bolt label -->
-  <line x1="96"  y1="160" x2="56"  y2="145" stroke="#334477" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="10"   y="142"  font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">U-BOLT /</text>
-  <text x="10"   y="153"  font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">HD BRACKET</text>
-
-  <!-- Nut label -->
-  <line x1="90"  y1="328" x2="56"  y2="344" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="10"   y="352"  font-family="Arial,sans-serif" font-size="8.5" fill="#333" font-weight="700">NUT &amp;</text>
-  <text x="10"   y="363"  font-family="Arial,sans-serif" font-size="8.5" fill="#333" font-weight="700">WASHER</text>
-
-  <!-- Base plate label -->
-  <line x1="68"  y1="333" x2="14"  y2="316" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="10"   y="313"  font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">BASE</text>
-  <text x="10"   y="324"  font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">PLATE</text>
-
-  <!-- ╔══════════════════════════════════════════╗
-       ║  END ELEVATION  (right panel)             ║
-       ║  U-bolt clearly spans over pipe circle    ║
-       ╚══════════════════════════════════════════╝ -->
-
-  <!-- I-beam end view -->
-  <rect x="408" y="340" width="110" height="10" fill="url(#h)"  stroke="#222" stroke-width="1"/>
-  <rect x="458" y="350" width="14"  height="20" fill="#AAAAAA"  stroke="#222" stroke-width="1"/>
-  <rect x="408" y="370" width="110" height="10" fill="url(#h)"  stroke="#222" stroke-width="1"/>
-
-  <!-- Base plate (end view) -->
-  <rect x="413" y="326" width="100" height="14" fill="url(#bh)" stroke="#222" stroke-width="1.2"/>
-
-  <!-- Pipe circle: bottom at y=285, cy=238, r=47 -->
-  <circle cx="463" cy="238" r="47" fill="url(#pg)" stroke="#4A6A8A" stroke-width="1.5"/>
-  <circle cx="463" cy="238" r="41" fill="none"     stroke="#7A9AB8" stroke-width="0.7" stroke-dasharray="2,2"/>
-  <ellipse cx="447" cy="221" rx="12" ry="8" fill="rgba(255,255,255,0.46)"/>
-  <line x1="463" y1="197" x2="463" y2="279" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
-  <line x1="418" y1="238" x2="508" y2="238" stroke="#0044BB" stroke-width="0.9" stroke-dasharray="9,3,2,3"/>
-
-  <!-- U-bolt (end view): two legs on left and right of pipe, top bar visible above -->
-  <!-- Left leg: x=447 to x=459, y=167 to y=326 -->
-  <rect x="447" y="167" width="12" height="159" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-  <!-- Right leg: x=469 to x=481 -->
-  <rect x="469" y="167" width="12" height="159" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-  <!-- Top bar: x=447 to x=481, y=154 to y=167 -->
-  <rect x="447" y="154" width="34"  height="13" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-
-  <!-- BUT the U-bolt wraps around the pipe in end view — show as arc on each side -->
-  <!-- Left bolt circle (passes LEFT of pipe) -->
-  <circle cx="416" cy="238" r="7"  fill="#333"  stroke="#334477" stroke-width="1.5"/>
-  <circle cx="416" cy="238" r="3"  fill="#334477"/>
-  <!-- Right bolt circle -->
-  <circle cx="510" cy="238" r="7"  fill="#333"  stroke="#334477" stroke-width="1.5"/>
-  <circle cx="510" cy="238" r="3"  fill="#334477"/>
-
-  <!-- U-bolt top bar (end view, above pipe) -->
-  <rect x="447" y="150" width="34" height="13" fill="url(#bg)" stroke="#222" stroke-width="1.2"/>
-
-  <!-- Nuts at bottom of legs (on base plate) -->
-  <rect x="441" y="322" width="24" height="12" rx="2" fill="#333" stroke="#334477" stroke-width="1.2"/>
-  <rect x="463" y="322" width="24" height="12" rx="2" fill="#333" stroke="#334477" stroke-width="1.2"/>
-
-  <!-- UPLIFT arrow (end view) -->
-  <line x1="463" y1="205" x2="463" y2="148" stroke="#CC2200" stroke-width="1.5" marker-end="url(#uu)"/>
-
-  <!-- ── Labels (end view) ── -->
-  <line x1="504" y1="221" x2="530" y2="208" stroke="#222" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="533" y="206" font-family="Arial,sans-serif" font-size="9"   fill="#111" font-weight="700">PIPE</text>
-
-  <line x1="447" y1="156" x2="420" y2="143" stroke="#334477" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="318" y="141" font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">U-BOLT (HOLD-DOWN)</text>
-  <text x="318" y="152" font-family="Arial,sans-serif" font-size="7.5" fill="#334477">TOP BAR RESTRAINS UPLIFT</text>
-
-  <line x1="416" y1="231" x2="390" y2="218" stroke="#334477" stroke-width="0.8" marker-end="url(#a)"/>
-  <text x="318" y="215" font-family="Arial,sans-serif" font-size="8.5" fill="#334477" font-weight="700">BOLT LEG</text>
-
-  <!-- Note -->
-  <text x="318" y="362" font-family="Arial,sans-serif" font-size="7.5" fill="#666">NOTE: U-BOLT SPANS OVER PIPE. NUTS TIGHTEN</text>
-  <text x="318" y="372" font-family="Arial,sans-serif" font-size="7.5" fill="#CC2200">AGAINST BASE PLATE, PREVENTING UPLIFT.</text>
-  <text x="318" y="381" font-family="Arial,sans-serif" font-size="7.5" fill="#666">PIPE IS FREE TO SLIDE AXIALLY WITHIN U-BOLT.</text>
-
-  <!-- Title block -->
-  <rect x="4" y="388" width="612" height="28" fill="#003087"/>
-  <text x="310" y="407" text-anchor="middle" font-family="Arial,sans-serif" font-size="13" font-weight="700" fill="white" letter-spacing="2">HOLD DOWN SUPPORT  (GH)</text>
+  <rect x="68" y="258" width="244" height="22" rx="4" fill="#003087"/>
+  <text x="190" y="274" text-anchor="middle"
+        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
+        fill="white" letter-spacing="1.5">HOLD DOWN SUPPORT</text>
 </svg>
