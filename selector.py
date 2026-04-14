@@ -230,21 +230,80 @@ def select_support(
     }
 
     # -----------------------------------------------------------------------
-    # FRP special case for Table 16 (guide & line_stop only, NPS 2" – 24")
-    # The standard lists FRP as a separate row "2"–24" (FRP)" at the bottom
-    # of Table 16 with CF03 (guide) and CF04 (line stop).
+    # FRP special case — handled entirely here for all support functions.
+    #
+    # New standard rules (JESA Rev A update):
+    #   REST      : SC71 (3/4"–68") primary; SC72 (3/4"–52") as alternative
+    #   GUIDE     : SC73 (3/4"–52") for all sizes
+    #   LINE STOP : No FRP-specific type — use CF03 with engineering note
+    #   HOLD DOWN : Not applicable
+    #
+    # Sizes below NPS 3/4" are not covered by any FRP support type.
     # -----------------------------------------------------------------------
-    if material_key == "frp" and function_key in ("guide", "line_stop"):
-        if 2.0 <= nps <= 24.0:
-            code = "CLAMP SHOE FOR GUIDE (CF03)" if function_key == "guide" else "CLAMP SHOE FOR LINE STOP (CF04)"
+    if material_key == "frp":
+        # NPS 1/2" (0.5) is below the minimum FRP support size (3/4")
+        if nps < 0.75:
+            return SelectionResult(
+                support_code=None,
+                drawings=[],
+                notes=[],
+                size_range=size_range,
+                inputs=inputs,
+            )
+
+        if function_key == "rest":
+            # SC71 covers 3/4"–68" (all tool sizes); SC72 also available up to 52"
+            # Both cover the full tool range (max 48" < 52"), except NPS 26" where
+            # SC72 sub-ranges jump from 16"-24" directly to 28"-52".
+            if nps == 26.0:
+                # NPS 26" falls between SC72 sub-ranges — SC71 only
+                code = "SADDLE SUPPORT (SC71)"
+            else:
+                # All other sizes: SC71 primary, SC72 as alternative
+                code = "SADDLE SUPPORT (SC71)  OR  SC72 (alternative)"
             return SelectionResult(
                 support_code=code,
                 drawings=get_drawings(code),
                 notes=[],
-                size_range="frp_2_to_24",
+                size_range=size_range,
                 inputs=inputs,
             )
+
+        elif function_key == "guide":
+            # SC73 covers 3/4"–52" (all tool sizes up to 48")
+            # Sub-range gap: 25"-27" — NPS 26" falls between 16"-24" and 28"-52"
+            if nps == 26.0:
+                return SelectionResult(
+                    support_code=None,
+                    drawings=[],
+                    notes=[],
+                    size_range=size_range,
+                    inputs=inputs,
+                )
+            code = "SADDLE GUIDE SUPPORT (SC73)"
+            return SelectionResult(
+                support_code=code,
+                drawings=get_drawings(code),
+                notes=[],
+                size_range=size_range,
+                inputs=inputs,
+            )
+
+        elif function_key == "line_stop":
+            # No dedicated FRP line stop in the standard.
+            # CF03 (FRP Clamp Shoe for Guide) is used as the nearest alternative.
+            # Note 6 explains the deviation to the engineer.
+            code = "CF03"
+            return SelectionResult(
+                support_code=code,
+                drawings=get_drawings(code),
+                notes=[6],
+                size_range=size_range,
+                inputs=inputs,
+            )
+
         else:
+            # hold_down — not applicable for FRP
             return SelectionResult(
                 support_code=None,
                 drawings=[],

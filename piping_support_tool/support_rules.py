@@ -557,4 +557,10 @@ NOTES = {
 
     5: ("NOTE 5 - Applicable only for Line Stop on SS/DS/SD/SA/AL/AY lines "
         "with operating temperature >= 750 degF."),
+
+    6: ("NOTE 6 - FRP LINE STOP: No FRP-specific line stop support is defined in "
+        "the current JESA Piping Support Standard. CF03 (FRP Clamp Shoe for Guide) "
+        "is selected as the nearest applicable alternative. This is a deviation from "
+        "the standard — verify this approach with the piping support engineer and obtain "
+        "specific approval before use on the project."),
 }

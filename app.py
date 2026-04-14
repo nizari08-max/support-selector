@@ -34,6 +34,8 @@ def get_image_key(support_code: str) -> str:
         return "guide"
     if re.search(r"\bCF\d", s):
         return "frp_clamp"
+    if re.search(r"\bSC7[123]\b", s):   # FRP saddle supports (SC71 / SC72 / SC73)
+        return "frp_clamp"
     if re.search(r"\bSC\d", s):
         return "shoe_clamp"
     if re.search(r"\bSH\d", s):

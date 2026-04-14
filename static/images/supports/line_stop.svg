@@ -1,71 +1,157 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
   <defs>
+    <!-- Pipe end-view gradient (radial) -->
     <radialGradient id="pg" cx="38%" cy="32%" r="65%">
       <stop offset="0%" stop-color="#E8ECF4"/>
       <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
+    <!-- Pipe side-view gradient (linear top-to-bottom) -->
+    <linearGradient id="ps" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#DFE5F0"/>
+      <stop offset="42%" stop-color="#B5C0D8"/>
+      <stop offset="100%" stop-color="#8FA0BB"/>
+    </linearGradient>
+    <!-- Structural steel gradient -->
     <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#6B7280"/>
       <stop offset="100%" stop-color="#374151"/>
     </linearGradient>
-    <linearGradient id="stop_g" x1="0" y1="0" x2="0" y2="1">
+    <!-- JESA blue gradient (shoe / stop lug) -->
+    <linearGradient id="bl" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#2563EB"/>
       <stop offset="100%" stop-color="#003087"/>
     </linearGradient>
-    <!-- Arrow marker for force direction -->
-    <marker id="force_arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+    <!-- Axial force arrow marker (red) -->
+    <marker id="farr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
       <path d="M0,0 L0,6 L8,3 z" fill="#EF4444"/>
     </marker>
   </defs>
 
+  <!-- Canvas background -->
   <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
 
-  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
-    <line x1="0" y1="72" x2="380" y2="72"/>
-    <line x1="0" y1="144" x2="380" y2="144"/>
-    <line x1="0" y1="216" x2="380" y2="216"/>
-    <line x1="95" y1="0" x2="95" y2="290"/>
-    <line x1="190" y1="0" x2="190" y2="290"/>
-    <line x1="285" y1="0" x2="285" y2="290"/>
+  <!-- Engineering grid (subtle blueprint lines) -->
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.55">
+    <line x1="0"   y1="72"  x2="380" y2="72"/>
+    <line x1="0"   y1="144" x2="380" y2="144"/>
+    <line x1="0"   y1="216" x2="380" y2="216"/>
+    <line x1="95"  y1="0"   x2="95"  y2="270"/>
+    <line x1="190" y1="0"   x2="190" y2="270"/>
+    <line x1="285" y1="0"   x2="285" y2="270"/>
   </g>
 
-  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
+  <!-- ════════════════════════════════════════════════════════════
+       LEFT PANEL  —  SIDE ELEVATION
+       Pipe viewed from the side; stop lug resists axial movement
+       ════════════════════════════════════════════════════════════ -->
 
-  <!-- I-beam -->
-  <rect x="68" y="222" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
-  <rect x="182" y="232" width="16" height="20" fill="#374151"/>
-  <rect x="68" y="252" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <text x="12" y="20" font-family="'Courier New',monospace" font-size="9"
+        fill="#94A3B8" letter-spacing="1">SIDE ELEVATION</text>
 
-  <!-- Shoe base plate -->
-  <rect x="114" y="208" width="136" height="14" rx="2" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Shoe sides -->
-  <rect x="114" y="178" width="16" height="30" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <rect x="234" y="178" width="16" height="30" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Saddle -->
-  <path d="M 130,178 Q 190,198 234,178" fill="none" stroke="#1B4DB8" stroke-width="2.5"/>
+  <!-- I-beam structural steel (support below shoe) -->
+  <!-- Top flange -->
+  <rect x="14" y="228" width="222" height="9"  rx="1.5" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <!-- Web -->
+  <rect x="115" y="237" width="12"  height="14" fill="#374151"/>
+  <!-- Bottom flange -->
+  <rect x="14" y="251" width="222" height="9"  rx="1.5" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Stop lug on left side — the axial stop element -->
-  <rect x="82" y="116" width="32" height="92" rx="3" fill="#1E3A8A" stroke="#001F5C" stroke-width="2"/>
-  <!-- Lug highlight -->
-  <rect x="84" y="118" width="8" height="88" rx="2" fill="rgba(96,165,250,0.2)"/>
-  <!-- Weld marks at base of lug -->
-  <polygon points="114,208 110,218 118,218" fill="#EF4444" opacity="0.75"/>
+  <!-- Shoe base plate (blue) — pipe sits in this saddle, which sits on beam -->
+  <rect x="94" y="211" width="142" height="17" rx="2" fill="url(#bl)" stroke="#001F5C" stroke-width="1.5"/>
 
-  <!-- Pipe — cy=114, r=64 -->
-  <circle cx="190" cy="114" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
-  <ellipse cx="172" cy="96" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
-  <line x1="190" y1="99" x2="190" y2="129" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="175" y1="114" x2="205" y2="114" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <!-- Pipe body (side view — horizontal cylinder running left-to-right)
+       Pipe outer boundary: x=94 to x=239, y=165 to y=211 (diameter 46 px)
+       Pipe centerline at y=188 -->
+  <rect x="94"  y="165" width="145" height="46" fill="url(#ps)"/>
+  <line x1="94" y1="165" x2="239" y2="165" stroke="#64748B" stroke-width="1.5"/>
+  <line x1="94" y1="211" x2="239" y2="211" stroke="#64748B" stroke-width="1.5"/>
+  <!-- Left pipe cap: visible cut face (the end the stop lug bears against) -->
+  <ellipse cx="94" cy="188" rx="9" ry="23" fill="#CDD8EC" stroke="#64748B" stroke-width="1.5"/>
+  <!-- Pipe centerline (dash-dot) -->
+  <line x1="60"  y1="188" x2="243" y2="188" stroke="#8FA0BB" stroke-width="1"
+        stroke-dasharray="6,3,1,3"/>
+  <!-- Pipe top highlight/shine -->
+  <rect x="100" y="167" width="133" height="9" rx="4.5" fill="rgba(255,255,255,0.30)"/>
 
-  <!-- Force / restraint arrow -->
-  <line x1="60" y1="114" x2="80" y2="114" stroke="#EF4444" stroke-width="2.5" marker-end="url(#force_arr)"/>
-  <text x="24" y="110" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">AXIAL</text>
-  <text x="20" y="120" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">FORCE</text>
+  <!-- ── STOP LUG ──────────────────────────────────────────────────
+       Vertical plate welded to the shoe base plate.
+       The pipe shoe (clamped to the pipe) bears against this lug,
+       preventing axial movement in the arrow direction.
+       ─────────────────────────────────────────────────────────── -->
+  <rect x="66" y="153" width="28" height="75" rx="2"
+        fill="url(#bl)" stroke="#001F5C" stroke-width="1.8"/>
+  <!-- Lug surface highlight -->
+  <rect x="68" y="155" width="10" height="71" rx="1.5" fill="rgba(147,197,253,0.20)"/>
 
-  <!-- Label callout -->
-  <text x="296" y="188" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">LS01–LS03</text>
-  <line x1="250" y1="184" x2="292" y2="184" stroke="#003087" stroke-width="0.8"/>
+  <!-- Weld triangles: lug to shoe base plate (bottom junction) -->
+  <polygon points="94,211  88,222  101,222" fill="#EF4444" opacity="0.82"/>
+  <!-- Weld triangles: lug to pipe shoe (top junction, at pipe top) -->
+  <polygon points="94,165  88,154  101,154" fill="#EF4444" opacity="0.82"/>
 
+  <!-- Axial force arrow — pointing RIGHT (force being restrained by the lug) -->
+  <line x1="14" y1="188" x2="63" y2="188" stroke="#EF4444" stroke-width="2.5"
+        marker-end="url(#farr)"/>
+  <text x="11" y="180" font-family="'Arial',sans-serif" font-size="7.5"
+        fill="#EF4444" font-weight="700">AXIAL</text>
+  <text x="11" y="200" font-family="'Arial',sans-serif" font-size="7.5"
+        fill="#EF4444" font-weight="700">LOAD</text>
+
+  <!-- Callout: STOP LUG -->
+  <circle cx="80" cy="158" r="2.5" fill="#1E40AF"/>
+  <line x1="80" y1="158" x2="80"  y2="136" stroke="#1E40AF" stroke-width="0.8"/>
+  <line x1="80" y1="136" x2="120" y2="136" stroke="#1E40AF" stroke-width="0.8"/>
+  <text x="122" y="140" font-family="'Arial',sans-serif" font-size="8"
+        fill="#003087" font-weight="700">STOP LUG</text>
+
+  <!-- Callout: LS01 – LS03 code reference -->
+  <circle cx="160" cy="219" r="2.5" fill="#374151"/>
+  <line x1="160" y1="219" x2="160" y2="245" stroke="#374151" stroke-width="0.8"/>
+  <text x="134" y="256" font-family="'Arial',sans-serif" font-size="7.5"
+        fill="#374151" font-weight="600">LS01 / LS02 / LS03</text>
+
+  <!-- Panel divider (dashed vertical line between the two views) -->
+  <line x1="242" y1="12" x2="242" y2="262"
+        stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+  <!-- ════════════════════════════════════════════════════════════
+       RIGHT PANEL  —  END ELEVATION
+       Pipe viewed end-on; stop lug visible to the left of shoe
+       ════════════════════════════════════════════════════════════ -->
+
+  <text x="250" y="20" font-family="'Courier New',monospace" font-size="9"
+        fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
+
+  <!-- I-beam (same y positions as left panel) -->
+  <rect x="248" y="228" width="120" height="9"  rx="1.5" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="302" y="237" width="12"  height="14" fill="#374151"/>
+  <rect x="248" y="251" width="120" height="9"  rx="1.5" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+
+  <!-- Shoe base plate (end view) -->
+  <rect x="277" y="211" width="68" height="17" rx="2"
+        fill="url(#bl)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- Stop lug (end view — narrow vertical plate to the LEFT of shoe/pipe) -->
+  <rect x="259" y="153" width="18" height="75" rx="1.5"
+        fill="url(#bl)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Weld: lug bottom to shoe (end view) -->
+  <polygon points="277,211  272,222  283,222" fill="#EF4444" opacity="0.82"/>
+  <!-- Weld: lug top to pipe shoe (end view) -->
+  <polygon points="277,165  272,154  283,154" fill="#EF4444" opacity="0.82"/>
+
+  <!-- Pipe circle (end elevation) — cx aligns with shoe center -->
+  <!-- Pipe: cx=311, cy=177, r=34  →  pipe bottom = 211 (= shoe top) ✓ -->
+  <circle cx="311" cy="177" r="34" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
+  <!-- Highlight ellipse -->
+  <ellipse cx="298" cy="165" rx="11" ry="7" fill="rgba(255,255,255,0.42)"/>
+  <!-- Crosshairs -->
+  <line x1="311" y1="162" x2="311" y2="192" stroke="#8FA0BB" stroke-width="1"
+        stroke-dasharray="3,3"/>
+  <line x1="296" y1="177" x2="326" y2="177" stroke="#8FA0BB" stroke-width="1"
+        stroke-dasharray="3,3"/>
+
+  <!-- ════════════════════════════════════════════════════════════
+       BOTTOM LABEL BAR
+       ════════════════════════════════════════════════════════════ -->
   <rect x="68" y="264" width="244" height="22" rx="4" fill="#003087"/>
   <text x="190" y="280" text-anchor="middle"
         font-family="'Arial',sans-serif" font-size="11" font-weight="700"

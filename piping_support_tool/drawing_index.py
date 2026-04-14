@@ -75,7 +75,16 @@ DRAWING_INDEX = {
     "CF01":  [f"{DRAWING_PREFIX}0369"],
     "CF02":  [f"{DRAWING_PREFIX}0370"],
     "CF03":  [f"{DRAWING_PREFIX}0371"],
-    "CF04":  [f"{DRAWING_PREFIX}0372"],   # FRP Clamp Shoe for Line Stop — verify sheet number
+    "CF04":  [f"{DRAWING_PREFIX}0372"],
+
+    # -------------------------------------------------------------------------
+    # FRP SADDLE SUPPORTS (SC7x series) — new standard
+    # Sub-ranges (different drawing sheets per size) are referenced by the
+    # same code; the drawing number suffix follows the JS-PE-DPS-<code> format.
+    # -------------------------------------------------------------------------
+    "SC71":  [f"{DRAWING_PREFIX}SC71"],   # FRP Rest — 3/4" to 68"
+    "SC72":  [f"{DRAWING_PREFIX}SC72"],   # FRP Rest (alternative) — 3/4" to 52"
+    "SC73":  [f"{DRAWING_PREFIX}SC73"],   # FRP Guide — 3/4" to 52"
 }
 
 
