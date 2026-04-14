@@ -1,32 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
-  <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 420">
+  <rect width="620" height="420" fill="#FAFAFA"/>
+  <rect x="4" y="4" width="612" height="412" fill="none" stroke="#AAAAAA" stroke-width="1"/>
+  <rect x="8" y="8" width="604" height="376" fill="none" stroke="#DDDDDD" stroke-width="0.4"/>
 
-  <!-- Muted grid -->
-  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.4">
-    <line x1="0" y1="72" x2="380" y2="72"/>
-    <line x1="0" y1="144" x2="380" y2="144"/>
-    <line x1="0" y1="216" x2="380" y2="216"/>
-    <line x1="95" y1="0" x2="95" y2="290"/>
-    <line x1="190" y1="0" x2="190" y2="290"/>
-    <line x1="285" y1="0" x2="285" y2="290"/>
-  </g>
+  <!-- Large prohibition circle -->
+  <circle cx="310" cy="196" r="118" fill="none"     stroke="#BBBBBB" stroke-width="8"/>
+  <!-- Diagonal slash -->
+  <line x1="226" y1="112" x2="394" y2="280" stroke="#BBBBBB" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Not-applicable circle with diagonal -->
-  <circle cx="190" cy="132" r="72" fill="none" stroke="#CBD5E1" stroke-width="6"/>
-  <line x1="139" y1="81" x2="241" y2="183" stroke="#CBD5E1" stroke-width="6" stroke-linecap="round"/>
+  <!-- Inner muted pipe suggestion (barely visible) -->
+  <circle cx="310" cy="196" r="54"  fill="none"     stroke="#DDDDDD" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <!-- Muted beam lines -->
+  <line x1="192" y1="278" x2="428" y2="278" stroke="#DDDDDD" stroke-width="2"/>
+  <line x1="192" y1="296" x2="428" y2="296" stroke="#DDDDDD" stroke-width="2"/>
 
-  <!-- N/A text -->
-  <text x="190" y="143" text-anchor="middle"
-        font-family="'Arial Black','Arial',sans-serif"
-        font-size="36" font-weight="900" fill="#94A3B8" letter-spacing="2">N/A</text>
+  <!-- N/A text (large, muted) -->
+  <text x="310" y="214" text-anchor="middle"
+        font-family="Arial Black, Arial, sans-serif"
+        font-size="72" font-weight="900"
+        fill="#BBBBBB" letter-spacing="4">N/A</text>
 
-  <rect x="68" y="222" width="244" height="22" rx="4" fill="#94A3B8"/>
-  <text x="190" y="238" text-anchor="middle"
-        font-family="'Arial',sans-serif" font-size="11" font-weight="700"
-        fill="white" letter-spacing="1.5">NOT APPLICABLE</text>
-
-  <text x="190" y="270" text-anchor="middle"
-        font-family="'Arial',sans-serif" font-size="10" fill="#94A3B8">
-    No support assigned for this combination
+  <!-- Sub-label -->
+  <text x="310" y="342" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="11" fill="#AAAAAA" letter-spacing="1">
+    No support assigned for this condition
   </text>
+
+  <!-- Title block (muted) -->
+  <rect x="4" y="388" width="612" height="28" fill="#AAAAAA"/>
+  <text x="310" y="407" text-anchor="middle"
+        font-family="Arial,sans-serif" font-size="13" font-weight="700"
+        fill="white" letter-spacing="2">NOT APPLICABLE</text>
 </svg>

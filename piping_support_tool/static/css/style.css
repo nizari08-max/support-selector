@@ -544,7 +544,7 @@ body {
 /* Illustration zone */
 .illus-zone {
   background: linear-gradient(155deg, #E8EDF5 0%, #D8E4F2 50%, #E0E8F0 100%);
-  padding: 36px 48px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -590,9 +590,9 @@ body {
 }
 .support-illus {
   width: 100%;
-  max-width: 360px;
+  max-width: 520px;
   height: auto;
-  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.14));
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.16));
   transition: opacity 0.4s ease, transform 0.4s ease;
   position: relative;
   z-index: 1;
