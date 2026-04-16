@@ -26,16 +26,20 @@ DRAWING_INDEX = {
 
     # -------------------------------------------------------------------------
     # WEAR PAD ASSEMBLIES
+    # Sheets -001 and -002 are merged into a single ref (no suffix).
+    # Clicking the chip opens a 2-page PDF (plan view + notes/table).
     # -------------------------------------------------------------------------
-    "WA01":  [f"{DRAWING_PREFIX}0322-001", f"{DRAWING_PREFIX}0322-002"],
-    "WA02":  [f"{DRAWING_PREFIX}0323-001", f"{DRAWING_PREFIX}0323-002"],
-    "WA03":  [f"{DRAWING_PREFIX}0324-001", f"{DRAWING_PREFIX}0324-002"],
+    "WA01":  [f"{DRAWING_PREFIX}0322"],
+    "WA02":  [f"{DRAWING_PREFIX}0323"],
+    "WA03":  [f"{DRAWING_PREFIX}0324"],
 
     # -------------------------------------------------------------------------
     # PIPE SHOES (SH series)
+    # SH01/SH02 each have two sheets; merged into a single ref per drawing.
+    # SH03/SH04 are already single refs pointing to 2 PDF pages (no suffix).
     # -------------------------------------------------------------------------
-    "SH01":  [f"{DRAWING_PREFIX}0327-001", f"{DRAWING_PREFIX}0327-002"],
-    "SH02":  [f"{DRAWING_PREFIX}0328-001", f"{DRAWING_PREFIX}0328-002"],
+    "SH01":  [f"{DRAWING_PREFIX}0327"],
+    "SH02":  [f"{DRAWING_PREFIX}0328"],
     "SH03":  [f"{DRAWING_PREFIX}0329"],
     "SH04":  [f"{DRAWING_PREFIX}0330"],
     "SH05":  [f"{DRAWING_PREFIX}0331"],
@@ -54,14 +58,16 @@ DRAWING_INDEX = {
 
     # -------------------------------------------------------------------------
     # GUIDE SUPPORTS (GL series)
+    # GL01 has two sheets; merged into a single ref.
     # -------------------------------------------------------------------------
-    "GL01":  [f"{DRAWING_PREFIX}0357-001", f"{DRAWING_PREFIX}0357-002"],
+    "GL01":  [f"{DRAWING_PREFIX}0357"],
     "GL02":  [f"{DRAWING_PREFIX}0358"],
 
     # -------------------------------------------------------------------------
     # LINE STOP SUPPORTS (LS series)
+    # LS01 has two sheets; merged into a single ref.
     # -------------------------------------------------------------------------
-    "LS01":  [f"{DRAWING_PREFIX}0359-001", f"{DRAWING_PREFIX}0359-002"],
+    "LS01":  [f"{DRAWING_PREFIX}0359"],
     "LS02":  [f"{DRAWING_PREFIX}0360"],
     "LS03":  [f"{DRAWING_PREFIX}0361"],
 

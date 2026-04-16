@@ -55,19 +55,14 @@ DRAWING_PAGES: dict[str, list[int]] = {
     # Bearing Plate
     "JS-PE-DPS-0321":     [24],        # BP02
 
-    # Wear Pad Assemblies
-    "JS-PE-DPS-0322-001": [25],        # WA01 sheet 001 (plan view)
-    "JS-PE-DPS-0322-002": [26],        # WA01 sheet 002 (notes)
-    "JS-PE-DPS-0323-001": [27],        # WA02 sheet 001
-    "JS-PE-DPS-0323-002": [28],        # WA02 sheet 002
-    "JS-PE-DPS-0324-001": [29],        # WA03 sheet 001
-    "JS-PE-DPS-0324-002": [30],        # WA03 sheet 002
+    # Wear Pad Assemblies — merged: clicking one chip opens a 2-page PDF
+    "JS-PE-DPS-0322":     [25, 26],    # WA01 (plan view + notes)
+    "JS-PE-DPS-0323":     [27, 28],    # WA02 (plan view + notes)
+    "JS-PE-DPS-0324":     [29, 30],    # WA03 (plan view + notes)
 
-    # Pipe Shoes — standard
-    "JS-PE-DPS-0327-001": [31],        # SH01 sheet 001 (plan view, 1½"–24")
-    "JS-PE-DPS-0327-002": [32],        # SH01 sheet 002 (dimension table)
-    "JS-PE-DPS-0328-001": [33],        # SH02 sheet 001 (plan view, 26"–48")
-    "JS-PE-DPS-0328-002": [34],        # SH02 sheet 002 (dimension table)
+    # Pipe Shoes — standard, merged
+    "JS-PE-DPS-0327":     [31, 32],    # SH01 (plan view 1½"–24" + dimension table)
+    "JS-PE-DPS-0328":     [33, 34],    # SH02 (plan view 26"–48" + dimension table)
 
     # Pipe Shoes — sloping (single-ref drawings spanning 2 pages each)
     "JS-PE-DPS-0329":     [35, 36],    # SH03 (sheet 001 plan + sheet 002 table)
@@ -86,14 +81,12 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0348":     [56],        # SC07
     "JS-PE-DPS-0349":     [57],        # SC08
 
-    # Guide Supports
-    "JS-PE-DPS-0357-001": [60],        # GL01 sheet 001 (up to 18")
-    "JS-PE-DPS-0357-002": [61],        # GL01 sheet 002 (up to 48", dim table)
+    # Guide Supports — GL01 merged
+    "JS-PE-DPS-0357":     [60, 61],    # GL01 (plan view + dimension table)
     "JS-PE-DPS-0358":     [62],        # GL02
 
-    # Line Stop Supports
-    "JS-PE-DPS-0359-001": [63],        # LS01 sheet 001
-    "JS-PE-DPS-0359-002": [64],        # LS01 sheet 002 (dim table)
+    # Line Stop Supports — LS01 merged
+    "JS-PE-DPS-0359":     [63, 64],    # LS01 (plan view + dimension table)
     "JS-PE-DPS-0360":     [65],        # LS02 (up to 6")
     "JS-PE-DPS-0361":     [66],        # LS03 (8"–48")
 
