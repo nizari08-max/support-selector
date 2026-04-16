@@ -125,10 +125,12 @@ DRAWING_SIZE_RANGES = {
     "0345":  (1.5,  24.0),  # SC04
 
     # Shoe Clamps — sloping (paired with SH03–SH05)
-    "0346":  (1.5,   4.0),  # SC05  (matches SH04 range)
-    "0347":  (6.0,  48.0),  # SC06  (matches SH05 range)
-    "0348":  (6.0,  48.0),  # SC07
-    "0349":  (1.5,  48.0),  # SC08  (matches SH03 range)
+    # Each drawing covers two size bands: 1-1/2"–4" (with SH04) and 6"–24" (with SH05/SH03).
+    # Verified from drawing text: "PIPE SIZE 1-1/2" TO 4"" and "PIPE SIZE 6" TO 24"".
+    "0346":  (1.5,  24.0),  # SC05  (1½"–4" with SH04; 6"–24" with SH05 — confirmed)
+    "0347":  (1.5,  24.0),  # SC06  (1½"–4" with SH04; 6"–24" with SH05 — confirmed)
+    "0348":  (1.5,  24.0),  # SC07  (1½"–4" with SH04; 6"–24" with SH05 — confirmed)
+    "0349":  (1.5,  24.0),  # SC08  (1½"–4" with SH04; 6"–24" with SH03/SH05 — confirmed)
 
     # Guide Supports
     "0357":  (0.5,  48.0),  # GL01
@@ -175,6 +177,22 @@ def _drawing_covers_nps(ref: str, nps: float) -> bool:
     return min_nps <= nps <= max_nps
 
 
+def _expand_code_ranges(s: str) -> str:
+    """Expand shorthand range notation like SC02-SC04 into SC02/SC03/SC04.
+
+    The support rules use compact range strings (e.g. "SC02-SC04, SC06-SC09")
+    to mean "any of SC02, SC03, SC04".  Without expansion the regex below only
+    sees the first and last code of each range.
+    """
+    def _expand(m):
+        prefix, n1, n2 = m.group(1), int(m.group(2)), int(m.group(4))
+        if m.group(1) == m.group(3) and n2 > n1:
+            return "/".join(f"{prefix}{i:02d}" for i in range(n1, n2 + 1))
+        return m.group(0)   # leave unchanged if prefixes differ or range invalid
+
+    return re.sub(r'\b([A-Z]{2})(\d{2})-([A-Z]{2})(\d{2})\b', _expand, s)
+
+
 def get_drawings(support_code: str, nps: float = None) -> list:
     """
     Return drawing reference numbers for a given support code or compound support string.
@@ -182,6 +200,9 @@ def get_drawings(support_code: str, nps: float = None) -> list:
     Extracts all drawing codes (e.g. SH01, GL02, CF04) from the string using a
     regex, then looks each one up in DRAWING_INDEX.  Codes not in the index are
     silently skipped.  Results are de-duplicated and ordered by first appearance.
+
+    Range notation like "SC02-SC04" is expanded to "SC02/SC03/SC04" before
+    extraction so that all codes in the range are included.
 
     If *nps* is supplied, only drawings whose documented size range includes
     that NPS are returned (Improvement 1 — filter by pipe size).
@@ -200,8 +221,11 @@ def get_drawings(support_code: str, nps: float = None) -> list:
     if not support_code:
         return []
 
+    # Expand range notation (e.g. "SC02-SC04" → "SC02/SC03/SC04") before parsing
+    expanded = _expand_code_ranges(support_code.upper())
+
     # Match codes like SH01, GL02, CF04, SC71 — 2 uppercase letters + 2 digits
-    codes = re.findall(r'\b([A-Z]{2}\d{2})\b', support_code.upper())
+    codes = re.findall(r'\b([A-Z]{2}\d{2})\b', expanded)
 
     seen = set()
     drawings = []

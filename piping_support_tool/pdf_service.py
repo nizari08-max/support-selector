@@ -105,7 +105,10 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0369":     [69, 70],    # CF01 (two pages)
     "JS-PE-DPS-0370":     [71],        # CF02
     "JS-PE-DPS-0371":     [72],        # CF03
-    "JS-PE-DPS-0372":     [73],        # CF04
+    # CF04 / JS-PE-DPS-0372 is NOT included: the PDF index (page 13) confirms
+    # that drawing 0372 is SF01 (FRP Butt-and-Wrap Thrust Collar), not CF04.
+    # CF04 has no drawing in this PDF revision.  The endpoint returns HTTP 404,
+    # which is safer than serving the wrong drawing.
 }
 
 

@@ -1,7 +1,7 @@
 # PROGRESS — JESA Piping Support Selector
 
-Last updated: 2026-04-16  
-Session summary: Implemented two improvements requested by the user (drawing size filtering + clickable PDF chips).
+Last updated: 2026-04-16 (session 2)
+Session summary: Fixed three bugs discovered during PDF verification (range notation in get_drawings, SC05-SC08 size ranges, CF04 page mapping).
 
 ---
 
@@ -96,9 +96,39 @@ Commits: `5105f3f` (code changes) and `eff90ce` (PDF file).
 
 ---
 
+### 10. `drawing_index.py` — Range notation expansion in `get_drawings()` (session 2)
+**Bug fixed:**  
+Support code strings like `"CLAMPED SHOE (SC02-SC04, SC06-SC09)"` use range notation (`SC02-SC04` = SC02, SC03, SC04). The previous regex only extracted the first and last code of each range, silently missing SC03, SC07, SC08 from drawing results.
+
+**Fix:**  
+Added `_expand_code_ranges()` helper that rewrites `SCxx-SCyy` → `SCxx/SC(xx+1)/.../SCyy` before regex extraction. Called automatically inside `get_drawings()`.
+
+---
+
+### 11. `drawing_index.py` — SC05–SC08 size ranges corrected (session 2)
+**What was wrong:**  
+- `"0346"` (SC05): was `(1.5, 4.0)` — too narrow  
+- `"0347"` (SC06): was `(6.0, 48.0)` — wrong  
+- `"0348"` (SC07): was `(6.0, 48.0)` — wrong  
+- `"0349"` (SC08): was `(1.5, 48.0)` — too wide  
+
+**Verified from PDF text:** Pages 54–57 each state "PIPE SIZE 1-1/2" TO 4"" AND "PIPE SIZE 6" TO 24"" — all four drawings cover `(1.5, 24.0)`.
+
+**Fix:** All four corrected to `(1.5, 24.0)`.
+
+---
+
+### 12. `pdf_service.py` — CF04/0372 removed from DRAWING_PAGES (session 2)
+**Bug fixed:**  
+`DRAWING_PAGES["JS-PE-DPS-0372"]` was pointing to page 73, which is the SF01 (FRP Butt-and-Wrap Thrust Collar) drawing. PDF index page 13 confirms: `JS-PE-DPS-0372 → SF01`, not CF04.
+
+**Fix:** Removed the `"JS-PE-DPS-0372"` entry. The `/api/drawing/JS-PE-DPS-0372` endpoint now returns HTTP 404 (safer than serving the wrong drawing). CF04 is not currently returned by any rule — selector uses CF03 for FRP line stops — so this has no functional impact on the tool.
+
+---
+
 ## IN PROGRESS
 
-**Nothing is currently in progress.** Both improvements are fully implemented, tested, and deployed.
+**Nothing is currently in progress.**
 
 ---
 
@@ -106,33 +136,17 @@ Commits: `5105f3f` (code changes) and `eff90ce` (PDF file).
 
 ### HIGH PRIORITY
 
-**A. Populate `SUPPORT_RULES` in `support_rules.py`**  
-Every entry in the nested rules dict currently contains `"TODO"` as placeholders. The full Table 15 (REST supports) and Table 16 (GUIDE / LINE STOP / HOLD DOWN supports) from the standard need to be transcribed into Python. Until this is done the selector returns placeholder results for most material/condition combinations.
+**A. Populate `SUPPORT_RULES` in `support_rules.py`** — DONE (was already complete before session 2)  
+All entries filled in from Tables 15 & 16. No TODO placeholders remain.
 
-Structure of each leaf:
-```python
-# For CS/LT (PWHT matters):
-{"support": "SH01 + WA01", "notes": [1, 3]}
+**B. Verify PDF page mapping for all 35 entries in `DRAWING_PAGES`** — DONE (session 2)  
+- WA01–WA03 (pages 25–30): verified correct via text extraction.
+- BP02 (page 24): verified correct (notes text present).
+- SC05–SC08 (pages 54–57): verified correct page assignment; size ranges corrected (see task 11).
+- CF04 page mapping: confirmed wrong — removed from DRAWING_PAGES (see task 12).
 
-# For SS/AL/FRP (no PWHT):
-{"support": "SH01", "notes": []}
-
-# Not applicable:
-{"support": None, "notes": []}
-```
-
-**B. Verify PDF page mapping for all 35 entries in `DRAWING_PAGES`**  
-The page numbers in `pdf_service.py` were derived by scanning PDF text for support-code strings. The following pages need manual verification by opening the PDF and confirming each entry:
-- WA01–WA03 (pages 25–30): no extractable drawing number in text layer, mapping inferred from position.
-- BP02 (page 24): drawing number not in text layer.
-- SC05–SC08 (pages 54–57): size ranges set to defaults; need confirmation from actual drawings.
-
-**C. SC05–SC08 size ranges in `DRAWING_SIZE_RANGES`**  
-Currently set to defaults based on inference from associated shoe drawings. Should be read from actual drawing title blocks:
-- `"0346"` (SC05): currently `(1.5, 4.0)` — needs verification
-- `"0347"` (SC06): currently `(6.0, 48.0)` — needs verification
-- `"0348"` (SC07): currently `(6.0, 48.0)` — needs verification
-- `"0349"` (SC08): currently `(1.5, 48.0)` — needs verification
+**C. SC05–SC08 size ranges in `DRAWING_SIZE_RANGES`** — DONE (session 2)  
+All four corrected to `(1.5, 24.0)` from PDF-confirmed drawing text. See task 11.
 
 ### MEDIUM PRIORITY
 
@@ -149,11 +163,11 @@ Page 73 in the mapping was inferred; the text on that page shows `SF01-4` (FRP c
 
 ## BUGS / ISSUES DISCOVERED (not yet fixed)
 
-1. **`CF04` page mapping may be wrong.** Page 73 (0-indexed) was assigned to `JS-PE-DPS-0372` but the text on that page says `SF01`. CF04 may not have a drawing in this PDF version. If CF04 is ever returned by the rules engine, the user will get the wrong drawing. Fix: confirm CF04's page or remove it from `DRAWING_PAGES` (endpoint will return 404, which is safer than wrong content).
+1. **`CF04` page mapping** — FIXED (session 2). Removed from `DRAWING_PAGES`; endpoint returns 404 now.
 
-2. **Support rules are all `"TODO"`.** The selector returns placeholder codes for every non-FRP combination. This is pre-existing, not introduced in this session.
+2. **Support rules all `"TODO"`** — RESOLVED (pre-existing, already filled in before session 2).
 
-3. **`fitz` import failure on deploy if PyMuPDF is not installed.** `get_drawing_pdf()` catches `ImportError` and returns `None`, which causes the endpoint to return 404. The endpoint degrades gracefully but the feature will silently not work. Fix: ensure `PyMuPDF>=1.23.0` is in `requirements.txt` (already done) and verify it installs on the hosting platform.
+3. **`fitz` import failure on deploy if PyMuPDF is not installed.** `get_drawing_pdf()` catches `ImportError` and returns `None`, causing the endpoint to return 404 gracefully. Fix: verify PyMuPDF installs on hosting platform after next deploy.
 
 ---
 
@@ -172,10 +186,12 @@ Page 73 in the mapping was inferred; the text on that page shows `SF01-4` (FRP c
 
 ## EXACT NEXT STEP WHEN RESUMING
 
-The most impactful unfinished task is populating `support_rules.py`. Steps:
+All HIGH PRIORITY tasks are complete. Remaining work is MEDIUM PRIORITY:
 
-1. Open `QW2507-00-PE-STD-00001.pdf`, navigate to Table 15 (REST) and Table 16 (GUIDE/LINE STOP/HOLD DOWN).
-2. Read `support_rules.py` to see the full skeleton structure already in place.
-3. Fill in each `"TODO"` entry with the correct support code string and note numbers.
-4. Run `python main.py` to verify results for a few known combinations.
-5. Push to GitHub.
+**D. Place PDF on production server** — verify after next deploy that `/api/drawing/JS-PE-DPS-0327-001?nps=8` works in production.
+
+**E. NPS highlight on plan-view pages** — sheet -001 pages (plan views) may show an odd highlight since there's no dimension table. Consider highlighting only on -002 (dimension table) pages, or suppressing highlight on plan pages altogether.
+
+**F. Verify SH05 (0331) size range** — currently `(6.0, 48.0)` — looks correct but was not explicitly confirmed from PDF text this session.
+
+Push the current changes to GitHub (`drawing_index.py`, `pdf_service.py`, `PROGRESS.md` and their subfolder copies).
