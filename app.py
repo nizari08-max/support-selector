@@ -6,6 +6,14 @@ import os
 import sys
 import re
 
+# Load .env.local (local dev overrides) before anything else.
+# Requires python-dotenv (pip install python-dotenv).  Safe to skip if missing.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(".env.local")
+except ImportError:
+    pass
+
 from flask import Flask, render_template, request, jsonify, Response, abort
 
 # Allow imports from the same directory as app.py
