@@ -711,6 +711,32 @@ body {
   color: var(--primary);
   letter-spacing: 0.3px;
 }
+.dwg-chip-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition),
+              color var(--transition), box-shadow var(--transition);
+  gap: 6px;
+}
+.dwg-chip-link::after {
+  content: "↗";
+  font-family: system-ui, sans-serif;
+  font-size: 10px;
+  opacity: 0.5;
+  font-weight: 400;
+}
+.dwg-chip-link:hover,
+.dwg-chip-link:focus-visible {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 48, 135, 0.25);
+  outline: none;
+}
+.dwg-chip-link:hover::after,
+.dwg-chip-link:focus-visible::after {
+  opacity: 0.8;
+}
 .dwg-chip-none {
   display: inline-flex;
   align-items: center;

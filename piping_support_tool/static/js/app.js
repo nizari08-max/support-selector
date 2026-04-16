@@ -257,9 +257,14 @@ function showResult(data) {
   chipsEl.innerHTML = "";
   if (data.drawings && data.drawings.length > 0) {
     data.drawings.forEach(dwg => {
-      const chip = document.createElement("span");
-      chip.className = "dwg-chip";
+      const chip = document.createElement("a");
+      chip.className = "dwg-chip dwg-chip-link";
       chip.textContent = dwg;
+      const npsParam = state.nps !== null ? `?nps=${state.nps}` : "";
+      chip.href = `/api/drawing/${encodeURIComponent(dwg)}${npsParam}`;
+      chip.target = "_blank";
+      chip.rel = "noopener noreferrer";
+      chip.title = `Open drawing ${dwg} (NPS ${state.nps || "?"}") — highlighted for selected pipe size`;
       chipsEl.appendChild(chip);
     });
   } else {

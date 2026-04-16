@@ -263,7 +263,7 @@ def select_support(
                 code = "SADDLE SUPPORT (SC71)  OR  SC72 (alternative)"
             return SelectionResult(
                 support_code=code,
-                drawings=get_drawings(code),
+                drawings=get_drawings(code, nps=nps),
                 notes=[],
                 size_range=size_range,
                 inputs=inputs,
@@ -283,7 +283,7 @@ def select_support(
             code = "SADDLE GUIDE SUPPORT (SC73)"
             return SelectionResult(
                 support_code=code,
-                drawings=get_drawings(code),
+                drawings=get_drawings(code, nps=nps),
                 notes=[],
                 size_range=size_range,
                 inputs=inputs,
@@ -296,7 +296,7 @@ def select_support(
             code = "CF03"
             return SelectionResult(
                 support_code=code,
-                drawings=get_drawings(code),
+                drawings=get_drawings(code, nps=nps),
                 notes=[6],
                 size_range=size_range,
                 inputs=inputs,
@@ -335,7 +335,7 @@ def select_support(
 
     support_code = entry.get("support")          # None = not applicable
     note_numbers = entry.get("notes", [])
-    drawings     = get_drawings(support_code) if support_code else []
+    drawings     = get_drawings(support_code, nps=nps) if support_code else []
 
     return SelectionResult(
         support_code=support_code,

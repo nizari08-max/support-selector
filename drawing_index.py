@@ -14,6 +14,8 @@
 #   DRAWING_INDEX["SH01"] → list of full drawing reference strings
 # =============================================================================
 
+import re
+
 DRAWING_PREFIX = "JS-PE-DPS-"
 
 DRAWING_INDEX = {
@@ -88,7 +90,92 @@ DRAWING_INDEX = {
 }
 
 
-def get_drawings(support_code: str) -> list:
+# =============================================================================
+# DRAWING SIZE RANGES
+# Maps the 4-digit drawing base number to the (min_nps, max_nps) it covers.
+# Used to filter drawing references so only the sheet(s) relevant to the
+# selected pipe size are shown.
+#
+# Source: title blocks and dimension tables in QW2507-00-PE-STD-00001.pdf.
+# Sheet suffixes (-001/-002) share the same range as the base drawing.
+# =============================================================================
+
+DRAWING_SIZE_RANGES = {
+    # Bearing Plate
+    "0321":  (0.5,  48.0),  # BP02 — all sizes
+
+    # Wear Pad Assemblies
+    "0322":  (1.5,  48.0),  # WA01
+    "0323":  (2.0,  48.0),  # WA02
+    "0324":  (2.0,  48.0),  # WA03
+
+    # Pipe Shoes — standard (non-sloping)
+    "0327":  (1.5,  24.0),  # SH01
+    "0328":  (26.0, 48.0),  # SH02
+
+    # Pipe Shoes — sloping / special
+    "0329":  (1.5,  48.0),  # SH03  (line stop + SS/AL + temp > 400°C)
+    "0330":  (1.5,   4.0),  # SH04  (sloping, 1½"–4")
+    "0331":  (6.0,  48.0),  # SH05  (sloping, 6"–48")
+
+    # Shoe Clamps — non-sloping
+    "0342":  (1.5,  24.0),  # SC01
+    "0343":  (1.5,  24.0),  # SC02
+    "0344":  (1.5,  24.0),  # SC03
+    "0345":  (1.5,  24.0),  # SC04
+
+    # Shoe Clamps — sloping (paired with SH03–SH05)
+    "0346":  (1.5,   4.0),  # SC05  (matches SH04 range)
+    "0347":  (6.0,  48.0),  # SC06  (matches SH05 range)
+    "0348":  (6.0,  48.0),  # SC07
+    "0349":  (1.5,  48.0),  # SC08  (matches SH03 range)
+
+    # Guide Supports
+    "0357":  (0.5,  48.0),  # GL01
+    "0358":  (0.5,  48.0),  # GL02
+
+    # Line Stop Supports
+    "0359":  (0.5,  48.0),  # LS01
+    "0360":  (0.5,   6.0),  # LS02  (up to 6")
+    "0361":  (8.0,  48.0),  # LS03  (8"–48")
+
+    # Hold Down / Guide-Hold
+    "0362":  (0.5,  48.0),  # GH01
+    "0363":  (0.75, 10.0),  # GH02  (¾"–10")
+
+    # FRP Clamp Shoes
+    "0369":  (2.0,  24.0),  # CF01
+    "0370":  (2.0,  24.0),  # CF02
+    "0371":  (2.0,  24.0),  # CF03
+    "0372":  (2.0,  24.0),  # CF04
+}
+
+
+def _drawing_base(ref: str) -> str:
+    """Extract the 4-digit base number from a drawing reference string.
+
+    'JS-PE-DPS-0327-001' → '0327'
+    'JS-PE-DPS-0327'     → '0327'
+    'JS-PE-DPS-SC71'     → 'SC71'  (FRP saddle, no size filter)
+    """
+    # Strip prefix
+    s = ref.upper().replace("JS-PE-DPS-", "")
+    # Strip sheet suffix (-001, -002, …)
+    s = re.sub(r"-\d{3}$", "", s)
+    return s
+
+
+def _drawing_covers_nps(ref: str, nps: float) -> bool:
+    """Return True if the drawing covers the given NPS."""
+    base = _drawing_base(ref)
+    size_range = DRAWING_SIZE_RANGES.get(base)
+    if size_range is None:
+        return True   # unknown range → include by default (FRP saddle codes etc.)
+    min_nps, max_nps = size_range
+    return min_nps <= nps <= max_nps
+
+
+def get_drawings(support_code: str, nps: float = None) -> list:
     """
     Return drawing reference numbers for a given support code or compound support string.
 
@@ -96,23 +183,24 @@ def get_drawings(support_code: str) -> list:
     regex, then looks each one up in DRAWING_INDEX.  Codes not in the index are
     silently skipped.  Results are de-duplicated and ordered by first appearance.
 
-    Examples:
-        get_drawings("WELDED SHOE (SH01/SH05) + WEAR PAD (WA01)")
-            → ["JS-PE-DPS-0327-001", "JS-PE-DPS-0327-002",
-               "JS-PE-DPS-0331",
-               "JS-PE-DPS-0322-001", "JS-PE-DPS-0322-002"]
+    If *nps* is supplied, only drawings whose documented size range includes
+    that NPS are returned (Improvement 1 — filter by pipe size).
 
-        get_drawings("GL01 + PR01/PR02 or WA01 (if applicable)")
-            → ["JS-PE-DPS-0357-001", "JS-PE-DPS-0357-002",
+    Examples:
+        get_drawings("WELDED SHOE (SH01/SH05) + WEAR PAD (WA01)", nps=30)
+            → ["JS-PE-DPS-0331",
                "JS-PE-DPS-0322-001", "JS-PE-DPS-0322-002"]
+            (SH01/0327 excluded because it only covers 1½"–24")
+
+        get_drawings("WELDED SHOE (SH01/SH05) + WEAR PAD (WA01)")
+            → all 5 refs (unfiltered, backward-compatible)
 
         get_drawings("DIRECT REST") → []
     """
-    import re
     if not support_code:
         return []
 
-    # Match codes like SH01, GL02, CF04 — 2 uppercase letters + 2 digits
+    # Match codes like SH01, GL02, CF04, SC71 — 2 uppercase letters + 2 digits
     codes = re.findall(r'\b([A-Z]{2}\d{2})\b', support_code.upper())
 
     seen = set()
@@ -120,6 +208,9 @@ def get_drawings(support_code: str) -> list:
     for code in codes:
         if code not in seen:
             seen.add(code)
-            drawings.extend(DRAWING_INDEX.get(code, []))
+            for ref in DRAWING_INDEX.get(code, []):
+                if ref not in drawings:
+                    if nps is None or _drawing_covers_nps(ref, nps):
+                        drawings.append(ref)
 
     return drawings
