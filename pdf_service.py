@@ -101,14 +101,35 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0362":     [67],        # GH01
     "JS-PE-DPS-0363":     [68],        # GH02
 
-    # FRP Clamp Shoes
+    # FRP Clamp Shoes (CF series — older standard drawings for 2"–24")
     "JS-PE-DPS-0369":     [69, 70],    # CF01 (two pages)
     "JS-PE-DPS-0370":     [71],        # CF02
     "JS-PE-DPS-0371":     [72],        # CF03
-    # CF04 / JS-PE-DPS-0372 is NOT included: the PDF index (page 13) confirms
-    # that drawing 0372 is SF01 (FRP Butt-and-Wrap Thrust Collar), not CF04.
-    # CF04 has no drawing in this PDF revision.  The endpoint returns HTTP 404,
-    # which is safer than serving the wrong drawing.
+    # CF04 / JS-PE-DPS-0372 omitted: PDF index confirms 0372 = SF01 (FRP Thrust Collar), not CF04
+
+    # FRP Saddle Supports — SC71 (JS-PE-DPS-0701-xx)
+    # Pages confirmed by text-layer SC71 keyword scan; sequential order matches PDF index.
+    "JS-PE-DPS-0701-01":  [165],       # SC71: 3/4"–8"
+    "JS-PE-DPS-0701-02":  [166],       # SC71: 10"–14"
+    "JS-PE-DPS-0701-03":  [167],       # SC71: 16"–24"
+    "JS-PE-DPS-0701-04":  [168],       # SC71: 26"–68"
+
+    # FRP Saddle Supports — SC72 (JS-PE-DPS-0702-xx)  [gap at 26": no drawing]
+    "JS-PE-DPS-0702-01":  [169],       # SC72: 3/4"–6"
+    "JS-PE-DPS-0702-02":  [170],       # SC72: 8"–14"
+    "JS-PE-DPS-0702-03":  [171],       # SC72: 16"–24"
+    "JS-PE-DPS-0702-04":  [172],       # SC72: 28"–52"
+
+    # FRP Saddle Guide — SC73 (JS-PE-DPS-0703-xx)  [gap at 26": no drawing]
+    # Page 176 text layer shows "SC73 - 28 - L", confirming it is the 28"–52" sheet.
+    "JS-PE-DPS-0703-01":  [173],       # SC73: 3/4"–8"
+    "JS-PE-DPS-0703-02":  [174],       # SC73: 10"–14"
+    "JS-PE-DPS-0703-03":  [175],       # SC73: 16"–24"
+    "JS-PE-DPS-0703-04":  [176],       # SC73: 28"–52"
+
+    # FRP Sloped Saddle — SC74 (JS-PE-DPS-0704-xx)
+    "JS-PE-DPS-0704-01":  [177],       # SC74: 1"–8"
+    "JS-PE-DPS-0704-02":  [178],       # SC74: 10"–60"
 }
 
 

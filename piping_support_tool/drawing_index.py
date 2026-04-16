@@ -80,13 +80,34 @@ DRAWING_INDEX = {
     "CF04":  [f"{DRAWING_PREFIX}0372"],
 
     # -------------------------------------------------------------------------
-    # FRP SADDLE SUPPORTS (SC7x series) — new standard
-    # Sub-ranges (different drawing sheets per size) are referenced by the
-    # same code; the drawing number suffix follows the JS-PE-DPS-<code> format.
+    # FRP SADDLE SUPPORTS (SC7x series)
+    # Each code has multiple drawings — one per pipe size sub-range.
+    # The 2-digit suffix (-01/-02/…) identifies the sub-range sheet.
+    # Note: 2-digit suffixes are NOT stripped by _drawing_base(), so each
+    # "07xx-yy" entry is a separate key in DRAWING_SIZE_RANGES below.
     # -------------------------------------------------------------------------
-    "SC71":  [f"{DRAWING_PREFIX}SC71"],   # FRP Rest — 3/4" to 68"
-    "SC72":  [f"{DRAWING_PREFIX}SC72"],   # FRP Rest (alternative) — 3/4" to 52"
-    "SC73":  [f"{DRAWING_PREFIX}SC73"],   # FRP Guide — 3/4" to 52"
+    "SC71":  [                              # FRP Rest (primary) — 3/4" to 68"
+        f"{DRAWING_PREFIX}0701-01",         #   3/4" – 8"
+        f"{DRAWING_PREFIX}0701-02",         #   10"  – 14"
+        f"{DRAWING_PREFIX}0701-03",         #   16"  – 24"
+        f"{DRAWING_PREFIX}0701-04",         #   26"  – 68"
+    ],
+    "SC72":  [                              # FRP Rest (alternative) — 3/4" to 52" (gap at 26")
+        f"{DRAWING_PREFIX}0702-01",         #   3/4" – 6"
+        f"{DRAWING_PREFIX}0702-02",         #   8"   – 14"
+        f"{DRAWING_PREFIX}0702-03",         #   16"  – 24"
+        f"{DRAWING_PREFIX}0702-04",         #   28"  – 52"
+    ],
+    "SC73":  [                              # FRP Guide — 3/4" to 52" (gap at 26")
+        f"{DRAWING_PREFIX}0703-01",         #   3/4" – 8"
+        f"{DRAWING_PREFIX}0703-02",         #   10"  – 14"
+        f"{DRAWING_PREFIX}0703-03",         #   16"  – 24"
+        f"{DRAWING_PREFIX}0703-04",         #   28"  – 52"
+    ],
+    "SC74":  [                              # FRP Sloped Shoe — 1" to 60"
+        f"{DRAWING_PREFIX}0704-01",         #   1"   – 8"
+        f"{DRAWING_PREFIX}0704-02",         #   10"  – 60"
+    ],
 }
 
 
@@ -145,11 +166,35 @@ DRAWING_SIZE_RANGES = {
     "0362":  (0.5,  48.0),  # GH01
     "0363":  (0.75, 10.0),  # GH02  (¾"–10")
 
-    # FRP Clamp Shoes
+    # FRP Clamp Shoes (CF series — older standard drawings)
     "0369":  (2.0,  24.0),  # CF01
     "0370":  (2.0,  24.0),  # CF02
     "0371":  (2.0,  24.0),  # CF03
-    "0372":  (2.0,  24.0),  # CF04
+    "0372":  (2.0,  24.0),  # CF04 (note: drawing 0372 is actually SF01 in this PDF rev)
+
+    # FRP Saddle Supports — SC71 (2-digit sub-range suffix, full key kept as-is)
+    # Confirmed from PDF index page 7: drawing numbers JS-PE-DPS-0701-01 to 0701-04.
+    # _drawing_base() strips only 3-digit suffixes, so "0701-01" is the full lookup key.
+    "0701-01": (0.75,  8.0),   # SC71 sub-range 1: 3/4"–8"
+    "0701-02": (10.0, 14.0),   # SC71 sub-range 2: 10"–14"
+    "0701-03": (16.0, 24.0),   # SC71 sub-range 3: 16"–24"
+    "0701-04": (26.0, 68.0),   # SC71 sub-range 4: 26"–68" (tool max 48")
+
+    # FRP Saddle Supports — SC72 (gap at 26": no drawing covers that size)
+    "0702-01": (0.75,  6.0),   # SC72 sub-range 1: 3/4"–6"
+    "0702-02": (8.0,  14.0),   # SC72 sub-range 2: 8"–14"
+    "0702-03": (16.0, 24.0),   # SC72 sub-range 3: 16"–24"
+    "0702-04": (28.0, 52.0),   # SC72 sub-range 4: 28"–52"
+
+    # FRP Saddle Guide — SC73 (gap at 26": same as SC72)
+    "0703-01": (0.75,  8.0),   # SC73 sub-range 1: 3/4"–8"
+    "0703-02": (10.0, 14.0),   # SC73 sub-range 2: 10"–14"
+    "0703-03": (16.0, 24.0),   # SC73 sub-range 3: 16"–24"
+    "0703-04": (28.0, 52.0),   # SC73 sub-range 4: 28"–52"
+
+    # FRP Sloped Saddle — SC74
+    "0704-01": (1.0,   8.0),   # SC74 sub-range 1: 1"–8"
+    "0704-02": (10.0, 60.0),   # SC74 sub-range 2: 10"–60" (tool max 48")
 }
 
 
