@@ -1,3 +1,60 @@
+# UI Refresh — JESA Professional Blue (Light Theme)
+**Date:** 2026-04-18
+
+---
+
+## Files Modified
+
+### `static/css/style.css` — Complete theme rewrite (dark → light)
+
+**New color system (all CSS variables in `:root`):**
+- `--bg-main: #F0F4F8` — page background (light blue-grey)
+- `--bg-card: #FFFFFF` — all panels/cards
+- `--bg-header: #003DA5` — JESA corporate blue header
+- `--accent-blue: #0057D9` — primary interactive color
+- `--accent-blue-lt: #E8F0FE` — hover/selection backgrounds
+- `--accent-amber: #F59E0B` — PWHT active, drawing code labels
+- `--accent-green: #059669` — APPLICABLE badge
+- `--text-primary: #0F172A`, `--text-secondary: #475569`, `--text-muted: #94A3B8`
+- `--border: #CBD5E1` — all card/input borders
+- `--shadow: 0 2px 8px rgba(0,87,217,0.08)` — blue-tinted shadows
+- All legacy aliases remapped to new light values for backward compatibility
+
+**Component-by-component changes:**
+- `color-scheme: dark` → `color-scheme: light`; body bg → `--bg-main`
+- **Navbar:** `--bg-header` (#003DA5) bg, white text, 3px `#4D8FFF` underline accent
+- **Sidebar:** white card, blue active dot, clean borders
+- **Form panel:** white card with blue-tinted shadow
+- **NPS buttons:** white default, blue selected (solid fill, white text)
+- **Toggle pills:** `--bg-main` container; active = solid `--accent-blue` (PWHT = `--accent-amber`)
+- **Function grid buttons:** white bg, blue border/bg on hover/selected; light SVG icon colors
+- **Submit button:** `--accent-blue` fill, white text, hover = `--accent-blue-dk`
+- **DN converter section:** `--accent-blue-lt` tint background
+- **Result panel:** white card, 4px solid `--accent-blue` top accent
+- **Illustration zone:** `--bg-main` with CSS dot-grid pattern (light blueprint)
+- **Drawing chips:** white bg, `--accent-blue` border; hover = solid blue fill, white text
+- **Note items:** white bg, amber left border
+- **pc-feedback.pc-excluded:** light red warning box (#FEF2F2 bg, red border)
+- **Footer/Retry button:** white bg, blue border/text
+
+### `templates/index.html` — Targeted text and SVG fixes
+
+- **Navbar badge:** "PSS v2" → "Engineering Tool"
+- **Sidebar meta:** "Table 15 / Table 16" → "JESA Standard"
+- **Footer:** removed "Tables 15 & 16" reference
+- **Function button SVGs:** all hardcoded dark colors updated to light-theme equivalents
+  (pipe fill `#DBEAFE`, stroke `#0057D9`, platform `#E2E8F0`, brackets `#CBD5E1`)
+- **Empty state SVG:** dark fills updated to light greys/blues matching new theme
+
+---
+
+## Functionality Preserved
+- All JS element IDs, form fields, Flask routes unchanged
+- `app.js` not modified
+- Responsive at 1920px, 1280px, 768px
+
+---
+
 # UI Redesign — Precision Engineering Dashboard
 **Date:** 2026-04-17
 
