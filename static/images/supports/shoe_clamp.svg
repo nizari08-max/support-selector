@@ -12,10 +12,15 @@
       <stop offset="0%" stop-color="#2563EB"/>
       <stop offset="100%" stop-color="#003087"/>
     </linearGradient>
+    <marker id="slide_arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 z" fill="#60A5FA"/>
+    </marker>
+    <marker id="slide_arr_l" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+      <path d="M8,0 L0,3 L8,6 z" fill="#60A5FA"/>
+    </marker>
   </defs>
 
   <rect width="380" height="290" fill="#EEF2F7" rx="12"/>
-
   <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.6">
     <line x1="0" y1="72" x2="380" y2="72"/>
     <line x1="0" y1="144" x2="380" y2="144"/>
@@ -24,47 +29,73 @@
     <line x1="190" y1="0" x2="190" y2="290"/>
     <line x1="285" y1="0" x2="285" y2="290"/>
   </g>
-
   <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
-  <!-- I-beam -->
-  <rect x="68" y="222" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
-  <rect x="182" y="232" width="16" height="20" fill="#374151"/>
-  <rect x="68" y="252" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <!-- I-beam structural steel — top flange at y=220 -->
+  <rect x="68" y="220" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="182" y="230" width="16" height="18" fill="#374151"/>
+  <rect x="68" y="248" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Shoe base plate -->
-  <rect x="122" y="208" width="136" height="14" rx="2" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Shoe sides -->
-  <rect x="122" y="178" width="16" height="30" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
-  <rect x="242" y="178" width="16" height="30" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Saddle seat -->
-  <path d="M 138,178 Q 190,198 242,178" fill="none" stroke="#1B4DB8" stroke-width="2.5"/>
+  <!-- Shoe sole plate — slides on structure -->
+  <rect x="118" y="208" width="144" height="12" rx="2" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+  <g stroke="rgba(255,255,255,0.18)" stroke-width="1">
+    <line x1="128" y1="208" x2="118" y2="220"/><line x1="143" y1="208" x2="130" y2="220"/>
+    <line x1="158" y1="208" x2="145" y2="220"/><line x1="173" y1="208" x2="160" y2="220"/>
+    <line x1="188" y1="208" x2="175" y2="220"/><line x1="203" y1="208" x2="190" y2="220"/>
+    <line x1="218" y1="208" x2="205" y2="220"/><line x1="233" y1="208" x2="220" y2="220"/>
+    <line x1="248" y1="208" x2="235" y2="220"/><line x1="260" y1="209" x2="250" y2="220"/>
+  </g>
 
-  <!-- Pipe — cy=114 -->
+  <!-- Shoe side webs -->
+  <rect x="118" y="178" width="16" height="30" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="246" y="178" width="16" height="30" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- Shoe saddle arc (lower clamp half / cradle) -->
+  <!-- Pipe cy=114, r=64 → bottom at y=178; saddle ±50° arc -->
+  <!-- inner ±50°: x=190±49=141,239; y=114+41=155 -->
+  <!-- outer ±50°: x=190±56=134,246; y=114+47=161 -->
+  <path d="M 141,155 A 64 64 0 0 1 239,155 L 246,161 A 73 73 0 0 0 134,161 Z"
+        fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+
+  <!-- Pipe — cy=114, r=64 -->
   <circle cx="190" cy="114" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
   <ellipse cx="172" cy="96" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
   <line x1="190" y1="99" x2="190" y2="129" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
   <line x1="175" y1="114" x2="205" y2="114" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
 
-  <!-- U-bolt left -->
-  <path d="M 155,208 L 155,90 Q 155,78 168,78 Q 190,78 212,78 Q 225,78 225,90 L 225,208"
-        fill="none" stroke="#1E3A8A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- U-bolt clamp — over the pipe -->
+  <!-- Left leg: x=152, right leg: x=228, top bar y=66 -->
+  <path d="M 152,208 L 152,88 Q 152,72 168,72 Q 190,72 212,72 Q 228,72 228,88 L 228,208"
+        fill="none" stroke="#1E3A8A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
   <!-- U-bolt highlight -->
-  <path d="M 155,208 L 155,90 Q 155,78 168,78 Q 190,78 212,78 Q 225,78 225,90 L 225,208"
-        fill="none" stroke="#60A5FA" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Nut symbols at top -->
-  <rect x="148" y="74" width="14" height="10" rx="2" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1"/>
-  <rect x="218" y="74" width="14" height="10" rx="2" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1"/>
-  <!-- Bolt washers at bottom -->
-  <rect x="148" y="207" width="14" height="10" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
-  <rect x="218" y="207" width="14" height="10" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <path d="M 152,208 L 152,88 Q 152,72 168,72 Q 190,72 212,72 Q 225,72 225,88 L 225,208"
+        fill="none" stroke="#93C5FD" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  <!-- Nut/threaded rod heads at top of legs -->
+  <rect x="145" y="64" width="16" height="11" rx="2" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1"/>
+  <rect x="219" y="64" width="16" height="11" rx="2" fill="#1E3A8A" stroke="#60A5FA" stroke-width="1"/>
+  <!-- Tightening nuts at sole plate -->
+  <rect x="145" y="207" width="16" height="9" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
+  <rect x="219" y="207" width="16" height="9" rx="2" fill="#374151" stroke="#60A5FA" stroke-width="1"/>
 
-  <!-- Label callout -->
-  <text x="300" y="120" font-family="'Arial',sans-serif" font-size="8.5" fill="#1E3A8A" font-weight="700">SC01–SC09</text>
-  <line x1="258" y1="115" x2="296" y2="117" stroke="#1E3A8A" stroke-width="0.8"/>
+  <!-- Sliding arrows -->
+  <line x1="160" y1="226" x2="140" y2="226" stroke="#60A5FA" stroke-width="1.5" marker-end="url(#slide_arr_l)"/>
+  <line x1="220" y1="226" x2="240" y2="226" stroke="#60A5FA" stroke-width="1.5" marker-end="url(#slide_arr)"/>
+  <text x="167" y="237" font-family="'Arial',sans-serif" font-size="7.5" fill="#60A5FA" font-weight="600" text-anchor="middle">SLIDES FREELY</text>
 
-  <rect x="68" y="264" width="244" height="22" rx="4" fill="#003087"/>
-  <text x="190" y="280" text-anchor="middle"
+  <!-- Labels -->
+  <text x="14" y="80" font-family="'Arial',sans-serif" font-size="8.5" fill="#1E3A8A" font-weight="700">U-BOLT</text>
+  <text x="14" y="90" font-family="'Arial',sans-serif" font-size="7" fill="#1E3A8A">CLAMP</text>
+  <line x1="50" y1="80" x2="144" y2="76" stroke="#1E3A8A" stroke-width="0.8"/>
+
+  <text x="296" y="110" font-family="'Arial',sans-serif" font-size="8.5" fill="#475569" font-weight="700">PIPE</text>
+  <line x1="256" y1="106" x2="293" y2="108" stroke="#475569" stroke-width="0.8"/>
+
+  <text x="296" y="160" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">SADDLE</text>
+  <text x="296" y="170" font-family="'Arial',sans-serif" font-size="7" fill="#003087">SC01–SC09</text>
+  <line x1="246" y1="158" x2="293" y2="158" stroke="#003087" stroke-width="0.8"/>
+
+  <rect x="68" y="262" width="244" height="22" rx="4" fill="#003087"/>
+  <text x="190" y="278" text-anchor="middle"
         font-family="'Arial',sans-serif" font-size="11" font-weight="700"
         fill="white" letter-spacing="1.5">SHOE CLAMP / SADDLE</text>
 </svg>
