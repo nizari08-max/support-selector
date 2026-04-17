@@ -307,16 +307,23 @@ function showResult(data) {
   // -- Drawing references --
   const chipsEl = document.getElementById("drawingChips");
   chipsEl.innerHTML = "";
-  if (data.drawings && data.drawings.length > 0) {
-    data.drawings.forEach(dwg => {
+  const labeled = data.drawings_labeled || (data.drawings || []).map(r => ({ code: "", ref: r }));
+  if (labeled.length > 0) {
+    labeled.forEach(({ code, ref }) => {
       const chip = document.createElement("a");
       chip.className = "dwg-chip dwg-chip-link";
-      chip.textContent = dwg;
+      if (code) {
+        chip.innerHTML =
+          `<span class="chip-code-label">${code}</span>` +
+          `<span class="chip-ref-text">${ref}</span>`;
+      } else {
+        chip.innerHTML = `<span class="chip-ref-text">${ref}</span>`;
+      }
       const npsParam = state.nps !== null ? `?nps=${state.nps}` : "";
-      chip.href = `/api/drawing/${encodeURIComponent(dwg)}${npsParam}`;
+      chip.href = `/api/drawing/${encodeURIComponent(ref)}${npsParam}`;
       chip.target = "_blank";
       chip.rel = "noopener noreferrer";
-      chip.title = `Open drawing ${dwg} (NPS ${state.nps || "?"}") — highlighted for selected pipe size`;
+      chip.title = `${code ? code + " — " : ""}${ref}  (NPS ${state.nps || "?"}") — click to open drawing`;
       chipsEl.appendChild(chip);
     });
   } else {

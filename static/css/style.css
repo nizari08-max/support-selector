@@ -700,29 +700,45 @@ body {
 }
 .dwg-chip {
   display: inline-flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  position: relative;
   background: white;
   border: 1.5px solid #BFDBFE;
   border-radius: 6px;
-  padding: 5px 12px;
+  padding: 6px 28px 6px 12px;
   font-family: 'Courier New', 'Consolas', monospace;
   font-size: 11.5px;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: 0.3px;
 }
+.chip-code-label {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  opacity: 0.55;
+  line-height: 1;
+}
+.chip-ref-text {
+  line-height: 1;
+}
 .dwg-chip-link {
   text-decoration: none;
   cursor: pointer;
   transition: background var(--transition), border-color var(--transition),
               color var(--transition), box-shadow var(--transition);
-  gap: 6px;
 }
 .dwg-chip-link::after {
   content: "↗";
+  position: absolute;
+  top: 8px;
+  right: 9px;
   font-family: system-ui, sans-serif;
   font-size: 10px;
-  opacity: 0.5;
+  opacity: 0.45;
   font-weight: 400;
 }
 .dwg-chip-link:hover,
@@ -732,6 +748,10 @@ body {
   color: white;
   box-shadow: 0 2px 8px rgba(0, 48, 135, 0.25);
   outline: none;
+}
+.dwg-chip-link:hover .chip-code-label,
+.dwg-chip-link:focus-visible .chip-code-label {
+  opacity: 0.75;
 }
 .dwg-chip-link:hover::after,
 .dwg-chip-link:focus-visible::after {

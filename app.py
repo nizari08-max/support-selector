@@ -76,13 +76,14 @@ def api_select():
             support_function=str(data["function"]),
         )
         return jsonify({
-            "success":       True,
-            "support_code":  result.support_code,
-            "drawings":      result.drawings,
-            "notes":         result.note_texts,
-            "is_applicable": result.is_applicable(),
-            "image_key":     get_image_key(result.support_code),
-            "size_range":    result.size_range,
+            "success":          True,
+            "support_code":     result.support_code,
+            "drawings":         result.drawings,
+            "drawings_labeled": result.drawings_labeled,
+            "notes":            result.note_texts,
+            "is_applicable":    result.is_applicable(),
+            "image_key":        get_image_key(result.support_code),
+            "size_range":       result.size_range,
         })
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)}), 400

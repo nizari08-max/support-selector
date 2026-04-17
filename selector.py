@@ -4,7 +4,7 @@
 # =============================================================================
 
 from support_rules import SUPPORT_RULES, NOTES
-from drawing_index import get_drawings
+from drawing_index import get_drawings, label_drawings
 
 
 # =============================================================================
@@ -144,9 +144,10 @@ class SelectionResult:
     """
 
     def __init__(self, support_code, drawings, notes, size_range, inputs):
-        self.support_code = support_code
-        self.drawings     = drawings
-        self.notes        = notes
+        self.support_code     = support_code
+        self.drawings         = drawings
+        self.drawings_labeled = label_drawings(drawings)
+        self.notes            = notes
         self.note_texts   = [NOTES[n] for n in notes if n in NOTES]
         self.size_range   = size_range
         self.inputs       = inputs

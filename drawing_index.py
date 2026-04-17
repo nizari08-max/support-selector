@@ -179,9 +179,11 @@ DRAWING_SIZE_RANGES = {
     "0362":  (0.5,  48.0),  # GH01
     "0363":  (0.75, 10.0),  # GH02  (¾"–10")
 
-    # Isolation Pads
-    "0380":  (0.75, 10.0),  # PR01  (bonded, ¾"–10")
-    "0381":  (0.75, 10.0),  # PR02  (welded,  ¾"–10")
+    # Isolation Pads — drawing tables cover ¾"–10" but the pads appear
+    # in support codes for all sizes (GL01+PR01/PR02, GH02+PR01/PR02, BP02 combos)
+    # so show the drawing whenever the support code calls for it.
+    "0380":  (0.75, 48.0),  # PR01  (bonded)
+    "0381":  (0.75, 48.0),  # PR02  (welded)
 
     # FRP Clamp Shoes (CF series — older standard drawings)
     "0369":  (2.0,  24.0),  # CF01
@@ -300,3 +302,22 @@ def get_drawings(support_code: str, nps: float = None) -> list:
                         drawings.append(ref)
 
     return drawings
+
+
+# Reverse index: drawing_ref → support_code (built once at import time)
+_REF_TO_CODE: dict[str, str] = {
+    ref: code
+    for code, refs in DRAWING_INDEX.items()
+    for ref in refs
+}
+
+
+def label_drawings(drawing_refs: list) -> list:
+    """
+    Tag each drawing reference with its support code.
+
+    Returns [{"code": "BP02", "ref": "JS-PE-DPS-0321"}, …].
+    Used by the API so the frontend can display the support type
+    label alongside the drawing number on each chip.
+    """
+    return [{"code": _REF_TO_CODE.get(ref, ""), "ref": ref} for ref in drawing_refs]
