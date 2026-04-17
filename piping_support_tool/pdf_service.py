@@ -161,6 +161,35 @@ _NPS_PATTERNS: dict[float, list[str]] = {
     48.0: ['48"'],
 }
 
+# NPS (inches) → DN (mm) — used to search metric labels in the dimension table first
+_NPS_TO_DN: dict[float, int] = {
+    0.5:   15,
+    0.75:  20,
+    1.0:   25,
+    1.5:   40,
+    2.0:   50,
+    3.0:   80,
+    4.0:  100,
+    6.0:  150,
+    8.0:  200,
+    10.0: 250,
+    12.0: 300,
+    14.0: 350,
+    16.0: 400,
+    18.0: 450,
+    20.0: 500,
+    22.0: 550,
+    24.0: 600,
+    26.0: 650,
+    28.0: 700,
+    30.0: 750,
+    32.0: 800,
+    36.0: 900,
+    40.0: 1000,
+    42.0: 1050,
+    48.0: 1200,
+}
+
 
 def _nps_patterns(nps: float) -> list[str]:
     """Return text patterns to search for in the PDF for the given NPS."""
@@ -168,6 +197,48 @@ def _nps_patterns(nps: float) -> list[str]:
         return _NPS_PATTERNS[nps]
     n = int(nps) if nps == int(nps) else nps
     return [f'{n}"']
+
+
+def _find_row_rect(page, nps: float):
+    """
+    Locate the dimension-table row for *nps* on a rotation=270 page and return
+    a fitz.Rect covering that row for highlighting.
+
+    On rotation=270 pages the coordinate system is transposed: what appears as
+    a horizontal table row visually is a vertical x-stripe in coordinate space.
+    All pipe-size labels share approximately the same y (~157 pts) but each has
+    a unique x position.  We therefore return a full-height vertical stripe:
+        Rect(hit.x0 - 1, page.rect.y0, hit.x1 + 1, page.rect.y1)
+
+    Search order: DN metric value first (e.g. "200" for NPS 8"), then NPS
+    imperial patterns (e.g. '8"').  The leftmost hit is preferred to target the
+    pipe-size column rather than incidental matches elsewhere.
+    """
+    import fitz
+
+    dn = _NPS_TO_DN.get(nps)
+    search_terms = []
+    if dn is not None:
+        search_terms.append(str(dn))
+    search_terms.extend(_nps_patterns(nps))
+
+    page_rect = page.rect
+    best = None
+
+    for term in search_terms:
+        hits = page.search_for(term, quads=False)
+        if not hits:
+            continue
+        # Choose the leftmost hit (smallest x0) — that is the pipe-size column
+        candidate = min(hits, key=lambda r: r.x0)
+        if best is None or candidate.x0 < best.x0:
+            best = candidate
+        break   # stop at first term that yields a hit (DN preferred over NPS)
+
+    if best is None:
+        return None
+
+    return fitz.Rect(best.x0 - 1, page_rect.y0, best.x1 + 1, page_rect.y1)
 
 
 # ---------------------------------------------------------------------------
@@ -204,8 +275,6 @@ def get_drawing_pdf(drawing_ref: str, nps: float | None = None) -> bytes | None:
     src_doc = fitz.open(pdf_path)
     out_doc = fitz.open()
 
-    search_terms = _nps_patterns(nps) if nps is not None else []
-
     for page_idx in page_indices:
         if page_idx >= len(src_doc):
             continue
@@ -214,30 +283,20 @@ def get_drawing_pdf(drawing_ref: str, nps: float | None = None) -> bytes | None:
         out_doc.insert_pdf(src_doc, from_page=page_idx, to_page=page_idx)
         out_page = out_doc[-1]
 
-        if not search_terms:
+        if nps is None:
             continue
 
-        page_rect = out_page.rect
-
-        for term in search_terms:
-            hits = out_page.search_for(term, quads=False)
-            for hit in hits:
-                # Extend the bounding box horizontally to cover the full row,
-                # making the highlight span the entire table row width.
-                row_rect = fitz.Rect(
-                    page_rect.x0,
-                    hit.y0 - 1,
-                    page_rect.x1,
-                    hit.y1 + 1,
-                )
-                # Draw a semi-transparent yellow band over the row
-                out_page.draw_rect(
-                    row_rect,
-                    color=None,
-                    fill=(1.0, 0.93, 0.0),   # #FFED00 yellow
-                    fill_opacity=0.35,
-                    overlay=True,
-                )
+        # Drawing pages have rotation=270: visual rows are x-stripes in
+        # coordinate space.  _find_row_rect() returns the correct x-band.
+        row_rect = _find_row_rect(out_page, nps)
+        if row_rect:
+            out_page.draw_rect(
+                row_rect,
+                color=None,
+                fill=(1.0, 0.93, 0.0),   # #FFED00 yellow
+                fill_opacity=0.40,
+                overlay=True,
+            )
 
     pdf_bytes = out_doc.tobytes(garbage=3, deflate=True)
     src_doc.close()
