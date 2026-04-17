@@ -1,3 +1,43 @@
+# Standard PDF Banner — 404 Fix
+**Date:** 2026-04-18
+
+---
+
+## Problem
+Clicking the "JESA Piping Support Standard" banner returned a 404.
+The banner was pointing to `/static/QW2507-00-PE-STD-00001.pdf#page=3`
+but the file lives at the **project root**, not inside `static/`.
+
+## Investigation
+- `find . -name "QW2507-00-PE-STD-00001.pdf"` → found at `./QW2507-00-PE-STD-00001.pdf`
+- No existing Flask route was serving this file (Case B)
+
+## Fix Applied
+
+### `app.py`
+- Added `send_from_directory` to the Flask import line
+- Added new route `/standard-pdf` that serves the PDF from the project root:
+  ```python
+  @app.route("/standard-pdf")
+  def serve_standard_pdf():
+      return send_from_directory(
+          os.path.dirname(os.path.abspath(__file__)),
+          "QW2507-00-PE-STD-00001.pdf",
+          mimetype="application/pdf",
+      )
+  ```
+
+### `templates/index.html`
+- Banner `href` changed from `/static/QW2507-00-PE-STD-00001.pdf#page=3`
+  to `/standard-pdf#page=3`
+- `target="_blank" rel="noopener"` unchanged — still opens in new tab
+
+## Verified
+- `/api/drawing/<ref>` route (drawing chip PDFs) is unaffected — uses `pdf_service.get_drawing_pdf()`
+- Banner link resolves to `/standard-pdf#page=3` in rendered HTML
+
+---
+
 # Dark Mode Toggle & Banner Fix
 **Date:** 2026-04-18
 

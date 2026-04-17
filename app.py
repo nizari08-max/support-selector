@@ -14,7 +14,7 @@ try:
 except ImportError:
     pass
 
-from flask import Flask, render_template, request, jsonify, Response, abort
+from flask import Flask, render_template, request, jsonify, Response, abort, send_from_directory
 
 # Allow imports from the same directory as app.py
 sys.path.insert(0, os.path.dirname(__file__))
@@ -91,6 +91,16 @@ def api_select():
         return jsonify({"success": False, "error": str(e)}), 400
     except Exception as e:
         return jsonify({"success": False, "error": f"Unexpected error: {e}"}), 500
+
+
+@app.route("/standard-pdf")
+def serve_standard_pdf():
+    """Serve the JESA piping support standard PDF from the project root."""
+    return send_from_directory(
+        os.path.dirname(os.path.abspath(__file__)),
+        "QW2507-00-PE-STD-00001.pdf",
+        mimetype="application/pdf",
+    )
 
 
 @app.route("/api/drawing/<path:drawing_ref>")
