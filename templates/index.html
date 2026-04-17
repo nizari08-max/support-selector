@@ -11,6 +11,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/static/css/style.css">
+
+  <!-- Restore saved theme before render to prevent flash -->
+  <script>
+    (function () {
+      var t = localStorage.getItem('pss-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
 </head>
 <body>
 
@@ -28,6 +36,9 @@
       <div class="navbar-right">
         <div class="status-dot" title="Application ready"></div>
         <span class="navbar-badge">Engineering Tool</span>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
+          <span id="themeIcon">🌙</span>
+        </button>
       </div>
     </div>
   </header>
@@ -79,13 +90,15 @@
       </div><!-- /.stepper -->
 
       <div class="sidebar-meta">
-        <div class="doc-ref-banner" role="note" title="JESA Piping Support Standard — Reference Document">
+        <a class="doc-ref-banner"
+           href="/static/QW2507-00-PE-STD-00001.pdf#page=3"
+           target="_blank" rel="noopener"
+           role="note" title="JESA Piping Support Standard — click to open PDF">
           <div class="doc-ref-body">
             <span class="doc-ref-title">JESA Piping Support Standard</span>
-            <span class="doc-ref-sub">JS-PE-DPS Standard · Revision C · Oct 2025</span>
           </div>
           <span class="doc-ref-arrow">VIEW →</span>
-        </div>
+        </a>
       </div>
     </aside><!-- /.step-sidebar -->
 
@@ -488,6 +501,35 @@
     // Footer year
     var fy = document.getElementById('footerYear');
     if (fy) fy.textContent = '© ' + new Date().getFullYear();
+  })();
+  </script>
+
+  <!-- Dark / Light mode toggle -->
+  <script>
+  (function () {
+    var btn  = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+
+    function applyTheme(theme) {
+      if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        if (icon) icon.textContent = '☀️';
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        if (icon) icon.textContent = '🌙';
+      }
+    }
+
+    // Sync icon with theme already set by the <head> script
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('pss-theme', next);
+        applyTheme(next);
+      });
+    }
   })();
   </script>
 

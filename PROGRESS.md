@@ -1,3 +1,64 @@
+# Dark Mode Toggle & Banner Fix
+**Date:** 2026-04-18
+
+---
+
+## Files Modified
+
+### `static/css/style.css` — Dark mode support + theme toggle styles
+
+**Global theme transitions (added before reset block):**
+- `html { transition: background-color 0.3s ease; }` — smooth page bg change
+- `* { transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; }` — all elements transition on theme switch; does NOT include transform/opacity to preserve animation keyframes
+- Existing `@media (prefers-reduced-motion: reduce)` block suppresses all transitions with `!important`
+
+**Dark mode variable block (`[data-theme="dark"]`):**
+- `color-scheme: dark` declared on the selector
+- Full override of all light-theme CSS variables: `--bg-main #0F172A`, `--bg-card #1E293B`, `--bg-header #002B7A`, `--bg-footer #0A0F1E`
+- Accent colors: `--accent-blue #3B82F6`, `--accent-blue-lt #1E3A5F`
+- Text: `--text-primary #F1F5F9`, `--text-secondary #94A3B8`, `--text-muted #64748B`
+- Border: `--border #334155`
+- All legacy alias variables remapped for backward compatibility
+
+**Dark mode component overrides:**
+- `.doc-ref-banner` in dark: `--accent-blue-lt` bg, `--border` left border; hover = `#243B5A`
+- `.doc-ref-title` / `.doc-ref-arrow` in dark: `--accent-blue` color (was `--bg-header` which is invisible on dark)
+- `.pc-feedback.pc-excluded` in dark: translucent red bg, lighter text (#FCA5A5)
+- `select option/optgroup` in dark: explicit `--bg-card` background
+
+**Theme toggle button:**
+- `.theme-toggle`: transparent bg, no border, 18px emoji font, white color, `border-radius: var(--radius-sm)`, hover = `rgba(255,255,255,0.12)` tint
+
+### `templates/index.html` — Three targeted changes
+
+**1. Early theme restore (`<head>`, before `</head>`):**
+- Inline IIFE reads `localStorage.getItem('pss-theme')`; if `'dark'`, sets `data-theme="dark"` on `<html>` synchronously — prevents light-mode flash on dark-mode reload
+
+**2. Theme toggle button (in `.navbar-right`):**
+- `<button class="theme-toggle" id="themeToggle">` with `<span id="themeIcon">🌙</span>`
+- Light mode active → shows 🌙 (click to go dark); Dark mode active → shows ☀️ (click to go light)
+
+**3. JESA Standard banner:**
+- Changed `<div class="doc-ref-banner">` → `<a class="doc-ref-banner" href="/static/QW2507-00-PE-STD-00001.pdf#page=3" target="_blank" rel="noopener">`
+- Removed `.doc-ref-sub` subtitle line entirely ("JS-PE-DPS Standard · Revision C · Oct 2025")
+- Banner now shows only title "JESA Piping Support Standard" + "VIEW →" arrow
+
+**4. Theme toggle JS (inline `<script>` after existing inline scripts):**
+- `applyTheme(theme)`: sets/removes `data-theme` attribute on `<html>`, updates icon text
+- On `DOMContentLoaded`, syncs icon with theme already applied by head script
+- Click handler: reads current theme, toggles, saves to `localStorage('pss-theme')`, applies new theme
+- No external dependencies — vanilla JS only
+
+---
+
+## Functionality Preserved
+- All JS element IDs, form fields, Flask routes unchanged
+- `app.js` not modified
+- No Python files touched
+- Light mode is the default; dark mode only when `pss-theme=dark` in localStorage
+
+---
+
 # UI Polish — Typography, Animations & Header/Footer Fixes
 **Date:** 2026-04-18
 
