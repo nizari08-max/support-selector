@@ -60,6 +60,68 @@ const ILLUS_LABELS = {
   not_applicable:"Not Applicable",
 };
 
+// ── MPMS Piping Class mapping ─────────────────────────────────────────────────
+// Metallic + FRP classes only. Source: Master Piping Material Specification.
+const MPMS_CLASSES = {
+  BA1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Galvanized" },
+  BA2:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Galvanized" },
+  BB1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
+  BB1U: { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel + PE Coating" },
+  BB2:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel + PE Coating" },
+  BB3:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
+  BB4:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
+  BB5:  { material: "CS",  rating: "150 Lb.", desc: "Impact Tested Carbon Steel" },
+  BB6:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
+  BD1:  { material: "SS",  rating: "150 Lb.", desc: "316/316L Stainless Steel" },
+  BD2:  { material: "SS",  rating: "150 Lb.", desc: "316/316L Stainless Steel" },
+  BD2U: { material: "SS",  rating: "150 Lb.", desc: "316/316L SS + PE Coated" },
+  BG1:  { material: "SS",  rating: "150 Lb.", desc: "904L Stainless Steel" },
+  BG2:  { material: "SS",  rating: "150 Lb.", desc: "904L Stainless Steel" },
+  BK1:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
+  BK2:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
+  BK3:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
+  BK4:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
+  BP1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Jacketed" },
+  BS1:  { material: "SS",  rating: "150 Lb.", desc: "Duplex Stainless Steel S32205" },
+  BS2:  { material: "SS",  rating: "150 Lb.", desc: "Duplex S32750" },
+  BS3:  { material: "SS",  rating: "150 Lb.", desc: "Duplex S32205" },
+  BV1:  { material: "FRP", rating: "150 Lb.", desc: "Dual Laminate PP/FRP" },
+  CB1:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
+  CB2:  { material: "CS",  rating: "300 Lb.", desc: "Impact Tested Carbon Steel" },
+  CB3:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
+  CD1:  { material: "SS",  rating: "300 Lb.", desc: "316/316L Stainless Steel" },
+  CD2:  { material: "SS",  rating: "300 Lb.", desc: "316/316L Stainless Steel" },
+  CG1:  { material: "SS",  rating: "300 Lb.", desc: "904L Stainless Steel" },
+  CG2:  { material: "SS",  rating: "300 Lb.", desc: "904L Stainless Steel" },
+  CJ1:  { material: "CS",  rating: "300 Lb.", desc: "1-1/4 Cr-1/2 Mo Chrome Moly" },
+  CK3:  { material: "FRP", rating: "300 Lb.", desc: "Fiberglass Reinforced Pipe" },
+  CP1:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
+  CS1:  { material: "SS",  rating: "300 Lb.", desc: "Duplex Stainless Steel S32205" },
+  ES2:  { material: "SS",  rating: "600 Lb.", desc: "Super Duplex S32750" },
+  FB1:  { material: "CS",  rating: "900/1500 Lb.", desc: "Carbon Steel" },
+  FJ1:  { material: "CS",  rating: "900/1500 Lb.", desc: "1-1/4 Cr-1/2 Mo Chrome Moly" },
+  GC1:  { material: "SS",  rating: "1500 Lb.", desc: "Stainless Steel SS304H" },
+  GD1:  { material: "SS",  rating: "1500 Lb.", desc: "316/316L Stainless Steel" },
+  GD2:  { material: "SS",  rating: "1500 Lb.", desc: "316/316L Stainless Steel" },
+  KD1:  { material: "SS",  rating: "N/A",      desc: "316/316L Stainless Steel" },
+};
+
+// Non-metallic / non-FRP excluded classes — show warning, no auto-fill.
+const MPMS_EXCLUDED = {
+  BH1: "HDPE",
+  BH2: "HDPE",
+  BL5: "Rubber Lined Carbon Steel",
+  BN1: "PTFE Lined Carbon Steel",
+  BR1: "CPVC",
+  BT1: "Reinforced Flexible Rubber",
+  BX1: "Polypropylene",
+  BX2: "Polypropylene",
+  BX3: "Polypropylene",
+  BY1: "PVC",
+  BY3: "PVC",
+  BZ1: "PVDF",
+};
+
 // ── Material class readable names ─────────────────────────────────────────────
 const MATERIAL_NAMES = {
   CS:  "Carbon Steel (CS)",
@@ -76,11 +138,12 @@ const MATERIAL_NAMES = {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let state = {
-  nps:        null,
-  material:   "",
-  pwht:       false,
-  insulation: "uninsulated",
-  fn:         null,
+  nps:         null,
+  material:    "",
+  pwht:        false,
+  insulation:  "uninsulated",
+  fn:          null,
+  pipingClass: "",
 };
 
 // ── Initialise ────────────────────────────────────────────────────────────────
@@ -93,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     state.material = e.target.value;
   });
   document.getElementById("dnInput").addEventListener("input", handleDNInput);
+  document.getElementById("pipingClassInput").addEventListener("input", handlePipingClassInput);
 });
 
 // ── DN converter ─────────────────────────────────────────────────────────────
@@ -131,6 +195,44 @@ function handleDNInput(e) {
   });
   resultEl.textContent = `DN ${dn} = NPS ${npsEntry.label}"`;
   resultEl.className = "dn-result dn-ok";
+}
+
+// ── Piping class lookup ───────────────────────────────────────────────────────
+function handlePipingClassInput(e) {
+  const raw       = e.target.value.trim().toUpperCase();
+  const feedback  = document.getElementById("pcFeedback");
+  state.pipingClass = raw;
+
+  if (!raw) {
+    feedback.textContent = "";
+    feedback.className   = "pc-feedback";
+    return;
+  }
+
+  const excluded = MPMS_EXCLUDED[raw];
+  if (excluded) {
+    feedback.textContent =
+      `Class ${raw} is a non-metallic pipe class (${excluded}). ` +
+      `This app covers metallic and FRP pipes only. ` +
+      `Please consult the appropriate support standard.`;
+    feedback.className = "pc-feedback pc-excluded";
+    return;
+  }
+
+  const entry = MPMS_CLASSES[raw];
+  if (!entry) {
+    feedback.textContent = "Class code not found. Please select material manually.";
+    feedback.className   = "pc-feedback pc-unknown";
+    return;
+  }
+
+  // Auto-fill material dropdown
+  const sel  = document.getElementById("materialSelect");
+  sel.value  = entry.material;
+  state.material = entry.material;
+
+  feedback.textContent = `${raw} → ${entry.desc} | ${entry.rating} ✓`;
+  feedback.className   = "pc-feedback pc-ok";
 }
 
 // ── NPS grid ──────────────────────────────────────────────────────────────────
@@ -200,11 +302,12 @@ async function runSelection() {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({
-        nps:       state.nps,
-        material:  state.material,
-        pwht:      state.pwht,
-        insulation: state.insulation,
-        function:  state.fn,
+        nps:          state.nps,
+        material:     state.material,
+        pwht:         state.pwht,
+        insulation:   state.insulation,
+        function:     state.fn,
+        piping_class: state.pipingClass || null,
       }),
     });
     const data = await res.json();
@@ -297,6 +400,10 @@ function showResult(data) {
     { key: "Insulation", val: state.insulation === "hot_insulated" ? "Hot Insulated" : "Uninsulated" },
     { key: "Function",   val: state.fn.replace("_"," ").replace(/\b\w/g,c=>c.toUpperCase()) },
   ];
+  if (state.pipingClass && MPMS_CLASSES[state.pipingClass]) {
+    const pc = MPMS_CLASSES[state.pipingClass];
+    pills.push({ key: "Piping Class", val: `${state.pipingClass} — ${pc.desc}` });
+  }
   pills.forEach(({ key, val }) => {
     const pill = document.createElement("span");
     pill.className = "summary-pill";

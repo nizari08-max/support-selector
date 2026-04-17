@@ -963,6 +963,79 @@ body {
 .dn-result.dn-warn { color: var(--warn-text); }
 .dn-result.dn-error { color: #DC2626; }
 
+/* ── PIPING CLASS INPUT ──────────────────────────────────────────── */
+.optional-badge {
+  margin-left: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-lt);
+  background: var(--border);
+  padding: 1px 6px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+.pc-input-wrap {
+  display: inline-flex;
+  align-items: center;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  background: white;
+}
+.pc-input-wrap:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0,48,135,0.1);
+}
+
+.pc-prefix {
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: white;
+  background: var(--primary);
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+.pc-input {
+  border: none;
+  outline: none;
+  padding: 8px 10px;
+  width: 100px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  background: white;
+  text-transform: uppercase;
+}
+.pc-input::placeholder {
+  color: var(--text-lt);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.pc-feedback {
+  margin-top: 7px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  min-height: 0;
+  transition: color 0.15s ease;
+}
+.pc-feedback.pc-ok       { color: var(--success-text); }
+.pc-feedback.pc-unknown  { color: var(--text-md); }
+.pc-feedback.pc-excluded { color: #B45309; }
+
 /* ── RESPONSIVE ─────────────────────────────────────────────────── */
 @media (max-width: 1000px) {
   .main-layout {

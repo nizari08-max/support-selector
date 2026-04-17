@@ -68,6 +68,7 @@ def index():
 def api_select():
     data = request.get_json(force=True)
     try:
+        piping_class = str(data["piping_class"]).strip().upper() if data.get("piping_class") else None
         result = select_support(
             nps=float(data["nps"]),
             material=str(data["material"]),
@@ -84,6 +85,7 @@ def api_select():
             "is_applicable":    result.is_applicable(),
             "image_key":        get_image_key(result.support_code),
             "size_range":       result.size_range,
+            "piping_class":     piping_class,
         })
     except ValueError as e:
         return jsonify({"success": False, "error": str(e)}), 400
