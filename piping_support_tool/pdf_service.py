@@ -100,6 +100,10 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0371":     [72],        # CF03
     # CF04 / JS-PE-DPS-0372 omitted: PDF index confirms 0372 = SF01 (FRP Thrust Collar), not CF04
 
+    # Isolation Pads (PR series)
+    "JS-PE-DPS-0380":     [78],        # PR01 (bonded, ¾"–10")
+    "JS-PE-DPS-0381":     [79],        # PR02 (welded, ¾"–10")
+
     # FRP Saddle Supports — SC71 (JS-PE-DPS-0701-xx)
     # Pages confirmed by text-layer SC71 keyword scan; sequential order matches PDF index.
     "JS-PE-DPS-0701-01":  [165],       # SC71: 3/4"–8"
@@ -134,10 +138,15 @@ DRAWING_PAGES: dict[str, list[int]] = {
 # ---------------------------------------------------------------------------
 
 _NPS_PATTERNS: dict[float, list[str]] = {
-    0.5:  ['1/2"',  '½"',  "1/2 "],
-    0.75: ['3/4"',  '¾"',  "3/4 "],
+    # Fractional and decimal variants cover different drawings in this standard.
+    # Some pages (e.g. PR02 / JS-PE-DPS-0381) use "0.75"" and "1.5"" instead of
+    # the fractional "3/4"" and "1-1/2"" forms.
+    0.5:  ['1/2"',  '½"',  '0.5"',  "1/2 "],
+    0.75: ['3/4"',  '¾"',  '0.75"', "3/4 "],
     1.0:  ['1"',    "1 \""],
-    1.5:  ['1-1/2"', '1½"', "1 1/2\""],
+    # '1/2"'  catches drawings that split "1 1/2"" into two words (PR01/PR02).
+    # '11/2"' catches FRP saddle drawings (SC71-SC74) where the dash is lost.
+    1.5:  ['1-1/2"', '1½"', '1.5"', "1 1/2\"", '11/2"', '1/2"'],
     2.0:  ['2"',    "2 \""],
     3.0:  ['3"',    "3 \""],
     4.0:  ['4"',    "4 \""],
@@ -202,43 +211,89 @@ def _nps_patterns(nps: float) -> list[str]:
 def _find_row_rect(page, nps: float):
     """
     Locate the dimension-table row for *nps* on a rotation=270 page and return
-    a fitz.Rect covering that row for highlighting.
+    a fitz.Rect that covers only that row, constrained to the table borders.
 
-    On rotation=270 pages the coordinate system is transposed: what appears as
-    a horizontal table row visually is a vertical x-stripe in coordinate space.
-    All pipe-size labels share approximately the same y (~157 pts) but each has
-    a unique x position.  We therefore return a full-height vertical stripe:
-        Rect(hit.x0 - 1, page.rect.y0, hit.x1 + 1, page.rect.y1)
+    Coordinate-space note (rotation=270 pages):
+      What appears as a horizontal table row visually is a vertical x-stripe in
+      coordinate space.  All pipe-size labels share roughly the same y (~157 pt)
+      but each has a unique x position.  The returned rect is therefore:
+          Rect(hit.x0 - 1, table_y0, hit.x1 + 1, table_y1)
+      where table_y0/table_y1 are the table's visual left/right borders expressed
+      as y-values in coordinate space.
 
-    Search order: DN metric value first (e.g. "200" for NPS 8"), then NPS
-    imperial patterns (e.g. '8"').  The leftmost hit is preferred to target the
-    pipe-size column rather than incidental matches elsewhere.
+    Search order: NPS imperial patterns first (e.g. '1-1/2"', '0.75"') then DN
+    metric value as fallback.  Every hit is verified against the page word list
+    to ensure it is an exact word match rather than a substring of a longer token
+    (e.g. '8"' inside '18"', or '40' inside '400').
     """
     import fitz
 
+    # NPS patterns first; DN as fallback only
+    nps_terms = _nps_patterns(nps)
     dn = _NPS_TO_DN.get(nps)
-    search_terms = []
-    if dn is not None:
-        search_terms.append(str(dn))
-    search_terms.extend(_nps_patterns(nps))
+    dn_terms = [str(dn)] if dn is not None else []
+    search_terms = nps_terms + dn_terms
 
-    page_rect = page.rect
+    page_words = None   # lazy-loaded once and reused
     best = None
 
     for term in search_terms:
         hits = page.search_for(term, quads=False)
         if not hits:
             continue
-        # Choose the leftmost hit (smallest x0) — that is the pipe-size column
-        candidate = min(hits, key=lambda r: r.x0)
-        if best is None or candidate.x0 < best.x0:
-            best = candidate
-        break   # stop at first term that yields a hit (DN preferred over NPS)
+
+        # Verify every hit is an exact word match — not a substring of a longer
+        # word.  On rotation=270 pages, substring matches start at a y-offset
+        # within the containing word, so their y0 lands >3 pts from the word's
+        # y0, causing this check to reject them.  This handles e.g.:
+        #   '8"'  matching inside '18"', '28"'
+        #   '40'  matching inside '400', '40.0'
+        if page_words is None:
+            page_words = page.get_text("words")
+        hits = [h for h in hits
+                if any(abs(w[0] - h.x0) < 3 and abs(w[1] - h.y0) < 3
+                       and w[4] == term
+                       for w in page_words)]
+        if not hits:
+            continue
+
+        # Pick the leftmost hit (smallest x0) — that is the pipe-size column
+        best = min(hits, key=lambda r: r.x0)
+        break
 
     if best is None:
         return None
 
-    return fitz.Rect(best.x0 - 1, page_rect.y0, best.x1 + 1, page_rect.y1)
+    # ---- Determine table y-bounds (visual left/right borders in coord space) ----
+    # table_y0: look for the column-header row.  The match must be within 200 pts
+    # of the pipe-size hit to avoid picking up labels in the drawing title block
+    # (e.g. SC71 has "PIPE SIZE" at x=697 in its title block, far from the table
+    # at x=422; "NB" at x=437 is the real header).
+    table_y0 = None
+    for anchor in ("PIPE SIZE", "NPS", "NB", "DN"):
+        ah = page.search_for(anchor)
+        near = [h for h in ah if abs(h.x0 - best.x0) <= 200]
+        if near:
+            table_y0 = min(h.y0 for h in near) - 3
+            break
+    if table_y0 is None:
+        table_y0 = best.y0 - 5
+
+    # table_y1: bounding box of words in the table's x-band.
+    # x_lo = hit.x0 - 15 stays within the table; the notes section on all known
+    # drawing pages sits at x values >15 pts below (smaller x) than the last row.
+    if page_words is None:
+        page_words = page.get_text("words")
+    x_lo = best.x0 - 15
+    x_hi = best.x0 + 80   # include column headers sitting just right of the data
+    band = [w for w in page_words if x_lo <= w[0] <= x_hi]
+    table_y1 = (max(w[3] for w in band) + 3) if band else page.rect.y1
+
+    # Guard: ensure valid (non-inverted) rect
+    if table_y0 > table_y1:
+        table_y0, table_y1 = table_y1, table_y0
+
+    return fitz.Rect(best.x0 - 1, table_y0, best.x1 + 1, table_y1)
 
 
 # ---------------------------------------------------------------------------

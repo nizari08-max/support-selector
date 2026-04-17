@@ -78,12 +78,19 @@ DRAWING_INDEX = {
     "GH02":  [f"{DRAWING_PREFIX}0363"],
 
     # -------------------------------------------------------------------------
+    # ISOLATION PADS (PR series)
+    # -------------------------------------------------------------------------
+    "PR01":  [f"{DRAWING_PREFIX}0380"],   # bonded, ¾"–10"
+    "PR02":  [f"{DRAWING_PREFIX}0381"],   # welded,  ¾"–10"
+
+    # -------------------------------------------------------------------------
     # FRP CLAMP SHOES (CF series)
     # -------------------------------------------------------------------------
     "CF01":  [f"{DRAWING_PREFIX}0369"],
     "CF02":  [f"{DRAWING_PREFIX}0370"],
     "CF03":  [f"{DRAWING_PREFIX}0371"],
-    "CF04":  [f"{DRAWING_PREFIX}0372"],
+    # CF04: drawing 0372 in this PDF revision is SF01 (FRP Thrust Collar),
+    # not CF04.  CF04 has no drawing in this revision of the standard.
 
     # -------------------------------------------------------------------------
     # FRP SADDLE SUPPORTS (SC7x series)
@@ -172,11 +179,15 @@ DRAWING_SIZE_RANGES = {
     "0362":  (0.5,  48.0),  # GH01
     "0363":  (0.75, 10.0),  # GH02  (¾"–10")
 
+    # Isolation Pads
+    "0380":  (0.75, 10.0),  # PR01  (bonded, ¾"–10")
+    "0381":  (0.75, 10.0),  # PR02  (welded,  ¾"–10")
+
     # FRP Clamp Shoes (CF series — older standard drawings)
     "0369":  (2.0,  24.0),  # CF01
     "0370":  (2.0,  24.0),  # CF02
     "0371":  (2.0,  24.0),  # CF03
-    "0372":  (2.0,  24.0),  # CF04 (note: drawing 0372 is actually SF01 in this PDF rev)
+    # 0372 is SF01 (FRP Thrust Collar) in this PDF rev — not CF04, no size range needed
 
     # FRP Saddle Supports — SC71 (2-digit sub-range suffix, full key kept as-is)
     # Confirmed from PDF index page 7: drawing numbers JS-PE-DPS-0701-01 to 0701-04.
