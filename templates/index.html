@@ -4,363 +4,482 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JESA — Piping Support Selector</title>
+
+  <!-- Google Fonts: Rajdhani (UI/headings) + JetBrains Mono (codes/numbers) + Inter (body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
 
-  <!-- ══════════════════════════ NAVBAR ══════════════════════════ -->
+  <!-- ══════════════════════════ TOP BAR ══════════════════════════ -->
   <header class="navbar">
     <div class="navbar-inner">
       <div class="brand">
         <img src="/static/images/logo_jesa.svg" alt="JESA" class="logo">
         <div class="nav-divider"></div>
         <div class="tool-title">
-          <span class="title-main">Piping Support Selector</span>
+          <span class="title-main">Pipe Support Selector</span>
+          <span class="title-sub">Engineering Reference Tool · JESA Standard</span>
         </div>
       </div>
       <div class="navbar-right">
         <div class="status-dot" title="Application ready"></div>
-        <span class="navbar-badge">Engineering Tool</span>
+        <span class="navbar-badge">PSS v2</span>
       </div>
     </div>
   </header>
 
-  <!-- ══════════════════════════ MAIN LAYOUT ══════════════════════════ -->
-  <main class="main-layout">
+  <!-- ══════════════════════════ APP SHELL ══════════════════════════ -->
+  <div class="app-shell">
 
-    <!-- ─── LEFT PANEL: FORM ─── -->
-    <aside class="form-panel">
-      <div class="panel-header">
-        <div class="panel-header-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <div>
-          <h2>Pipe Parameters</h2>
-          <p>Define line conditions to retrieve the applicable support type.</p>
-        </div>
-      </div>
+    <!-- ─── STEP SIDEBAR ─── -->
+    <aside class="step-sidebar">
+      <div class="sidebar-section-label">Selection Flow</div>
 
-      <!-- ── DN CONVERTER ── -->
-      <div class="form-section dn-converter-section">
-        <label class="section-label">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14A6 6 0 118 2a6 6 0 010 12zM7 5h2v4H7zm0 5h2v2H7z"/>
-          </svg>
-          Quick DN Converter
-        </label>
-        <div class="dn-row">
-          <div class="dn-input-wrap">
-            <span class="dn-prefix">DN</span>
-            <input type="number" id="dnInput" class="dn-input"
-                   placeholder="e.g. 150" min="1" max="1200" step="1">
+      <div class="stepper">
+
+        <!-- Step 01 -->
+        <div class="si-item si-active" id="si-1">
+          <div class="si-spine">
+            <div class="si-dot"><span>01</span></div>
+            <div class="si-line"></div>
           </div>
-          <span class="dn-result" id="dnResult"></span>
+          <div class="si-content">
+            <div class="si-title">Pipe Size</div>
+            <div class="si-desc">NPS · Material Class</div>
+          </div>
         </div>
-        <p class="field-hint">Type a DN value to auto-select the matching NPS size below.</p>
-      </div>
 
-      <!-- ── NPS ── -->
-      <div class="form-section">
-        <label class="section-label">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14A6 6 0 118 2a6 6 0 010 12z"/>
-          </svg>
-          Nominal Pipe Size — NPS
-          <span id="npsDisplay" class="value-badge" style="display:none"></span>
-        </label>
-        <div class="nps-grid" id="npsGrid"></div>
-        <p class="field-hint">Select the nominal pipe size in inches.</p>
-      </div>
-
-      <!-- ── PIPING CLASS (MPMS) ── -->
-      <div class="form-section">
-        <label class="section-label" for="pipingClassInput">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M14 1H2a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V2a1 1 0 00-1-1zM2 0h12a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V2a2 2 0 012-2zm4.5 6.5A1.5 1.5 0 115 5a1.5 1.5 0 011.5 1.5zM12 5H8v1h4V5zm0 3H8v1h4V8zm-4 3H4v1h4v-1zm4 0h-2v1h2v-1z"/>
-          </svg>
-          Piping Class (MPMS)
-          <span class="optional-badge">Optional</span>
-        </label>
-        <div class="pc-input-wrap">
-          <span class="pc-prefix">CLASS</span>
-          <input type="text" id="pipingClassInput" class="pc-input"
-                 placeholder="e.g. BB3" maxlength="6" autocomplete="off"
-                 spellcheck="false" autocapitalize="characters">
+        <!-- Step 02 -->
+        <div class="si-item" id="si-2">
+          <div class="si-spine">
+            <div class="si-dot"><span>02</span></div>
+            <div class="si-line"></div>
+          </div>
+          <div class="si-content">
+            <div class="si-title">Conditions</div>
+            <div class="si-desc">PWHT · Insulation · Function</div>
+          </div>
         </div>
-        <div class="pc-feedback" id="pcFeedback"></div>
-        <p class="field-hint">Enter your MPMS class code to auto-select the material below.</p>
-      </div>
 
-      <!-- ── MATERIAL ── -->
-      <div class="form-section">
-        <label class="section-label" for="materialSelect">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 2v10h8V3H4z"/>
-          </svg>
-          Material Class
-        </label>
-        <div class="select-wrapper">
-          <select id="materialSelect" class="styled-select">
-            <option value="">— Select material class —</option>
-            <optgroup label="Carbon Steel">
-              <option value="CS">CS — Carbon Steel</option>
-              <option value="LT">LT — Low Temperature Carbon Steel</option>
-            </optgroup>
-            <optgroup label="Stainless / Alloy Steel">
-              <option value="SS">SS — Stainless Steel</option>
-              <option value="DS">DS — Duplex Stainless Steel</option>
-              <option value="SD">SD — Super Duplex Stainless Steel</option>
-              <option value="SA">SA — Alloy Steel</option>
-            </optgroup>
-            <optgroup label="Non-Ferrous">
-              <option value="AL">AL — Aluminum</option>
-              <option value="AY">AY — Aluminum Alloy</option>
-              <option value="CN">CN — Copper-Nickel</option>
-            </optgroup>
-            <optgroup label="Composite">
-              <option value="FRP">FRP — Fiberglass Reinforced Plastic</option>
-            </optgroup>
-          </select>
+        <!-- Step 03 -->
+        <div class="si-item" id="si-3">
+          <div class="si-spine">
+            <div class="si-dot"><span>03</span></div>
+          </div>
+          <div class="si-content">
+            <div class="si-title">Result</div>
+            <div class="si-desc">Support Type · Drawings</div>
+          </div>
         </div>
-      </div>
 
-      <!-- ── PWHT ── -->
-      <div class="form-section">
-        <label class="section-label">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm3.5 11L7 6.7V3h2v3l4 2.2-1.5 2.8z"/>
-          </svg>
-          PWHT Required
-        </label>
-        <div class="toggle-row" id="pwhtGroup">
-          <button class="toggle-btn active" data-value="false">
-            <svg class="toggle-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/><path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/></svg>
-            No PWHT
-          </button>
-          <button class="toggle-btn" data-value="true">
-            <svg class="toggle-icon" viewBox="0 0 16 16" fill="currentColor"><path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/><path d="M10.97 4.97a.235.235 0 00-.02.022L7.477 9.417 5.384 7.323a.75.75 0 00-1.06 1.06L6.97 11.03a.75.75 0 001.079-.02l3.992-4.99a.75.75 0 10-1.071-1.05z"/></svg>
+      </div><!-- /.stepper -->
+
+      <div class="sidebar-meta">
+        <span class="sm-tool">JESA</span>
+        <span class="sm-std">Piping Support Standard</span>
+        <span class="sm-ver">Table 15 / Table 16</span>
+      </div>
+    </aside><!-- /.step-sidebar -->
+
+    <!-- ─── MAIN LAYOUT ─── -->
+    <div class="main-layout">
+
+      <!-- ─── LEFT PANEL: FORM ─── -->
+      <aside class="form-panel">
+        <div class="panel-header">
+          <div class="panel-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Pipe Parameters</h2>
+            <p>Define line conditions to retrieve the applicable support type.</p>
+          </div>
+        </div>
+
+        <!-- ── DN CONVERTER ── -->
+        <div class="form-section dn-converter-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14A6 6 0 118 2a6 6 0 010 12zM7 5h2v4H7zm0 5h2v2H7z"/>
+            </svg>
+            Quick DN Converter
+          </label>
+          <div class="dn-row">
+            <div class="dn-input-wrap">
+              <span class="dn-prefix">DN →</span>
+              <input type="number" id="dnInput" class="dn-input"
+                     placeholder="150" min="1" max="1200" step="1">
+            </div>
+            <span class="dn-result" id="dnResult"></span>
+          </div>
+          <p class="field-hint">Enter DN to auto-select matching NPS below.</p>
+        </div>
+
+        <!-- ── NPS ── -->
+        <div class="form-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14A6 6 0 118 2a6 6 0 010 12z"/>
+            </svg>
+            Nominal Pipe Size — NPS
+            <span id="npsDisplay" class="value-badge" style="display:none"></span>
+          </label>
+          <div class="nps-grid" id="npsGrid"></div>
+          <p class="field-hint">Select pipe size in inches.</p>
+        </div>
+
+        <!-- ── PIPING CLASS (MPMS) ── -->
+        <div class="form-section">
+          <label class="section-label" for="pipingClassInput">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M14 1H2a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V2a1 1 0 00-1-1zM2 0h12a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V2a2 2 0 012-2zm4.5 6.5A1.5 1.5 0 115 5a1.5 1.5 0 011.5 1.5zM12 5H8v1h4V5zm0 3H8v1h4V8zm-4 3H4v1h4v-1zm4 0h-2v1h2v-1z"/>
+            </svg>
+            Piping Class (MPMS)
+            <span class="optional-badge">Optional</span>
+          </label>
+          <div class="pc-input-wrap">
+            <span class="pc-prefix">CLASS</span>
+            <input type="text" id="pipingClassInput" class="pc-input"
+                   placeholder="e.g. BB3" maxlength="6" autocomplete="off"
+                   spellcheck="false" autocapitalize="characters">
+          </div>
+          <div class="pc-feedback" id="pcFeedback"></div>
+          <p class="field-hint">Enter MPMS class code to auto-select material below.</p>
+        </div>
+
+        <!-- ── MATERIAL ── -->
+        <div class="form-section">
+          <label class="section-label" for="materialSelect">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M3 1h10a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V2a1 1 0 011-1zm1 2v10h8V3H4z"/>
+            </svg>
+            Material Class
+          </label>
+          <div class="select-wrapper" id="materialSelectWrapper">
+            <select id="materialSelect" class="styled-select">
+              <option value="">— Select material class —</option>
+              <optgroup label="Carbon Steel">
+                <option value="CS">CS — Carbon Steel</option>
+                <option value="LT">LT — Low Temperature Carbon Steel</option>
+              </optgroup>
+              <optgroup label="Stainless / Alloy Steel">
+                <option value="SS">SS — Stainless Steel</option>
+                <option value="DS">DS — Duplex Stainless Steel</option>
+                <option value="SD">SD — Super Duplex Stainless Steel</option>
+                <option value="SA">SA — Alloy Steel</option>
+              </optgroup>
+              <optgroup label="Non-Ferrous">
+                <option value="AL">AL — Aluminum</option>
+                <option value="AY">AY — Aluminum Alloy</option>
+                <option value="CN">CN — Copper-Nickel</option>
+              </optgroup>
+              <optgroup label="Composite">
+                <option value="FRP">FRP — Fiberglass Reinforced Plastic</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <!-- ── PWHT ── -->
+        <div class="form-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 0C3.6 0 0 3.6 0 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm3.5 11L7 6.7V3h2v3l4 2.2-1.5 2.8z"/>
+            </svg>
             PWHT Required
-          </button>
+          </label>
+          <div class="toggle-row" id="pwhtGroup">
+            <button class="toggle-btn active" data-value="false">
+              <svg class="toggle-icon" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/>
+                <path d="M4.646 4.646a.5.5 0 01.708 0L8 7.293l2.646-2.647a.5.5 0 01.708.708L8.707 8l2.647 2.646a.5.5 0 01-.708.708L8 8.707l-2.646 2.647a.5.5 0 01-.708-.708L7.293 8 4.646 5.354a.5.5 0 010-.708z"/>
+              </svg>
+              No PWHT
+            </button>
+            <button class="toggle-btn" data-value="true">
+              <svg class="toggle-icon" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 15A7 7 0 118 1a7 7 0 010 14zm0 1A8 8 0 108 0a8 8 0 000 16z"/>
+                <path d="M10.97 4.97a.235.235 0 00-.02.022L7.477 9.417 5.384 7.323a.75.75 0 00-1.06 1.06L6.97 11.03a.75.75 0 001.079-.02l3.992-4.99a.75.75 0 10-1.071-1.05z"/>
+              </svg>
+              PWHT Required
+            </button>
+          </div>
+          <p class="field-hint">Post Weld Heat Treatment — only affects CS / LT material classes.</p>
         </div>
-        <p class="field-hint">Post Weld Heat Treatment — only affects CS / LT material classes.</p>
-      </div>
 
-      <!-- ── INSULATION ── -->
-      <div class="form-section">
-        <label class="section-label">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 1a5 5 0 100 10A5 5 0 008 1zm0 9a4 4 0 110-8 4 4 0 010 8zm0-6a2 2 0 100 4 2 2 0 000-4z"/>
-          </svg>
-          Insulation Condition
-        </label>
-        <div class="toggle-row" id="insulationGroup">
-          <button class="toggle-btn insul-btn active" data-value="uninsulated">
-            <svg class="toggle-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="10" cy="10" r="6"/>
+        <!-- ── INSULATION ── -->
+        <div class="form-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1a5 5 0 100 10A5 5 0 008 1zm0 9a4 4 0 110-8 4 4 0 010 8zm0-6a2 2 0 100 4 2 2 0 000-4z"/>
             </svg>
-            Uninsulated
-          </button>
-          <button class="toggle-btn insul-btn" data-value="hot_insulated">
-            <svg class="toggle-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="10" cy="10" r="5"/>
-              <circle cx="10" cy="10" r="8" stroke-dasharray="2,2"/>
+            Insulation Condition
+          </label>
+          <div class="toggle-row" id="insulationGroup">
+            <button class="toggle-btn insul-btn active" data-value="uninsulated">
+              <svg class="toggle-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="6"/>
+              </svg>
+              Uninsulated
+            </button>
+            <button class="toggle-btn insul-btn" data-value="hot_insulated">
+              <svg class="toggle-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="10" cy="10" r="5"/>
+                <circle cx="10" cy="10" r="8" stroke-dasharray="2,2"/>
+              </svg>
+              Hot Insulated
+            </button>
+          </div>
+        </div>
+
+        <!-- ── FUNCTION ── -->
+        <div class="form-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/>
             </svg>
-            Hot Insulated
-          </button>
-        </div>
-      </div>
+            Support Function
+          </label>
+          <div class="function-grid">
 
-      <!-- ── FUNCTION ── -->
-      <div class="form-section">
-        <label class="section-label">
-          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/>
-          </svg>
-          Support Function
-        </label>
-        <div class="function-grid">
-          <button class="fn-btn" data-value="rest" title="Pipe rests on support, free to slide axially and laterally">
-            <div class="fn-icon">
-              <svg viewBox="0 0 52 52" fill="none">
-                <circle cx="26" cy="22" r="11" fill="#C7D2FE" stroke="#4F46E5" stroke-width="2"/>
-                <ellipse cx="26" cy="24" rx="7" ry="4" fill="rgba(79,70,229,0.15)"/>
-                <rect x="6" y="33" width="40" height="8" rx="3" fill="#003087"/>
-                <line x1="26" y1="33" x2="26" y2="36" stroke="white" stroke-width="1.5" stroke-dasharray="2,1"/>
-              </svg>
-            </div>
-            <span class="fn-name">REST</span>
-            <span class="fn-desc">Gravity support / free sliding</span>
-          </button>
+            <button class="fn-btn" data-value="rest" title="Pipe rests on support, free to slide axially and laterally">
+              <div class="fn-icon">
+                <svg viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="22" r="11" fill="#1A3A5C" stroke="#0EA5E9" stroke-width="2"/>
+                  <ellipse cx="26" cy="24" rx="7" ry="4" fill="rgba(14,165,233,0.15)"/>
+                  <rect x="6" y="33" width="40" height="8" rx="2" fill="#0F2940"/>
+                  <line x1="26" y1="33" x2="26" y2="36" stroke="#475569" stroke-width="1.5" stroke-dasharray="2,1"/>
+                </svg>
+              </div>
+              <span class="fn-name">REST</span>
+              <span class="fn-desc">Gravity support / free sliding</span>
+            </button>
 
-          <button class="fn-btn" data-value="guide" title="Restricts lateral movement, allows axial sliding">
-            <div class="fn-icon">
-              <svg viewBox="0 0 52 52" fill="none">
-                <circle cx="26" cy="26" r="10" fill="#C7D2FE" stroke="#4F46E5" stroke-width="2"/>
-                <rect x="4" y="20" width="10" height="12" rx="2" fill="#003087"/>
-                <rect x="38" y="20" width="10" height="12" rx="2" fill="#003087"/>
-                <rect x="6" y="37" width="40" height="7" rx="2" fill="#374151"/>
-                <line x1="14" y1="24" x2="16" y2="24" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="1,1"/>
-                <line x1="36" y1="24" x2="38" y2="24" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="1,1"/>
-              </svg>
-            </div>
-            <span class="fn-name">GUIDE</span>
-            <span class="fn-desc">Lateral restraint only</span>
-          </button>
+            <button class="fn-btn" data-value="guide" title="Restricts lateral movement, allows axial sliding">
+              <div class="fn-icon">
+                <svg viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="26" r="10" fill="#1A3A5C" stroke="#0EA5E9" stroke-width="2"/>
+                  <rect x="4" y="20" width="10" height="12" rx="2" fill="#0F2940"/>
+                  <rect x="38" y="20" width="10" height="12" rx="2" fill="#0F2940"/>
+                  <rect x="6" y="37" width="40" height="7" rx="2" fill="#1A2942"/>
+                  <line x1="14" y1="24" x2="16" y2="24" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="1,1"/>
+                  <line x1="36" y1="24" x2="38" y2="24" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="1,1"/>
+                </svg>
+              </div>
+              <span class="fn-name">GUIDE</span>
+              <span class="fn-desc">Lateral restraint only</span>
+            </button>
 
-          <button class="fn-btn" data-value="line_stop" title="Restricts axial movement in one direction">
-            <div class="fn-icon">
-              <svg viewBox="0 0 52 52" fill="none">
-                <circle cx="28" cy="24" r="10" fill="#C7D2FE" stroke="#4F46E5" stroke-width="2"/>
-                <rect x="6" y="34" width="40" height="7" rx="2" fill="#374151"/>
-                <rect x="6" y="16" width="10" height="16" rx="2" fill="#003087"/>
-                <line x1="26" y1="24" x2="16" y2="24" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
-                <polygon points="16,20 8,24 16,28" fill="#EF4444"/>
-              </svg>
-            </div>
-            <span class="fn-name">LINE STOP</span>
-            <span class="fn-desc">Axial force restraint</span>
-          </button>
+            <button class="fn-btn" data-value="line_stop" title="Restricts axial movement in one direction">
+              <div class="fn-icon">
+                <svg viewBox="0 0 52 52" fill="none">
+                  <circle cx="28" cy="24" r="10" fill="#1A3A5C" stroke="#0EA5E9" stroke-width="2"/>
+                  <rect x="6" y="34" width="40" height="7" rx="2" fill="#1A2942"/>
+                  <rect x="6" y="16" width="10" height="16" rx="2" fill="#0F2940"/>
+                  <line x1="26" y1="24" x2="16" y2="24" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round"/>
+                  <polygon points="16,20 8,24 16,28" fill="#EF4444"/>
+                </svg>
+              </div>
+              <span class="fn-name">LINE STOP</span>
+              <span class="fn-desc">Axial force restraint</span>
+            </button>
 
-          <button class="fn-btn" data-value="hold_down" title="Prevents upward (uplift) movement">
-            <div class="fn-icon">
-              <svg viewBox="0 0 52 52" fill="none">
-                <circle cx="26" cy="30" r="10" fill="#C7D2FE" stroke="#4F46E5" stroke-width="2"/>
-                <rect x="6" y="42" width="40" height="7" rx="2" fill="#374151"/>
-                <path d="M 15 44 L 15 18 Q 15 14 19 14 L 33 14 Q 37 14 37 18 L 37 44"
-                      fill="none" stroke="#003087" stroke-width="4" stroke-linecap="round"/>
-                <polygon points="20,18 26,6 32,18" fill="#EF4444" opacity="0.8"/>
-                <line x1="26" y1="6" x2="26" y2="2" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="fn-name">HOLD DOWN</span>
-            <span class="fn-desc">Uplift restraint</span>
-          </button>
-        </div>
-      </div>
+            <button class="fn-btn" data-value="hold_down" title="Prevents upward (uplift) movement">
+              <div class="fn-icon">
+                <svg viewBox="0 0 52 52" fill="none">
+                  <circle cx="26" cy="30" r="10" fill="#1A3A5C" stroke="#0EA5E9" stroke-width="2"/>
+                  <rect x="6" y="42" width="40" height="7" rx="2" fill="#1A2942"/>
+                  <path d="M 15 44 L 15 18 Q 15 14 19 14 L 33 14 Q 37 14 37 18 L 37 44"
+                        fill="none" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+                  <polygon points="20,18 26,6 32,18" fill="#EF4444" opacity="0.85"/>
+                  <line x1="26" y1="6" x2="26" y2="2" stroke="#EF4444" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="fn-name">HOLD DOWN</span>
+              <span class="fn-desc">Uplift restraint</span>
+            </button>
 
-      <!-- ── SUBMIT ── -->
-      <button class="submit-btn" id="submitBtn" onclick="runSelection()">
-        <svg class="submit-spinner" id="spinner" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="display:none">
-          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-        </svg>
-        <svg class="submit-arrow" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-          <path d="M5 12h14M12 5l7 7-7 7"/>
-        </svg>
-        <span id="submitLabel">SELECT SUPPORT</span>
-      </button>
-    </aside>
-
-    <!-- ─── RIGHT PANEL: RESULTS ─── -->
-    <section class="result-panel" id="resultPanel">
-
-      <!-- EMPTY STATE -->
-      <div class="empty-state" id="emptyState">
-        <div class="empty-graphic">
-          <svg viewBox="0 0 200 160" fill="none">
-            <!-- Structural beam -->
-            <rect x="20" y="118" width="160" height="10" rx="3" fill="#CBD5E1"/>
-            <rect x="88" y="128" width="24" height="18" fill="#94A3B8"/>
-            <rect x="20" y="146" width="160" height="8" rx="3" fill="#CBD5E1"/>
-            <!-- Pipe -->
-            <circle cx="100" cy="90" r="30" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
-            <ellipse cx="90" cy="80" rx="9" ry="6" fill="rgba(255,255,255,0.6)"/>
-            <!-- Question marks -->
-            <text x="74" y="98" font-family="Arial" font-size="28" font-weight="800" fill="#CBD5E1">?</text>
-            <!-- Supports (dashed — awaiting selection) -->
-            <rect x="66" y="118" width="68" height="2" rx="1" fill="#CBD5E1" stroke-dasharray="4,2"/>
-          </svg>
-        </div>
-        <h3>Ready to Select</h3>
-        <p>Set the pipe parameters on the left panel, then click <strong>Select Support</strong> to retrieve the applicable support type, drawing reference numbers, and engineering notes.</p>
-        <div class="empty-steps">
-          <div class="step"><span class="step-num">1</span><span>Select pipe size &amp; material</span></div>
-          <div class="step"><span class="step-num">2</span><span>Set PWHT &amp; insulation</span></div>
-          <div class="step"><span class="step-num">3</span><span>Choose support function</span></div>
-          <div class="step"><span class="step-num">4</span><span>Click <em>Select Support</em></span></div>
-        </div>
-      </div>
-
-      <!-- RESULT CONTENT -->
-      <div class="result-content" id="resultContent" style="display:none">
-
-        <!-- Illustration zone -->
-        <div class="illus-zone">
-          <div class="illus-corner tl"></div>
-          <div class="illus-corner tr"></div>
-          <img id="supportImg" src="" alt="" class="support-illus">
-          <div class="illus-meta" id="illusMeta"></div>
-        </div>
-
-        <!-- Details zone -->
-        <div class="details-zone">
-          <!-- Badge + title -->
-          <div class="result-header">
-            <span class="result-status-badge" id="resultBadge">APPLICABLE</span>
-            <h1 class="result-code" id="resultCode"></h1>
-          </div>
-
-          <!-- Input summary -->
-          <div class="input-summary" id="inputSummary"></div>
-
-          <!-- Drawing refs -->
-          <div class="info-card" id="drawingsCard">
-            <div class="info-card-header">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-              </svg>
-              Drawing References
-            </div>
-            <div class="chip-row" id="drawingChips"></div>
-          </div>
-
-          <!-- Engineering notes -->
-          <div class="info-card" id="notesCard" style="display:none">
-            <div class="info-card-header">
-              <svg viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-              </svg>
-              Engineering Notes
-            </div>
-            <div id="notesList"></div>
           </div>
         </div>
-      </div>
 
-      <!-- NOT APPLICABLE STATE -->
-      <div class="na-state" id="naState" style="display:none">
-        <img src="/static/images/supports/not_applicable.svg" alt="Not applicable" class="na-img">
-        <h3>Not Applicable</h3>
-        <p>No support type is assigned in the standard for this combination of pipe size, material class, and operating conditions. Refer to the piping support engineer for guidance.</p>
-        <div class="na-params" id="naParams"></div>
-      </div>
-
-      <!-- ERROR STATE -->
-      <div class="error-state" id="errorState" style="display:none">
-        <div class="error-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <!-- ── SUBMIT ── -->
+        <button class="submit-btn" id="submitBtn" onclick="runSelection()">
+          <svg class="submit-spinner" id="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
           </svg>
-        </div>
-        <h3>Selection Error</h3>
-        <p id="errorMsg"></p>
-        <button class="retry-btn" onclick="resetToEmpty()">Try Again</button>
-      </div>
+          <svg class="submit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          <span id="submitLabel">GET SUPPORT TYPE</span>
+        </button>
 
-    </section>
-  </main>
+      </aside><!-- /.form-panel -->
+
+      <!-- ─── RIGHT PANEL: RESULTS ─── -->
+      <section class="result-panel" id="resultPanel">
+
+        <!-- EMPTY STATE -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-graphic">
+            <svg viewBox="0 0 200 160" fill="none">
+              <!-- Structural beam -->
+              <rect x="20" y="118" width="160" height="10" rx="2" fill="#334155"/>
+              <rect x="88" y="128" width="24" height="18" fill="#243447"/>
+              <rect x="20" y="146" width="160" height="6" rx="2" fill="#2A3F56"/>
+              <!-- Pipe -->
+              <circle cx="100" cy="90" r="30" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+              <ellipse cx="90" cy="80" rx="9" ry="6" fill="rgba(14,165,233,0.08)"/>
+              <!-- Question mark -->
+              <text x="74" y="98" font-family="monospace" font-size="28" font-weight="800" fill="#334155">?</text>
+              <!-- Support indicator dashed -->
+              <rect x="66" y="118" width="68" height="2" rx="1" fill="#334155" stroke-dasharray="4,2"/>
+            </svg>
+          </div>
+          <h3>Awaiting Input</h3>
+          <p>Set pipe parameters on the left, then click <strong>Get Support Type</strong> to retrieve the applicable support, drawing references, and engineering notes.</p>
+          <div class="empty-steps">
+            <div class="step"><span class="step-num">1</span><span>Select pipe size &amp; material</span></div>
+            <div class="step"><span class="step-num">2</span><span>Set PWHT &amp; insulation</span></div>
+            <div class="step"><span class="step-num">3</span><span>Choose support function</span></div>
+            <div class="step"><span class="step-num">4</span><span>Click <em>Get Support Type</em></span></div>
+          </div>
+        </div>
+
+        <!-- RESULT CONTENT -->
+        <div class="result-content" id="resultContent" style="display:none">
+
+          <!-- Illustration zone — blueprint feel -->
+          <div class="illus-zone">
+            <div class="illus-corner tl"></div>
+            <div class="illus-corner tr"></div>
+            <img id="supportImg" src="" alt="" class="support-illus">
+            <div class="illus-meta" id="illusMeta"></div>
+          </div>
+
+          <!-- Details zone -->
+          <div class="details-zone">
+            <!-- Badge + title -->
+            <div class="result-header">
+              <span class="result-status-badge" id="resultBadge">APPLICABLE</span>
+              <h1 class="result-code" id="resultCode"></h1>
+            </div>
+
+            <!-- Input summary -->
+            <div class="input-summary" id="inputSummary"></div>
+
+            <!-- Drawing refs -->
+            <div class="info-card" id="drawingsCard">
+              <div class="info-card-header">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                </svg>
+                Drawing References
+              </div>
+              <div class="chip-row" id="drawingChips"></div>
+            </div>
+
+            <!-- Engineering notes -->
+            <div class="info-card" id="notesCard" style="display:none">
+              <div class="info-card-header">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                </svg>
+                Engineering Notes
+              </div>
+              <div id="notesList"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOT APPLICABLE STATE -->
+        <div class="na-state" id="naState" style="display:none">
+          <img src="/static/images/supports/not_applicable.svg" alt="Not applicable" class="na-img">
+          <h3>Not Applicable</h3>
+          <p>No support type is assigned in the standard for this combination. Refer to the piping support engineer for guidance.</p>
+          <div class="na-params" id="naParams"></div>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div class="error-state" id="errorState" style="display:none">
+          <div class="error-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+          </div>
+          <h3>Selection Error</h3>
+          <p id="errorMsg"></p>
+          <button class="retry-btn" onclick="resetToEmpty()">Try Again</button>
+        </div>
+
+      </section><!-- /.result-panel -->
+
+    </div><!-- /.main-layout -->
+
+  </div><!-- /.app-shell -->
 
   <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
   <footer class="footer">
     <span>JESA Piping Support Selector</span>
     <span class="foot-sep">·</span>
     <span>For internal engineering use only</span>
+    <span class="foot-sep">·</span>
+    <span>Per JESA Piping Support Standard — Tables 15 &amp; 16</span>
   </footer>
 
   <script src="/static/js/app.js"></script>
+
+  <!-- Step indicator + AUTO badge wiring (visual only) -->
+  <script>
+  (function () {
+    "use strict";
+
+    // Update sidebar step states based on DOM state
+    function updateStepper() {
+      var npsSelected  = !!document.querySelector('.nps-btn.selected');
+      var matSelected  = !!(document.getElementById('materialSelect') || {}).value;
+      var fnSelected   = !!document.querySelector('.fn-btn.selected');
+      var resultVisible = (document.getElementById('resultContent') || {}).style &&
+                          document.getElementById('resultContent').style.display !== 'none';
+      var naVisible     = (document.getElementById('naState') || {}).style &&
+                          document.getElementById('naState').style.display !== 'none';
+
+      var step1done = npsSelected && matSelected;
+      var step2done = step1done && fnSelected;
+      var step3done = resultVisible || naVisible;
+
+      setStep('si-1', step1done, !step1done);
+      setStep('si-2', step2done, step1done && !step2done);
+      setStep('si-3', step3done, step2done && !step3done);
+    }
+
+    function setStep(id, done, active) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('si-done', 'si-active');
+      if (done)       el.classList.add('si-done');
+      else if (active) el.classList.add('si-active');
+    }
+
+    // AUTO badge: observe pcFeedback class changes
+    var pcFeedback = document.getElementById('pcFeedback');
+    var matWrapper = document.getElementById('materialSelectWrapper');
+    if (pcFeedback && matWrapper) {
+      new MutationObserver(function () {
+        matWrapper.dataset.auto = pcFeedback.classList.contains('pc-ok') ? 'true' : '';
+      }).observe(pcFeedback, { attributeFilter: ['class'] });
+    }
+
+    // Poll stepper state at 250ms (imperceptible, no perf impact for this tool)
+    setInterval(updateStepper, 250);
+    updateStepper();
+  })();
+  </script>
+
 </body>
 </html>
