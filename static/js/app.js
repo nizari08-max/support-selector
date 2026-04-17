@@ -33,6 +33,19 @@ const NPS_SIZES = [
   { label: "48",   value: 48.0 },
 ];
 
+// ── DN → NPS mapping (ISO 6708 / ASME B36.10M) ───────────────────────────────
+const DN_TO_NPS = {
+   15: 0.5,   20: 0.75,   25: 1.0,   32: 1.25,   40: 1.5,
+   50: 2.0,   65: 2.5,    80: 3.0,  100: 4.0,   125: 5.0,
+  150: 6.0,  200: 8.0,   250: 10.0, 300: 12.0,  350: 14.0,
+  400: 16.0, 450: 18.0,  500: 20.0, 550: 22.0,  600: 24.0,
+  650: 26.0, 700: 28.0,  750: 30.0, 800: 32.0,  900: 36.0,
+ 1000: 40.0, 1050: 42.0, 1200: 48.0,
+};
+
+// NPS fraction labels for sizes not in the grid (1¼", 2½", 5")
+const NPS_EXTRA_LABELS = { 1.25: "1¼", 2.5: "2½", 5.0: "5" };
+
 // ── Illustration labels ───────────────────────────────────────────────────────
 const ILLUS_LABELS = {
   direct_rest:   "Direct Rest — End Elevation",
@@ -79,7 +92,46 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("materialSelect").addEventListener("change", e => {
     state.material = e.target.value;
   });
+  document.getElementById("dnInput").addEventListener("input", handleDNInput);
 });
+
+// ── DN converter ─────────────────────────────────────────────────────────────
+function handleDNInput(e) {
+  const raw = e.target.value.trim();
+  const resultEl = document.getElementById("dnResult");
+  if (!raw) {
+    resultEl.textContent = "";
+    resultEl.className = "dn-result";
+    return;
+  }
+  const dn = parseInt(raw, 10);
+  if (isNaN(dn) || dn <= 0) {
+    resultEl.textContent = "Enter a positive integer.";
+    resultEl.className = "dn-result dn-error";
+    return;
+  }
+  const npsValue = DN_TO_NPS[dn];
+  if (npsValue === undefined) {
+    resultEl.textContent = `DN ${dn} not found. Please select NPS manually.`;
+    resultEl.className = "dn-result dn-error";
+    return;
+  }
+  const npsEntry = NPS_SIZES.find(s => s.value === npsValue);
+  if (!npsEntry) {
+    const lbl = NPS_EXTRA_LABELS[npsValue] || npsValue;
+    resultEl.textContent = `DN ${dn} = NPS ${lbl}" — not available in this grid`;
+    resultEl.className = "dn-result dn-warn";
+    return;
+  }
+  const buttons = document.querySelectorAll(".nps-btn");
+  buttons.forEach(btn => {
+    if (btn.textContent.trim() === npsEntry.label) {
+      selectNPS(npsValue, btn, npsEntry.label);
+    }
+  });
+  resultEl.textContent = `DN ${dn} = NPS ${npsEntry.label}"`;
+  resultEl.className = "dn-result dn-ok";
+}
 
 // ── NPS grid ──────────────────────────────────────────────────────────────────
 function buildNPSGrid() {

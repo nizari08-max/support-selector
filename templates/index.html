@@ -45,6 +45,25 @@
         </div>
       </div>
 
+      <!-- ── DN CONVERTER ── -->
+      <div class="form-section dn-converter-section">
+        <label class="section-label">
+          <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0a8 8 0 100 16A8 8 0 008 0zm0 14A6 6 0 118 2a6 6 0 010 12zM7 5h2v4H7zm0 5h2v2H7z"/>
+          </svg>
+          Quick DN Converter
+        </label>
+        <div class="dn-row">
+          <div class="dn-input-wrap">
+            <span class="dn-prefix">DN</span>
+            <input type="number" id="dnInput" class="dn-input"
+                   placeholder="e.g. 150" min="1" max="1200" step="1">
+          </div>
+          <span class="dn-result" id="dnResult"></span>
+        </div>
+        <p class="field-hint">Type a DN value to auto-select the matching NPS size below.</p>
+      </div>
+
       <!-- ── NPS ── -->
       <div class="form-section">
         <label class="section-label">

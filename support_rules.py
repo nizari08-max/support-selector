@@ -313,7 +313,7 @@ SUPPORT_RULES = {
 
     # =========================================================================
     # TABLE 16  -  LINE STOP SUPPORTS
-    # FRP (NPS 2"-24") is handled as a special case in selector.py → CF04
+    # FRP (NPS 2"-24") is handled as a special case in selector.py → CF03
     # =========================================================================
     "line_stop": {
 
