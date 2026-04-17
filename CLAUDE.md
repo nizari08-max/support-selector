@@ -1,52 +1,44 @@
-# CLAUDE.md
+# Support Selector — Project Context
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+## What this app does
+Flask web app that helps stress engineers select appropriate support types for piping systems.
 
-## Running the Tool
+## Key files
+- `app.py` — Flask entry point and routes
+- `selector.py` — Core logic: `select_support()` function
+- `support_rules.py` — Rules engine for support selection
+- `drawing_index.py` — Maps support types to drawing references
+- `templates/` — HTML templates
+- `static/` — CSS/JS assets
 
-```bash
-cd piping_support_tool
-python main.py
-```
+## Deployment
+- Platform: Railway
+- Repo: github.com/nizari08-max/support-selector
+- Entry point: `app.py`
+- Procfile: `web: python app.py`
+- All source files must stay at repo root (not in subdirectories)
 
-Python 3.7+ required. No external dependencies — all modules are in the same directory.
+## Architecture note
+`app.py` calls `from selector import select_support` — selector.py must stay at root.
 
-## Architecture
+## Current status
+Last updated: 2026-04-17 (commit aee51eb)
 
-This is a **four-module CLI decision-support tool** for selecting piping supports per the JESA Piping Support Standard Rev A (Project QW2507).
+### Completed
+- **PDF row highlighting rewrite** — switched from y-band to x-band approach for rotation=270 pages. `_find_row_rect()` now returns `Rect(hit.x0-1, table_y0, hit.x1+1, table_y1)`.
+- **Highlight overflow fix** — table y-bounds detected by searching for column-header anchors ("PIPE SIZE", "NPS", "NB", "DN") within 200 pts of the pipe-size hit. Prevents title-block label false matches (e.g. SC71).
+- **Small bore highlight fix** — exact-word match verification via page word list (±3 pt tolerance rejects substring hits like '8"' inside '18"', '40' inside '400'). NPS patterns searched first; DN only as fallback.
+- **Format variant coverage** — `_NPS_PATTERNS` now covers: fractional ('3/4"'), decimal ('0.75"'), split-word ('1/2"' for PR01), and no-hyphen ('11/2"' for FRP saddle drawings SC71–SC74).
+- **PR01/PR02 isolation pads mapped** — JS-PE-DPS-0380 (page 78) and JS-PE-DPS-0381 (page 79) added to DRAWING_PAGES, DRAWING_INDEX, and DRAWING_SIZE_RANGES.
+- **Full drawing index audit** — all support codes verified; CF04/0372 confirmed as SF01 (FRP Thrust Collar) in this PDF revision.
 
-### Data Flow
+### Known limitations
+- **CF04** has no valid drawing in this PDF revision — 0372 is SF01. Clicking CF04 chip produces no PDF. Consider removing CF04 from support_rules.py or showing a "not available" message.
+- **SC09** does not exist in the standard (support rules reference "SC06-SC09" but only SC01–SC08 are defined).
 
-```
-main.py → selector.py → support_rules.py
-                      → drawing_index.py
-```
+### In progress
+- Nothing — all three reported PDF issues resolved and pushed.
 
-1. `main.py` — Interactive CLI. Collects 5 user inputs: NPS (pipe size), material class, PWHT required, insulation condition, and support function.
-2. `selector.py` — Normalizes raw inputs into canonical keys, navigates the rules table, and returns a `SelectionResult`. Entry point is `select_support()`.
-3. `support_rules.py` — Nested `SUPPORT_RULES` dict encoding the engineering decision tables. Lookup path: `[function][size_range][material_class][pwht_status][insulation]` → `{"support": "CODE", "notes": [...]}`. Also contains `NOTES` dict for note text.
-4. `drawing_index.py` — Maps support codes (e.g. `SC04`, `GL01`) to JESA drawing sheet references (`JS-PE-DPS-XXXX-001/002`).
-
-### Key Normalization Mappings (selector.py)
-
-- **Size ranges**: NPS float → one of `0.5_to_1`, `1.5`, `2_to_16`, `18_to_24`, `26_to_30`, `32_to_48`
-- **Material classes**: free-text → one of `cs_lt`, `ss_ds_sd_sa`, `al_ay_cn`, `frp`
-- **Insulation**: free-text → `uninsulated` or `hot_insulated`
-- **Function**: free-text → `rest`, `guide`, `line_stop`, or `hold_down`
-
-### Current State of the Rules Table
-
-All entries in `SUPPORT_RULES` currently contain `"TODO"` values. Populating these from the JESA standard documents is the primary outstanding task.
-
-### Drawing Code Families
-
-| Prefix | Description |
-|--------|-------------|
-| BP | Bearing Plates |
-| WA | Wear Pad Assemblies |
-| SH | Pipe Shoes |
-| SC | Shoe Clamps / Saddle Supports |
-| GL | Guide Supports |
-| LS | Line Stop Supports |
-| GH | Hold Down / Guide-Hold Supports |
-| CF | FRP Clamp Shoes |
+### Next steps
+- Deploy to Railway and verify `/drawing/<ref>` endpoint works in production.
+- Decide whether to remove CF04 from support_rules.py or surface a UI message for missing drawings.
