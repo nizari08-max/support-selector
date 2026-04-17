@@ -1,3 +1,67 @@
+# UI Polish — Typography, Animations & Header/Footer Fixes
+**Date:** 2026-04-18
+
+---
+
+## Files Modified
+
+### `static/css/style.css` — Targeted improvements
+
+**Font system:**
+- `--font-ui` changed from `'Rajdhani'` to `'Outfit'` — modern geometric, more readable
+- `--font-body` changed from `'Inter'` to `'Outfit'` — unified font across all UI text
+- `--font-mono` unchanged: `'JetBrains Mono'` for all technical codes/values
+- Page title (`.title-main`) bumped to 22px; panel headers to 18px; body text to 13–14px
+
+**Logo fix:**
+- `.logo` filter changed from `brightness(10) invert(1)` → `brightness(0) invert(1)` for reliable white conversion against blue header
+
+**Animations (CSS-only, GPU-accelerated, prefers-reduced-motion aware):**
+- `navbarSlide` — header slides down from top on page load (0.4s ease-out)
+- `cardFadeUp` — sidebar (0s), form panel (0.1s), result panel (0.2s) stagger in on load
+- `npsGlow` — selected NPS button pulses a subtle blue ring (2s infinite)
+- `badgePop` — APPLICABLE badge scales in with a pop (0.3s, 0.25s delay)
+- `chipFadeIn` — drawing chips stagger-fade in via nth-child delays (0.05s–0.54s)
+- NPS buttons: `scale(1.05)` hover, `scale(0.95)` active press feel
+- Drawing chips: `translateY(-2px)` hover lift + shadow; `scale(0.97)` on click
+- `@media (prefers-reduced-motion: reduce)` — disables all animations/transitions
+
+**Footer redesign:**
+- Background: `--bg-footer: #002B7A` (dark JESA blue)
+- `border-top: 2px solid var(--accent-blue)`
+- New layout: `.footer-inner` flexbox with `.footer-brand` (title + dept) and `.footer-year`
+- Footer text: "Pipe Support Selector — Engineering Tool" / "Stress Engineering Department · JESA"
+
+**Document reference banner (replaces plain sidebar-meta):**
+- `.doc-ref-banner`: `--accent-blue-lt` bg, 4px solid `--bg-header` left border
+- Title: "JESA Piping Support Standard" in `--bg-header` bold
+- Subtitle: "JS-PE-DPS Standard · Revision C · Oct 2025" in `--text-secondary`
+- "VIEW →" right-side arrow label
+- Hover: `#DBEAFE` bg, shadow, `translateY(-1px)` lift
+
+**Animation variables added to `:root`:**
+- `--anim-fast: 0.15s`, `--anim-med: 0.3s`, `--anim-slow: 0.5s`
+- `--bg-footer: #002B7A`
+
+**Step indicator transitions** smoothed to `--anim-med` (0.3s) on color changes
+
+### `templates/index.html` — Targeted HTML updates
+
+- **Google Fonts**: replaced Rajdhani + Inter with `Outfit:wght@300;400;500;600;700`; kept JetBrains Mono
+- **Sidebar meta**: replaced plain `sm-tool/sm-std/sm-ver` spans with `.doc-ref-banner` block
+- **Footer**: replaced flat single-line footer with structured dark footer (brand + dept + year)
+- **Year injection**: inline script sets `#footerYear` to `© YYYY` dynamically
+
+---
+
+## Functionality Preserved
+- All JS element IDs, form fields, Flask routes unchanged
+- `app.js` not modified
+- All animations use `transform` and `opacity` only (GPU-accelerated, no layout thrash)
+- `prefers-reduced-motion` respected
+
+---
+
 # UI Refresh — JESA Professional Blue (Light Theme)
 **Date:** 2026-04-18
 

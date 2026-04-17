@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JESA — Piping Support Selector</title>
 
-  <!-- Google Fonts: Rajdhani (UI/headings) + JetBrains Mono (codes/numbers) + Inter (body) -->
+  <!-- Google Fonts: Outfit (UI/body) + JetBrains Mono (codes/technical values) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
@@ -79,9 +79,13 @@
       </div><!-- /.stepper -->
 
       <div class="sidebar-meta">
-        <span class="sm-tool">JESA</span>
-        <span class="sm-std">Piping Support Standard</span>
-        <span class="sm-ver">JESA Standard</span>
+        <div class="doc-ref-banner" role="note" title="JESA Piping Support Standard — Reference Document">
+          <div class="doc-ref-body">
+            <span class="doc-ref-title">JESA Piping Support Standard</span>
+            <span class="doc-ref-sub">JS-PE-DPS Standard · Revision C · Oct 2025</span>
+          </div>
+          <span class="doc-ref-arrow">VIEW →</span>
+        </div>
       </div>
     </aside><!-- /.step-sidebar -->
 
@@ -425,11 +429,13 @@
 
   <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
   <footer class="footer">
-    <span>JESA Piping Support Selector</span>
-    <span class="foot-sep">·</span>
-    <span>For internal engineering use only</span>
-    <span class="foot-sep">·</span>
-    <span>Per JESA Piping Support Standard</span>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Pipe Support Selector — Engineering Tool</span>
+        <span class="footer-dept">Stress Engineering Department · JESA</span>
+      </div>
+      <span class="footer-year" id="footerYear"></span>
+    </div>
   </footer>
 
   <script src="/static/js/app.js"></script>
@@ -478,6 +484,10 @@
     // Poll stepper state at 250ms (imperceptible, no perf impact for this tool)
     setInterval(updateStepper, 250);
     updateStepper();
+
+    // Footer year
+    var fy = document.getElementById('footerYear');
+    if (fy) fy.textContent = '© ' + new Date().getFullYear();
   })();
   </script>
 

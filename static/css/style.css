@@ -74,14 +74,22 @@
   --shadow-sm:      0 1px 4px rgba(0,87,217,0.06);
 
   /* Typography */
-  --font-ui:    'Rajdhani', 'Barlow Condensed', system-ui, sans-serif;
-  --font-body:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-ui:    'Outfit', system-ui, sans-serif;
+  --font-body:  'Outfit', system-ui, sans-serif;
   --font-mono:  'JetBrains Mono', 'IBM Plex Mono', 'Consolas', monospace;
 
   /* Geometry */
   --radius:     6px;
   --radius-sm:  4px;
   --radius-lg:  10px;
+
+  /* Animation timing */
+  --anim-fast:  0.15s;
+  --anim-med:   0.3s;
+  --anim-slow:  0.5s;
+
+  /* Dark footer */
+  --bg-footer:  #002B7A;
 
   --transition: 0.18s ease;
 }
@@ -106,6 +114,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 200;
+  animation: navbarSlide 0.4s ease-out both;
 }
 .navbar::after {
   content: '';
@@ -122,7 +131,7 @@ body {
   justify-content: space-between;
 }
 .brand { display: flex; align-items: center; gap: 16px; }
-.logo { height: 38px; width: auto; filter: brightness(10) invert(1); }
+.logo { height: 38px; width: auto; filter: brightness(0) invert(1); }
 .nav-divider {
   width: 1px;
   height: 28px;
@@ -131,10 +140,10 @@ body {
 .tool-title { display: flex; flex-direction: column; gap: 1px; }
 .title-main {
   font-family: var(--font-ui);
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 700;
   color: #FFFFFF;
-  letter-spacing: 1.5px;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 .title-sub {
@@ -190,6 +199,7 @@ body {
   top: 59px;
   height: calc(100vh - 59px);
   overflow-y: auto;
+  animation: cardFadeUp var(--anim-slow) ease-out 0s both;
 }
 .sidebar-section-label {
   font-family: var(--font-ui);
@@ -324,6 +334,11 @@ body {
   position: sticky;
   top: 79px;
   box-shadow: var(--shadow);
+  animation: cardFadeUp var(--anim-slow) ease-out 0.1s both;
+  transition: box-shadow var(--transition);
+}
+.form-panel:hover {
+  box-shadow: 0 4px 16px rgba(0,87,217,0.12);
 }
 
 /* Panel header */
@@ -353,15 +368,15 @@ body {
 }
 .panel-header h2 {
   font-family: var(--font-ui);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
   color: var(--text-primary);
   margin-bottom: 3px;
 }
 .panel-header p {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.5;
 }
@@ -426,21 +441,28 @@ body {
   color: var(--text-secondary);
   cursor: pointer;
   text-align: center;
-  transition: border-color var(--transition), background var(--transition),
-              color var(--transition), box-shadow var(--transition);
+  transition: border-color var(--anim-fast) ease,
+              background var(--anim-fast) ease,
+              color var(--anim-fast) ease,
+              transform var(--anim-fast) ease,
+              box-shadow var(--anim-fast) ease;
   line-height: 1;
 }
 .nps-btn:hover {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
   background: var(--accent-blue-lt);
+  transform: scale(1.05);
+}
+.nps-btn:active {
+  transform: scale(0.95);
 }
 .nps-btn.selected {
   border-color: var(--accent-blue);
   background: var(--accent-blue);
   color: #FFFFFF;
-  box-shadow: var(--shadow);
   font-weight: 700;
+  animation: npsGlow 2s ease-in-out infinite;
 }
 .nps-btn.shake { animation: shake 0.4s ease; }
 
@@ -676,6 +698,8 @@ body {
   top: 79px;
   max-height: calc(100vh - 100px);
   overflow-y: auto;
+  animation: cardFadeUp var(--anim-slow) ease-out 0.2s both;
+  transition: box-shadow var(--transition);
 }
 
 /* Scrollbar */
@@ -749,7 +773,7 @@ body {
   animation: slideIn 0.3s ease;
 }
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(16px); }
+  from { opacity: 0; transform: translateX(28px); }
   to   { opacity: 1; transform: translateX(0); }
 }
 
@@ -833,6 +857,7 @@ body {
   color: var(--accent-green);
   border: 1px solid rgba(5,150,105,0.25);
   width: fit-content;
+  animation: badgePop var(--anim-med) ease 0.25s both;
 }
 .result-status-badge::before {
   content: '';
@@ -894,6 +919,17 @@ body {
 
 /* ── DRAWING CHIPS ──────────────────────────────────────────────── */
 .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* Staggered chip fade-in */
+.chip-row .dwg-chip { animation: chipFadeIn 0.25s ease both; }
+.chip-row .dwg-chip:nth-child(1)  { animation-delay: 0.05s; }
+.chip-row .dwg-chip:nth-child(2)  { animation-delay: 0.12s; }
+.chip-row .dwg-chip:nth-child(3)  { animation-delay: 0.19s; }
+.chip-row .dwg-chip:nth-child(4)  { animation-delay: 0.26s; }
+.chip-row .dwg-chip:nth-child(5)  { animation-delay: 0.33s; }
+.chip-row .dwg-chip:nth-child(6)  { animation-delay: 0.40s; }
+.chip-row .dwg-chip:nth-child(7)  { animation-delay: 0.47s; }
+.chip-row .dwg-chip:nth-child(8)  { animation-delay: 0.54s; }
 .dwg-chip {
   display: inline-flex;
   flex-direction: column;
@@ -942,9 +978,12 @@ body {
 .dwg-chip-link:focus-visible {
   background: var(--accent-blue);
   border-color: var(--accent-blue);
-  box-shadow: var(--shadow-blue);
-  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,87,217,0.22);
+  transform: translateY(-2px);
   outline: none;
+}
+.dwg-chip-link:active {
+  transform: translateY(0) scale(0.97);
 }
 .dwg-chip-link:hover .chip-code-label,
 .dwg-chip-link:focus-visible .chip-code-label {
@@ -1086,19 +1125,44 @@ body {
 
 /* ── FOOTER ─────────────────────────────────────────────────────── */
 .footer {
-  background: var(--bg-card);
-  border-top: 1px solid var(--border);
+  background: var(--bg-footer);
+  border-top: 2px solid var(--accent-blue);
   color: var(--text-muted);
-  text-align: center;
-  padding: 12px 24px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.5px;
+  padding: 18px 32px;
+  font-family: var(--font-body);
+  font-size: 12px;
+}
+.footer-inner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: 8px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.footer-title {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.3px;
+}
+.footer-dept {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
+}
+.footer-year {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.5px;
 }
 .foot-sep { opacity: 0.4; }
 
@@ -1257,6 +1321,56 @@ body {
   margin-top: 8px;
 }
 
+/* ── DOCUMENT REFERENCE BANNER ─────────────────────────────────── */
+.doc-ref-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--accent-blue-lt);
+  border-left: 4px solid var(--bg-header);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 12px 14px;
+  margin-top: auto;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--transition), box-shadow var(--transition),
+              transform var(--transition);
+}
+.doc-ref-banner:hover {
+  background: #DBEAFE;
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+.doc-ref-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.doc-ref-title {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--bg-header);
+  letter-spacing: 0.2px;
+  line-height: 1.3;
+}
+.doc-ref-sub {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.2px;
+}
+.doc-ref-arrow {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--bg-header);
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Step indicator transition enhancement */
+.si-dot { transition: background var(--anim-med) ease, border-color var(--anim-med) ease,
+                       color var(--anim-med) ease; }
+.si-line { transition: background var(--anim-med) ease; }
+.si-title { transition: color var(--anim-med) ease; }
+
 /* ── RESPONSIVE — TABLET (≤1100px) ──────────────────────────────── */
 @media (max-width: 1100px) {
   .step-sidebar { display: none; }
@@ -1288,4 +1402,47 @@ body {
   .nps-grid     { grid-template-columns: repeat(5, 1fr); }
   .function-grid { grid-template-columns: 1fr 1fr; }
   .details-zone { padding: 16px 18px; }
+  .footer-inner { flex-direction: column; gap: 6px; text-align: center; }
+}
+
+/* ── KEYFRAMES ───────────────────────────────────────────────────── */
+
+/* Header slide down */
+@keyframes navbarSlide {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+
+/* Card fade up (staggered page load) */
+@keyframes cardFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* NPS selected — subtle pulsing ring */
+@keyframes npsGlow {
+  0%,100% { box-shadow: 0 0 0 0   rgba(0,87,217,0),    var(--shadow); }
+  50%     { box-shadow: 0 0 0 4px rgba(0,87,217,0.18), var(--shadow); }
+}
+
+/* Result APPLICABLE badge pop */
+@keyframes badgePop {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+/* Drawing reference chip fade in */
+@keyframes chipFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* ── PREFERS REDUCED MOTION ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
