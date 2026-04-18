@@ -1,3 +1,59 @@
+# Support Span Calculator — New Feature
+**Date:** 2026-04-18
+
+---
+
+## What was added
+
+A fully self-contained **Support Span Calculator** tool accessible at `/span` via a new "SPAN CALC" button in the main navbar.
+
+### Files Created
+- **`span_calculator.py`** — Pure Python lookup engine, no Flask imports.
+  - `calculate_span(nps, material, service, insulation, code_preference, ss_schedule)` — returns span_m, span_ft, reference, warning, message, thumb_rule_m/ft, chart_data.
+  - `get_thumb_rule(nps)` — department thumb rule (1–6": starts 3.5 m, +0.5 m/in; 6–18": starts 6.5 m for 8", +0.25 m/in).
+  - `_interp(table, nps)` — linear interpolation between table entries for non-standard sizes.
+  - Four tables implemented: A (ASME B31.1 Table 121.5), B (B31.3/Shell DEP CS), C (B31.3 SS Sch 10S), D (ISO 14692 FRP).
+- **`templates/span_calculator.html`** — Full standalone page, same navbar/footer/theme as index.html. No new CSS file — page-specific styles in inline `<style>` block.
+
+### Files Modified
+- **`app.py`** — Added `from span_calculator import calculate_span`, plus two new routes:
+  - `GET /span` → renders `span_calculator.html`
+  - `POST /api/span` → calls `calculate_span()`, returns JSON
+- **`templates/index.html`** — Added "SPAN CALC" `<a class="nav-tool-link">` button in `.navbar-right`.
+- **`static/css/style.css`** — Added `.nav-tool-link` and `.nav-tool-link.active` styles.
+
+## Feature details
+
+### Inputs
+- **NPS grid** — same button-style selector as main app (20 sizes: ½" to 48").
+- **Material** — CS, LT, SA, SS, DS, SD, AL, AY, CN, FRP (same categories as main app).
+- **SS Schedule** — Sch 10S (Table C) vs Standard/Heavy Wall (Table B basis); visible only for SS/DS/SD.
+- **Code Reference** — ASME B31.3 / Shell DEP (default) or ASME B31.1; visible only for CS/LT/SA.
+- **Fluid Service** — Liquid / Vapor-Gas toggle.
+- **Insulation** — Bare / Insulated toggle (hidden for B31.1 which doesn't distinguish).
+
+### Outputs
+- Large value card: metres (2 dp) + feet equivalent.
+- Reference line (which table/code was used).
+- Warning banner for FRP, AL/AY/CN, and B31.1 insulation note.
+- Interpolation note when exact NPS not in table.
+- **Side-by-side comparison**: ASME reference value vs Dept. Thumb Rule.
+- **Inline bar chart**: span vs pipe size for all table entries, selected NPS highlighted.
+- Engineering disclaimer at bottom.
+
+### Material routing
+| Material | Table used |
+|----------|-----------|
+| CS, LT, SA + B31.3 | Table B — ASME B31.3 / Shell DEP |
+| CS, LT, SA + B31.1 | Table A — ASME B31.1 Table 121.5 |
+| SS, DS, SD + Sch 10S | Table C — ASME B31.3 SS Sch 10S |
+| SS, DS, SD + Std/Heavy | Table B — CS basis (conservative) |
+| FRP | Table D — ISO 14692 (simplified) |
+| AL, AY, CN | Table C × 0.85 approximate factor |
+| HDPE, PVC etc. | Message — not covered |
+
+---
+
 # App Logo & Favicon — Pipe+Support Icon
 **Date:** 2026-04-18
 

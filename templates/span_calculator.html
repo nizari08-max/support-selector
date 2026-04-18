@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JESA — Support Span Calculator</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <script>
+    (function () {
+      var t = localStorage.getItem('pss-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
+
+  <style>
+    /* ── Span Calculator page-specific styles ──────────────────────── */
+    .sc-shell {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 28px 0;
+      gap: 0;
+    }
+
+    /* Page header */
+    .sc-page-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .sc-page-header h1 {
+      font-family: var(--font-ui);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .sc-page-header .sc-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+    .sc-info-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--accent-blue-lt);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+    }
+    .sc-info-btn .sc-tooltip {
+      display: none;
+      position: absolute;
+      top: 26px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-header);
+      color: #fff;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      font-size: 11px;
+      line-height: 1.6;
+      width: 280px;
+      z-index: 100;
+      box-shadow: var(--shadow-lg);
+      text-align: left;
+    }
+    .sc-info-btn .sc-tooltip::before {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-bottom-color: var(--bg-header);
+    }
+    .sc-info-btn:hover .sc-tooltip,
+    .sc-info-btn:focus .sc-tooltip { display: block; }
+
+    /* Two-column layout */
+    .sc-layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    /* Form column */
+    .sc-form-col {
+      width: 420px;
+      min-width: 360px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sc-panel-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sc-panel-header-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-blue-lt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-blue);
+      flex-shrink: 0;
+    }
+    .sc-panel-header-icon svg { width: 16px; height: 16px; }
+    .sc-panel-header h2 {
+      font-family: var(--font-ui);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .sc-panel-header p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .sc-field { display: flex; flex-direction: column; gap: 6px; }
+    .sc-label {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* NPS grid — reused pattern */
+    .sc-nps-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .sc-nps-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 6px 2px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--anim-fast);
+    }
+    .sc-nps-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .sc-nps-btn.selected {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+
+    /* Toggle row */
+    .sc-toggle { display: flex; gap: 4px; }
+    .sc-toggle-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-ui);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--anim-fast);
+    }
+    .sc-toggle-btn:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+    .sc-toggle-btn.active {
+      background: var(--accent-blue);
+      border-color: var(--accent-blue);
+      color: #fff;
+    }
+    .sc-toggle-btn.active-amber {
+      background: var(--accent-amber);
+      border-color: var(--accent-amber-dk);
+      color: #fff;
+    }
+
+    /* Select */
+    .sc-select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%2394A3B8'%3E%3Cpath d='M7 7l3 3 3-3'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 20px;
+    }
+    .sc-select:focus { outline: none; border-color: var(--accent-blue); }
+
+    /* Submit */
+    .sc-submit {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent-blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background var(--anim-fast);
+      margin-top: 4px;
+    }
+    .sc-submit:hover { background: var(--accent-blue-dk); }
+    .sc-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* SS-schedule row — only shown for SS/DS/SD */
+    #ssScheduleRow { display: none; }
+
+    /* ── Result column ──────────────────────────────────────────────── */
+    .sc-result-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Empty state */
+    .sc-empty {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 48px 32px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .sc-empty svg { width: 64px; height: 64px; opacity: 0.35; margin-bottom: 12px; }
+    .sc-empty h3 { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+    .sc-empty p { font-size: 12px; line-height: 1.6; }
+
+    /* Primary result card */
+    .sc-result-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent-blue);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      padding: 24px 28px;
+    }
+    .sc-result-card.warn { border-top-color: var(--accent-amber); }
+
+    .sc-value-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .sc-value-m {
+      font-family: var(--font-mono);
+      font-size: 42px;
+      font-weight: 600;
+      color: var(--accent-blue);
+      line-height: 1;
+    }
+    .sc-value-ft {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+    .sc-result-label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .sc-result-ref {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--accent-blue-lt);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      border-left: 3px solid var(--accent-blue);
+      line-height: 1.5;
+    }
+    .sc-result-warn {
+      font-size: 11px;
+      color: var(--accent-amber-dk);
+      background: var(--accent-amber-lt);
+      border-radius: var(--radius-sm);
+      padding: 7px 10px;
+      border-left: 3px solid var(--accent-amber);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+    .sc-nps-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* Message card (no value) */
+    .sc-msg-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--accent-amber);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 24px 28px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    /* Comparison card */
+    .sc-compare-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 18px 24px;
+    }
+    .sc-compare-title {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .sc-compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .sc-comp-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+    }
+    .sc-comp-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .sc-comp-val {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .sc-comp-val.blue { color: var(--accent-blue); }
+    .sc-comp-val.amber { color: var(--accent-amber-dk); }
+    .sc-comp-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Chart card */
+    .sc-chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 18px 24px;
+    }
+    .sc-chart-title {
+      font-family: var(--font-ui);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .sc-chart { display: flex; flex-direction: column; gap: 5px; }
+    .sc-chart-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 52px;
+      align-items: center;
+      gap: 8px;
+    }
+    .sc-chart-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: right;
+    }
+    .sc-chart-track {
+      background: var(--bg-main);
+      border-radius: 3px;
+      height: 16px;
+      overflow: hidden;
+    }
+    .sc-chart-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: var(--accent-blue);
+      opacity: 0.45;
+      transition: width 0.5s ease;
+    }
+    .sc-chart-row.selected .sc-chart-bar { opacity: 1; }
+    .sc-chart-row.selected .sc-chart-lbl { color: var(--accent-blue); font-weight: 700; }
+    .sc-chart-row.selected .sc-chart-valtext { color: var(--accent-blue); font-weight: 700; }
+    .sc-chart-valtext {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+
+    /* Disclaimer */
+    .sc-disclaimer {
+      background: var(--accent-amber-lt);
+      border: 1px solid var(--accent-amber);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      font-size: 11px;
+      color: var(--accent-amber-dk);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .sc-disclaimer strong { display: block; margin-bottom: 4px; font-size: 12px; }
+
+    /* Field hint */
+    .sc-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Responsive */
+    @media (max-width: 960px) {
+      .sc-layout { flex-direction: column; }
+      .sc-form-col { width: 100%; min-width: 0; }
+    }
+    @media (max-width: 560px) {
+      .sc-shell { padding: 16px 12px 0; }
+      .sc-nps-grid { grid-template-columns: repeat(5, 1fr); }
+      .sc-compare-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════ TOP BAR ══════════════════════════ -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
+        <span class="logo-label">JESA</span>
+        <div class="nav-divider"></div>
+        <div class="tool-title">
+          <span class="title-main">Support Span Calculator</span>
+          <span class="title-sub">Max Recommended Spacing · ASME B31.1 / B31.3 / ISO 14692</span>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <div class="status-dot" title="Application ready"></div>
+        <a class="nav-tool-link" href="/" title="Pipe Support Selector">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+            <circle cx="10" cy="8" r="5"/><rect x="4" y="14" width="12" height="4" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
+          </svg>
+          SUPPORT SEL
+        </a>
+        <a class="nav-tool-link active" href="/span">SPAN CALC</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════ MAIN CONTENT ══════════════════════════ -->
+  <div class="sc-shell">
+
+    <!-- Page header -->
+    <div class="sc-page-header">
+      <div>
+        <h1>Support Span Calculator</h1>
+        <div class="sc-subtitle">Maximum recommended spacing between consecutive pipe supports</div>
+      </div>
+      <div class="sc-info-btn" tabindex="0">
+        ℹ
+        <div class="sc-tooltip">
+          <strong>ASME B31.1 vs B31.3</strong><br>
+          <strong>B31.1 (Power Piping)</strong> — Table 121.5 gives direct span values for standard steel pipe (water service and steam/gas/air). Widely used for utility and power plant systems.<br><br>
+          <strong>B31.3 (Process Piping)</strong> — Does not publish a span table directly. Values here are from Shell DEP engineering guidelines, commonly adopted for process plant design.
+        </div>
+      </div>
+    </div>
+
+    <div class="sc-layout">
+
+      <!-- ─── FORM COLUMN ─── -->
+      <aside class="sc-form-col">
+
+        <div class="sc-panel-header">
+          <div class="sc-panel-header-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M3 12h18M3 18h18"/>
+              <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity=".3"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Pipe Parameters</h2>
+            <p>Define conditions to look up the recommended span.</p>
+          </div>
+        </div>
+
+        <!-- NPS -->
+        <div class="sc-field">
+          <label class="sc-label">
+            Nominal Pipe Size — NPS
+            <span id="scNpsDisplay" style="font-family:var(--font-mono);font-size:11px;background:var(--accent-blue-lt);color:var(--accent-blue);padding:1px 7px;border-radius:3px;display:none"></span>
+          </label>
+          <div class="sc-nps-grid" id="scNpsGrid"></div>
+          <p class="sc-hint">Select pipe size in inches (NPS).</p>
+        </div>
+
+        <!-- Material -->
+        <div class="sc-field">
+          <label class="sc-label" for="scMaterial">Material Class</label>
+          <select id="scMaterial" class="sc-select">
+            <option value="">— Select material —</option>
+            <optgroup label="Carbon Steel">
+              <option value="CS">CS — Carbon Steel</option>
+              <option value="LT">LT — Low Temperature Carbon Steel</option>
+              <option value="SA">SA — Alloy Steel</option>
+            </optgroup>
+            <optgroup label="Stainless / Duplex">
+              <option value="SS">SS — Stainless Steel</option>
+              <option value="DS">DS — Duplex Stainless Steel</option>
+              <option value="SD">SD — Super Duplex Stainless Steel</option>
+            </optgroup>
+            <optgroup label="Non-Ferrous">
+              <option value="AL">AL — Aluminum (approximate)</option>
+              <option value="AY">AY — Aluminum Alloy (approximate)</option>
+              <option value="CN">CN — Copper-Nickel (approximate)</option>
+            </optgroup>
+            <optgroup label="Composite">
+              <option value="FRP">FRP — Fiberglass Reinforced Plastic</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- SS Schedule (only for SS/DS/SD) -->
+        <div class="sc-field" id="ssScheduleRow">
+          <label class="sc-label">Pipe Schedule (SS/Duplex)</label>
+          <div class="sc-toggle" id="ssScheduleGroup">
+            <button class="sc-toggle-btn active" data-value="schedule_10s">Sch 10S (thin)</button>
+            <button class="sc-toggle-btn" data-value="standard">Std / Heavy Wall</button>
+          </div>
+          <p class="sc-hint">Sch 10S uses Table C; Standard/Heavy uses CS-basis Table B values.</p>
+        </div>
+
+        <!-- Code Reference -->
+        <div class="sc-field" id="codeRefRow">
+          <label class="sc-label">Code Reference</label>
+          <div class="sc-toggle" id="codeRefGroup">
+            <button class="sc-toggle-btn active" data-value="b31_3">ASME B31.3 / Shell DEP</button>
+            <button class="sc-toggle-btn" data-value="b31_1">ASME B31.1</button>
+          </div>
+          <p class="sc-hint">B31.3 / Shell DEP is default for process piping. B31.1 for power/utility.</p>
+        </div>
+
+        <!-- Service Type -->
+        <div class="sc-field">
+          <label class="sc-label">Fluid Service</label>
+          <div class="sc-toggle" id="serviceGroup">
+            <button class="sc-toggle-btn active" data-value="liquid">Liquid</button>
+            <button class="sc-toggle-btn" data-value="vapor">Vapor / Gas</button>
+          </div>
+        </div>
+
+        <!-- Insulation -->
+        <div class="sc-field" id="insulationRow">
+          <label class="sc-label">Insulation Condition</label>
+          <div class="sc-toggle" id="insulationGroup">
+            <button class="sc-toggle-btn active" data-value="bare">Bare</button>
+            <button class="sc-toggle-btn" data-value="insulated">Insulated</button>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="sc-submit" id="scSubmit" onclick="runSpan()">
+          CALCULATE SPAN
+        </button>
+
+      </aside><!-- /.sc-form-col -->
+
+      <!-- ─── RESULT COLUMN ─── -->
+      <div class="sc-result-col">
+
+        <!-- Empty state -->
+        <div id="scEmpty" class="sc-empty">
+          <svg viewBox="0 0 80 80" fill="none">
+            <rect x="10" y="62" width="60" height="8" rx="2" fill="var(--border)"/>
+            <rect x="32" y="50" width="16" height="12" rx="1" fill="var(--border)"/>
+            <circle cx="40" cy="34" r="16" stroke="var(--border)" stroke-width="2.5" fill="none"/>
+            <line x1="30" y1="50" x2="10" y2="50" stroke="var(--border)" stroke-width="2" stroke-dasharray="4,3"/>
+            <line x1="50" y1="50" x2="70" y2="50" stroke="var(--border)" stroke-width="2" stroke-dasharray="4,3"/>
+            <text x="35" y="40" font-family="monospace" font-size="18" font-weight="700" fill="var(--text-muted)">?</text>
+          </svg>
+          <h3>Set Parameters</h3>
+          <p>Select pipe size, material, service type, and insulation status, then click <strong>Calculate Span</strong>.</p>
+        </div>
+
+        <!-- Result card -->
+        <div id="scResultCard" class="sc-result-card" style="display:none">
+          <div class="sc-value-row">
+            <span class="sc-value-m" id="scValM">—</span>
+            <span class="sc-value-ft" id="scValFt"></span>
+          </div>
+          <div class="sc-result-label">Maximum recommended support span</div>
+          <div class="sc-result-ref" id="scRef"></div>
+          <div class="sc-result-warn" id="scWarn" style="display:none"></div>
+          <div class="sc-nps-note" id="scNpsNote" style="display:none"></div>
+        </div>
+
+        <!-- Message card (no span value) -->
+        <div id="scMsgCard" class="sc-msg-card" style="display:none" id="scMsgCard"></div>
+
+        <!-- Comparison card -->
+        <div id="scCompareCard" class="sc-compare-card" style="display:none">
+          <div class="sc-compare-title">Side-by-Side Comparison</div>
+          <div class="sc-compare-grid">
+            <div class="sc-comp-item">
+              <div class="sc-comp-label">Industry Reference (ASME)</div>
+              <div class="sc-comp-val blue" id="scCompAsme">—</div>
+              <div class="sc-comp-sub" id="scCompAsmeSub"></div>
+            </div>
+            <div class="sc-comp-item">
+              <div class="sc-comp-label">Dept. Thumb Rule (metallic)</div>
+              <div class="sc-comp-val amber" id="scCompThumb">—</div>
+              <div class="sc-comp-sub" id="scCompThumbSub"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart card -->
+        <div id="scChartCard" class="sc-chart-card" style="display:none">
+          <div class="sc-chart-title">Span vs Pipe Size — Selected Conditions</div>
+          <div class="sc-chart" id="scChart"></div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="sc-disclaimer">
+          <strong>Engineering Disclaimer</strong>
+          This tool provides preliminary reference values only. Final support spacing must be validated
+          by detailed stress analysis considering all loads, thermal effects, concentrated weights,
+          and flexibility requirements per ASME B31.3 (or the applicable code). For elbows, bends,
+          valves, or concentrated loads, reduce the span accordingly.
+        </div>
+
+      </div><!-- /.sc-result-col -->
+
+    </div><!-- /.sc-layout -->
+
+  </div><!-- /.sc-shell -->
+
+  <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Support Span Calculator — Engineering Tool</span>
+        <span class="footer-dept">Piping Department · JESA</span>
+      </div>
+      <span class="footer-year" id="footerYear"></span>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════ SCRIPT ══════════════════════════ -->
+  <script>
+  (function () {
+    "use strict";
+
+    /* ── NPS sizes ────────────────────────────────────────────────── */
+    var NPS_SIZES = [0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8, 10, 12, 14, 16, 18, 20, 24, 30, 36, 42, 48];
+    var NPS_LABELS = {
+      0.5: '½"', 0.75: '¾"', 1: '1"', 1.5: '1½"', 2: '2"',
+      3: '3"', 4: '4"', 6: '6"', 8: '8"', 10: '10"', 12: '12"',
+      14: '14"', 16: '16"', 18: '18"', 20: '20"', 24: '24"',
+      30: '30"', 36: '36"', 42: '42"', 48: '48"'
+    };
+
+    var selectedNps = null;
+
+    /* Build NPS grid */
+    var grid = document.getElementById('scNpsGrid');
+    NPS_SIZES.forEach(function (nps) {
+      var btn = document.createElement('button');
+      btn.className = 'sc-nps-btn';
+      btn.textContent = NPS_LABELS[nps] || (nps + '"');
+      btn.dataset.nps = nps;
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.sc-nps-btn').forEach(function (b) { b.classList.remove('selected'); });
+        btn.classList.add('selected');
+        selectedNps = nps;
+        var disp = document.getElementById('scNpsDisplay');
+        disp.textContent = 'NPS\u00a0' + (NPS_LABELS[nps] || nps + '"');
+        disp.style.display = '';
+      });
+      grid.appendChild(btn);
+    });
+
+    /* ── Toggle group helper ────────────────────────────────────────── */
+    function bindToggle(groupId, onChange) {
+      var grp = document.getElementById(groupId);
+      if (!grp) return;
+      grp.querySelectorAll('.sc-toggle-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          grp.querySelectorAll('.sc-toggle-btn').forEach(function (b) {
+            b.classList.remove('active', 'active-amber');
+          });
+          btn.classList.add('active');
+          if (onChange) onChange(btn.dataset.value);
+        });
+      });
+    }
+
+    function getToggle(groupId) {
+      var grp = document.getElementById(groupId);
+      if (!grp) return null;
+      var a = grp.querySelector('.active');
+      return a ? a.dataset.value : null;
+    }
+
+    bindToggle('ssScheduleGroup');
+    bindToggle('codeRefGroup', function (val) {
+      /* Hide insulation toggle for B31.1 (not distinguished in that table) */
+      var insulRow = document.getElementById('insulationRow');
+      if (insulRow) insulRow.style.display = val === 'b31_1' ? 'none' : '';
+    });
+    bindToggle('serviceGroup');
+    bindToggle('insulationGroup');
+
+    /* Show/hide SS-schedule and code-ref rows based on material */
+    document.getElementById('scMaterial').addEventListener('change', function () {
+      var mat = this.value;
+      var ssRow = document.getElementById('ssScheduleRow');
+      var crRow = document.getElementById('codeRefRow');
+      var issSS = ['SS', 'DS', 'SD'].indexOf(mat) >= 0;
+      var isCS  = ['CS', 'LT', 'SA'].indexOf(mat) >= 0;
+      ssRow.style.display = issSS ? '' : 'none';
+      crRow.style.display = isCS  ? '' : 'none';
+    });
+
+    /* ── Submit ─────────────────────────────────────────────────────── */
+    window.runSpan = function () {
+      if (!selectedNps) { alert('Please select a pipe size (NPS).'); return; }
+      var mat = document.getElementById('scMaterial').value;
+      if (!mat) { alert('Please select a material class.'); return; }
+
+      var payload = {
+        nps:             selectedNps,
+        material:        mat,
+        service:         getToggle('serviceGroup')  || 'liquid',
+        insulation:      getToggle('insulationGroup') || 'bare',
+        code_preference: getToggle('codeRefGroup')  || 'b31_3',
+        ss_schedule:     getToggle('ssScheduleGroup') || 'schedule_10s',
+      };
+
+      document.getElementById('scSubmit').disabled = true;
+      document.getElementById('scSubmit').textContent = 'Calculating…';
+
+      fetch('/api/span', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { renderResult(d, payload); })
+      .catch(function (e) { alert('Request failed: ' + e); })
+      .finally(function () {
+        document.getElementById('scSubmit').disabled = false;
+        document.getElementById('scSubmit').textContent = 'CALCULATE SPAN';
+      });
+    };
+
+    /* ── Render result ──────────────────────────────────────────────── */
+    function renderResult(d, payload) {
+      hide('scEmpty');
+
+      if (d.message) {
+        /* No span value — show message card */
+        hide('scResultCard');
+        hide('scCompareCard');
+        hide('scChartCard');
+        var mc = document.getElementById('scMsgCard');
+        mc.innerHTML = '<strong style="color:var(--accent-amber-dk)">&#9888; ' +
+                       'No Tabulated Value</strong><br>' + d.message;
+        show('scMsgCard');
+        return;
+      }
+
+      hide('scMsgCard');
+
+      /* Result card */
+      document.getElementById('scValM').textContent  = d.span_m.toFixed(2) + '\u00a0m';
+      document.getElementById('scValFt').textContent = '(' + d.span_ft + '\u00a0ft)';
+      document.getElementById('scRef').textContent   = d.reference || '';
+
+      var warnEl = document.getElementById('scWarn');
+      if (d.warning) { warnEl.textContent = '\u26a0 ' + d.warning; show('scWarn'); }
+      else hide('scWarn');
+
+      var noteEl = document.getElementById('scNpsNote');
+      if (d.nps_used && Math.abs(d.nps_used - payload.nps) > 0.01) {
+        noteEl.textContent = 'Note: exact NPS ' + payload.nps + '\u2033 not in table — value interpolated.';
+        show('scNpsNote');
+      } else {
+        hide('scNpsNote');
+      }
+
+      show('scResultCard');
+
+      /* Comparison card */
+      document.getElementById('scCompAsme').textContent = d.span_m.toFixed(2) + '\u00a0m';
+      document.getElementById('scCompAsmeSub').textContent = '= ' + d.span_ft + '\u00a0ft';
+
+      if (d.thumb_rule_m !== null && d.thumb_rule_m !== undefined) {
+        document.getElementById('scCompThumb').textContent = d.thumb_rule_m.toFixed(2) + '\u00a0m';
+        document.getElementById('scCompThumbSub').textContent = '= ' + d.thumb_rule_ft + '\u00a0ft';
+        show('scCompareCard');
+      } else {
+        hide('scCompareCard');
+      }
+
+      /* Chart */
+      if (d.chart_data && d.chart_data.length > 0) {
+        renderChart(d.chart_data, payload.nps);
+        show('scChartCard');
+      } else {
+        hide('scChartCard');
+      }
+    }
+
+    /* ── Chart render ────────────────────────────────────────────────── */
+    function renderChart(data, selectedNps) {
+      var container = document.getElementById('scChart');
+      container.innerHTML = '';
+      var maxVal = Math.max.apply(null, data.map(function (r) { return r[1]; }));
+
+      data.forEach(function (row) {
+        var nps = row[0], val = row[1];
+        var pct = maxVal > 0 ? (val / maxVal * 100).toFixed(1) : 0;
+        var isSelected = Math.abs(nps - selectedNps) < 0.01;
+        var lbl = NPS_LABELS[nps] || (nps + '"');
+
+        var rowEl = document.createElement('div');
+        rowEl.className = 'sc-chart-row' + (isSelected ? ' selected' : '');
+
+        rowEl.innerHTML =
+          '<span class="sc-chart-lbl">NPS\u00a0' + lbl + '</span>' +
+          '<div class="sc-chart-track"><div class="sc-chart-bar" style="width:' + pct + '%"></div></div>' +
+          '<span class="sc-chart-valtext">' + val.toFixed(2) + '\u00a0m</span>';
+
+        container.appendChild(rowEl);
+      });
+    }
+
+    /* ── Util ─────────────────────────────────────────────────────────── */
+    function show(id) { var el = document.getElementById(id); if (el) el.style.display = ''; }
+    function hide(id) { var el = document.getElementById(id); if (el) el.style.display = 'none'; }
+
+    /* Footer year */
+    var fy = document.getElementById('footerYear');
+    if (fy) fy.textContent = '\u00a9 ' + new Date().getFullYear();
+  })();
+  </script>
+
+  <!-- Dark / Light mode toggle -->
+  <script>
+  (function () {
+    var btn  = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      if (t === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); if (icon) icon.textContent = '\u2600\ufe0f'; }
+      else { document.documentElement.removeAttribute('data-theme'); if (icon) icon.textContent = '\ud83c\udf19'; }
+    }
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    if (btn) {
+      btn.addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('pss-theme', next);
+        applyTheme(next);
+      });
+    }
+  })();
+  </script>
+
+</body>
+</html>

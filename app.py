@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 from selector import select_support        # noqa: E402
 from pdf_service import get_drawing_pdf    # noqa: E402
+from span_calculator import calculate_span # noqa: E402
 
 app = Flask(__name__)
 
@@ -88,6 +89,30 @@ def api_select():
             "piping_class":     piping_class,
         })
     except ValueError as e:
+        return jsonify({"success": False, "error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"success": False, "error": f"Unexpected error: {e}"}), 500
+
+
+@app.route("/span")
+def span_page():
+    return render_template("span_calculator.html")
+
+
+@app.route("/api/span", methods=["POST"])
+def api_span():
+    data = request.get_json(force=True)
+    try:
+        result = calculate_span(
+            nps=float(data["nps"]),
+            material=str(data["material"]),
+            service=str(data.get("service", "liquid")),
+            insulation=str(data.get("insulation", "bare")),
+            code_preference=str(data.get("code_preference", "b31_3")),
+            ss_schedule=str(data.get("ss_schedule", "schedule_10s")),
+        )
+        return jsonify({"success": True, **result})
+    except (KeyError, ValueError) as e:
         return jsonify({"success": False, "error": str(e)}), 400
     except Exception as e:
         return jsonify({"success": False, "error": f"Unexpected error: {e}"}), 500
