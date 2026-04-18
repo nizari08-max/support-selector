@@ -187,10 +187,10 @@ body {
 .brand { display: flex; align-items: center; gap: 16px; }
 .logo { height: 38px; width: auto; filter: brightness(0) invert(1); }
 .logo-app {
-  height: 36px;
-  width: 36px;
+  height: 52px;
+  width: 52px;
   filter: none;
-  border-radius: 6px;
+  border-radius: 8px;
   flex-shrink: 0;
 }
 .logo-label {
