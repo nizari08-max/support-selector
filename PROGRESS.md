@@ -1,3 +1,59 @@
+# App Logo & Favicon — Pipe+Support Icon
+**Date:** 2026-04-18
+
+---
+
+## Design Concept
+Three-element mark: **blue rounded-square background → white pipe annulus (end elevation) → amber pedestal + base plate.**
+Reads instantly as "pipe sitting on a support" at both 16 px and 256 px.
+No gradients, no raster images — pure flat SVG geometry.
+
+## Files Created
+
+### `static/favicon.svg` — 32×32 browser-tab icon
+- `viewBox="0 0 32 32"`, `width="32" height="32"`
+- `<rect width="32" height="32" rx="5" fill="#003DA5"/>` — JESA blue rounded square
+- Pipe annulus: outer circle `cx=16 cy=11.5 r=7.5 fill=#FFFFFF`, bore `r=4.5 fill=#003DA5`
+- Support post: `rect x=14.25 y=19 w=3.5 h=4 rx=0.5 fill=#F59E0B` (amber)
+- Base plate: `rect x=5.5 y=23 w=21 h=4 rx=1.5 fill=#F59E0B` (amber)
+- All shapes self-contained, no external deps, scales perfectly
+
+### `static/images/logo_app.svg` — 200×200 full app logo
+- Same three-element composition, proportionally scaled
+- Outer pipe r=46, bore r=28 with subtle `#1A5AC7` bore-edge ring stroke (3px)
+- Amber post `w=18 h=22 rx=3`, base plate `w=132 h=22 rx=8`
+- Suitable for About pages, splash screens, documentation
+
+## Files Modified
+
+### `templates/index.html`
+1. **Favicon link** added in `<head>` (immediately after `<title>`):
+   ```html
+   <link rel="icon" type="image/svg+xml"
+         href="{{ url_for('static', filename='favicon.svg') }}">
+   ```
+   Uses Flask `url_for` for correct path resolution in both dev and Railway.
+
+2. **Header logo** replaced `logo_jesa.svg` img with new app icon + JESA text label:
+   ```html
+   <img src="{{ url_for('static', filename='favicon.svg') }}"
+        alt="PSS" class="logo logo-app">
+   <span class="logo-label">JESA</span>
+   ```
+   `logo-app` class prevents the existing `brightness(0) invert(1)` filter from destroying the icon colours.
+
+### `static/css/style.css`
+- `.logo-app` — `filter: none; height: 36px; width: 36px; border-radius: 6px;` — overrides `.logo` filter
+- `.logo-label` — Outfit 700, 15px, letter-spacing 2.5px, white uppercase — matches navbar brand typographic style
+
+## Verified
+- `favicon.svg` + `logo_app.svg` are self-contained, no external refs
+- Header brand area reads: [pipe+support icon] JESA | Pipe Support Selector / Engineering Reference Tool
+- `filter: none` on `.logo-app` preserves the blue/white/amber palette in the header
+- Browser tab replaces the generic PDF icon
+
+---
+
 # Standard PDF Banner — 404 Fix
 **Date:** 2026-04-18
 

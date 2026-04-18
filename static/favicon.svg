@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Blue rounded-square background -->
+  <rect width="32" height="32" rx="5" fill="#003DA5"/>
+
+  <!-- Pipe cross-section (end elevation) — white annulus -->
+  <circle cx="16" cy="11.5" r="7.5" fill="#FFFFFF"/>
+  <circle cx="16" cy="11.5" r="4.5" fill="#003DA5"/>
+
+  <!-- Support pedestal — amber post -->
+  <rect x="14.25" y="19" width="3.5" height="4" rx="0.5" fill="#F59E0B"/>
+
+  <!-- Support base plate — amber -->
+  <rect x="5.5" y="23" width="21" height="4" rx="1.5" fill="#F59E0B"/>
+</svg>

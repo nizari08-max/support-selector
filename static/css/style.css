@@ -186,6 +186,22 @@ body {
 }
 .brand { display: flex; align-items: center; gap: 16px; }
 .logo { height: 38px; width: auto; filter: brightness(0) invert(1); }
+.logo-app {
+  height: 36px;
+  width: 36px;
+  filter: none;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.logo-label {
+  font-family: var(--font-ui);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  user-select: none;
+}
 .nav-divider {
   width: 1px;
   height: 28px;
