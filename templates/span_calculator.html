@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JESA — Support Span Calculator</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script>(function(){var t=localStorage.getItem('pss-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
+</head>
+<body>
+
+<!-- ══ TOP BAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
+      <span class="logo-label">JESA</span>
+      <div class="nav-divider"></div>
+      <div class="tool-title">
+        <span class="title-main">Support Span Calculator</span>
+        <span class="title-sub">KS-PE-SPC-0073 Rev 0 · Appendix A Tables 13 &amp; 14</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="status-dot" title="Application ready"></div>
+      <a class="nav-tool-link" href="/">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <circle cx="10" cy="8" r="5"/>
+          <rect x="4" y="14" width="12" height="4" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
+        </svg>
+        SUPPORT SEL
+      </a>
+      <a class="nav-tool-link active" href="/span">SPAN CALC</a>
+      <a class="nav-tool-link" href="/reference">REFERENCE</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<div class="sc-shell">
+
+  <div class="sc-page-header">
+    <div>
+      <h1>Support Span Calculator</h1>
+      <div class="sc-subtitle">Maximum recommended spacing · KS-PE-SPC-0073 Rev 0 · All spans in metres</div>
+    </div>
+    <a href="/reference" class="sc-ref-link">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12">
+        <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/>
+        <circle cx="8" cy="11" r=".8" fill="currentColor" stroke="none"/>
+      </svg>
+      Assumptions &amp; Formulae
+    </a>
+  </div>
+
+  <div class="sc-layout">
+
+    <!-- ── FORM ── -->
+    <aside class="sc-form-col">
+
+      <div class="sc-panel-header">
+        <div class="sc-panel-header-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18M3 12h18M3 18h18"/>
+            <rect x="9" y="9" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity=".3"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Pipe Parameters</h2>
+          <p>Complete each step in order to look up the span.</p>
+        </div>
+      </div>
+
+      <!-- ── 1. MPMS Piping Class ─────────────────────────────────── -->
+      <div class="sc-step" id="stepMpms">
+        <label class="sc-label" for="mpmsInput">
+          Piping Class (MPMS)
+          <span style="font-size:10px;font-weight:400;text-transform:none;letter-spacing:0;color:var(--text-muted)">— optional</span>
+        </label>
+        <div class="mpms-input-row">
+          <input id="mpmsInput" class="mpms-input" type="text" list="mpmsList"
+            placeholder="e.g. BB3, BD1, BK2" maxlength="6" autocomplete="off" spellcheck="false">
+          <datalist id="mpmsList"></datalist>
+          <button class="mpms-clear-btn" id="mpmsClear" type="button">&times;</button>
+        </div>
+        <div class="mpms-resolve-bar" id="mpmsBar"></div>
+        <p class="sc-hint">Enter a class code to auto-fill material. Case-insensitive.</p>
+      </div>
+
+      <!-- ── 2. NPS ─────────────────────────────────────────────────── -->
+      <div class="sc-step" id="stepNps">
+        <label class="sc-label">
+          Nominal Pipe Size — NPS
+          <span id="scNpsDisplay" style="font-family:var(--font-mono);font-size:11px;background:var(--accent-blue-lt);color:var(--accent-blue);padding:1px 7px;border-radius:3px;display:none"></span>
+        </label>
+        <div class="sc-nps-grid" id="scNpsGrid"></div>
+      </div>
+
+      <!-- ── 3. Material ────────────────────────────────────────────── -->
+      <div class="sc-step" id="stepMaterial">
+        <label class="sc-label" for="scMaterial">
+          Material
+          <span id="matAutoBadge" class="mpms-auto-badge" style="display:none">AUTO</span>
+        </label>
+        <select id="scMaterial" class="sc-select">
+          <option value="">— Select material —</option>
+          <optgroup label="Table 13 — schedule + temperature required">
+            <option value="CS">CS — Carbon Steel</option>
+            <option value="LT">LT — Low Temp. Carbon Steel (= CS spans)</option>
+            <option value="SS">SS — Stainless Steel</option>
+          </optgroup>
+          <optgroup label="Table 14 — NPS only, no further inputs">
+            <option value="DS">DS — Duplex Stainless Steel</option>
+            <option value="SD">SD — Super Duplex Stainless Steel</option>
+            <option value="AS">AS — Alloy Steel</option>
+            <option value="AL">AL — Aluminium</option>
+            <option value="AY">AY — Aluminium Alloy</option>
+            <option value="TI">TI — Titanium</option>
+            <option value="CN">CN — Copper-Nickel</option>
+            <option value="FRP">FRP — Fibre-Reinforced Plastic</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="sc-step-sep" id="sep13" style="display:none"></div>
+
+      <!-- ── 4. Schedule (Table 13 only) ───────────────────────────── -->
+      <div class="sc-step hidden" id="stepSchedule">
+        <label class="sc-label">Schedule / Wall Thickness</label>
+        <div class="sc-toggle" id="scheduleGroup">
+          <!-- rebuilt dynamically per NPS -->
+        </div>
+        <p class="sc-hint" id="schedHint">Labels change at NPS 8" (SCH 80 → ½") and NPS 12" (SCH 40 → ⅜").</p>
+      </div>
+
+      <!-- ── 5. Pipe condition: Bare / Insulated ────────────────────── -->
+      <div class="sc-step hidden" id="stepCond">
+        <label class="sc-label">Pipe Condition</label>
+        <div class="sc-toggle">
+          <button class="sc-choice-btn" data-group="cond" data-value="bare" onclick="choose(this)">
+            Bare Pipe
+          </button>
+          <button class="sc-choice-btn" data-group="cond" data-value="insulated" onclick="choose(this)">
+            Insulated Pipe
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 5a. Bare fill: Empty / Water Filled ────────────────────── -->
+      <div class="sc-step hidden" id="stepFillBare">
+        <label class="sc-label">Fill Condition</label>
+        <div class="sc-toggle">
+          <button class="sc-choice-btn" data-group="fill" data-value="empty" onclick="choose(this)">
+            Empty
+          </button>
+          <button class="sc-choice-btn" data-group="fill" data-value="water" onclick="choose(this)">
+            Water Filled
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 5b. Insulated service: Vapor / Liquid ──────────────────── -->
+      <div class="sc-step hidden" id="stepFillIns">
+        <label class="sc-label">Service Type</label>
+        <div class="sc-toggle">
+          <button class="sc-choice-btn" data-group="fill" data-value="vapor" onclick="choose(this)">
+            Vapor Filled
+          </button>
+          <button class="sc-choice-btn" data-group="fill" data-value="liquid" onclick="choose(this)">
+            Liquid Filled
+          </button>
+        </div>
+      </div>
+
+      <!-- ── 6. Temperature (insulated only) ───────────────────────── -->
+      <div class="sc-step hidden" id="stepTemp">
+        <label class="sc-label">Operating Temperature</label>
+        <div class="sc-toggle">
+          <button class="sc-choice-btn" data-group="temp" data-value="t1" onclick="choose(this)">
+            &le;&nbsp;175&nbsp;°C<br><span style="font-size:9px;opacity:.65">(&le;&nbsp;347&nbsp;°F)</span>
+          </button>
+          <button class="sc-choice-btn" data-group="temp" data-value="t2" onclick="choose(this)">
+            176–315&nbsp;°C<br><span style="font-size:9px;opacity:.65">(348–599&nbsp;°F)</span>
+          </button>
+          <button class="sc-choice-btn" data-group="temp" data-value="t3" onclick="choose(this)">
+            316–400&nbsp;°C<br><span style="font-size:9px;opacity:.65">(600–752&nbsp;°F)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Table 14 note ──────────────────────────────────────────── -->
+      <div class="sc-step hidden" id="stepT14note">
+        <div class="t14-note">
+          <strong style="color:var(--text-secondary);display:block;margin-bottom:4px">Table 14 material</strong>
+          A single span applies to both vapour and liquid service — no schedule,
+          condition, or temperature input is needed.
+        </div>
+      </div>
+
+      <!-- ── Submit ─────────────────────────────────────────────────── -->
+      <button class="sc-submit" id="scSubmit" disabled onclick="runSpan()">
+        LOOK UP SPAN
+      </button>
+
+    </aside>
+
+    <!-- ── RESULT COLUMN ── -->
+    <div class="sc-result-col">
+
+      <div id="scEmpty" class="sc-empty">
+        <svg viewBox="0 0 80 80" fill="none">
+          <rect x="10" y="62" width="60" height="8" rx="2" fill="var(--border)"/>
+          <rect x="32" y="50" width="16" height="12" rx="1" fill="var(--border)"/>
+          <circle cx="40" cy="34" r="16" stroke="var(--border)" stroke-width="2.5" fill="none"/>
+          <line x1="30" y1="50" x2="10" y2="50" stroke="var(--border)" stroke-width="2" stroke-dasharray="4,3"/>
+          <line x1="50" y1="50" x2="70" y2="50" stroke="var(--border)" stroke-width="2" stroke-dasharray="4,3"/>
+          <text x="35" y="40" font-family="monospace" font-size="18" font-weight="700" fill="var(--text-muted)">?</text>
+        </svg>
+        <h3>Complete All Steps</h3>
+        <p>Fill in every required field in the left panel, then click <strong>Look Up Span</strong>.</p>
+      </div>
+
+      <div id="scResultCard" class="sc-result-card" style="display:none">
+        <div class="sc-value-row">
+          <span class="sc-value-m" id="scValM">—</span>
+          <span class="sc-value-ft" id="scValFt"></span>
+        </div>
+        <div class="sc-result-label">Maximum recommended support span · straight horizontal run only</div>
+        <div class="sc-result-ref" id="scRef"></div>
+        <div class="sc-result-warn" id="scWarn" style="display:none"></div>
+        <div class="sc-nps-note" id="scNpsNote" style="display:none"></div>
+      </div>
+
+      <div id="scMsgCard" class="sc-msg-card" style="display:none"></div>
+
+      <div id="scWeightCard" class="sc-weight-card" style="display:none">
+        <div class="sc-weight-title">Pipe Weight — from Table 13 (bare pipe basis)</div>
+        <div class="sc-weight-grid">
+          <div class="sc-wt-item">
+            <div class="sc-wt-label">Metric</div>
+            <div class="sc-wt-val blue" id="scWtKg">—</div>
+            <div class="sc-wt-sub">kg / m</div>
+          </div>
+          <div class="sc-wt-item">
+            <div class="sc-wt-label">Imperial</div>
+            <div class="sc-wt-val" id="scWtLb">—</div>
+            <div class="sc-wt-sub">lb / ft</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="scChartCard" class="sc-chart-card" style="display:none">
+        <div class="sc-chart-title">Span vs Pipe Size — Selected Conditions</div>
+        <div class="sc-chart" id="scChart"></div>
+      </div>
+
+      <div class="sc-disclaimer">
+        <strong>Engineering Notice — KS-PE-SPC-0073 Rev 0</strong>
+        Values are from Appendix A (Tables 13 &amp; 14) for continuous horizontal straight runs only.
+        Changes in direction, blast loading, elevated temperature &gt; 400 °C, or passive fire
+        protection require shorter spans. Spans assume water-filled insulated pipe
+        (insulation density 200 kg/m³, thickness 50 mm). Seismic loads NOT included.
+        For fluids denser than water (e.g. slurry), span must be recalculated.
+        Final spacing must be validated by the stress engineer.
+        <a href="/reference" style="color:inherit;text-decoration:underline;margin-left:4px">View full assumptions →</a>
+      </div>
+
+    </div><!-- /.sc-result-col -->
+
+  </div><!-- /.sc-layout -->
+</div><!-- /.sc-shell -->
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-title">Support Span Calculator — KS-PE-SPC-0073 Rev 0</span>
+      <span class="footer-dept">Piping Department · JESA</span>
+    </div>
+    <span class="footer-year" id="footerYear"></span>
+  </div>
+</footer>
+
+<!-- ══ SERVER-INJECTED MPMS DATA ══ -->
+<script>var MPMS_DATA={{ mpms_data|tojson|safe }};</script>
+
+<!-- ══ APP SCRIPT ══ -->
+<script>
+(function(){
+"use strict";
+
+/* ── NPS configuration ────────────────────────────────────────── */
+var NPS_T13 = [0.75,1,1.5,2,2.5,3,4,6,8,10,12,14,16,18,20,24];
+var NPS_T14 = [0.75,1,1.5,2,2.5,3,4,6,8,10,12,14,16,18,20,22,24];
+var NPS_ALL = [0.75,1,1.5,2,2.5,3,4,6,8,10,12,14,16,18,20,22,24];
+var NPS_LBL = {0.75:'¾"',1:'1"',1.5:'1½"',2:'2"',2.5:'2½"',3:'3"',4:'4"',
+               6:'6"',8:'8"',10:'10"',12:'12"',14:'14"',16:'16"',18:'18"',
+               20:'20"',22:'22"',24:'24"'};
+
+var TABLE14_MATS = ['DS','SD','AS','AL','AY','TI','CN','FRP'];
+
+/* ── Form state — no defaults, everything starts null ─────────── */
+var S = {
+  nps:      null,   // float
+  material: null,   // string
+  isT14:    false,
+  schedule: null,   // 'sch40'|'sch80'|'10s'
+  cond:     null,   // 'bare'|'insulated'
+  fill:     null,   // 'empty'|'water'|'vapor'|'liquid'
+  temp:     null,   // 't1'|'t2'|'t3'
+};
+
+/* ── Ready check ──────────────────────────────────────────────── */
+function isReady() {
+  if (!S.nps || !S.material) return false;
+  if (S.isT14) return true;
+  if (!S.schedule || !S.cond || !S.fill) return false;
+  if (S.cond === 'insulated' && !S.temp) return false;
+  return true;
+}
+
+/* ── UI update (show/hide steps, enable/disable submit) ────────── */
+function ui() {
+  var t14 = S.isT14;
+  var hasNpsAndMat = !!(S.nps && S.material);
+
+  setStep('sep13',       hasNpsAndMat && !t14);
+  setStep('stepSchedule',hasNpsAndMat && !t14);
+  setStep('stepT14note', hasNpsAndMat &&  t14);
+
+  var hasSched = hasNpsAndMat && !t14 && S.schedule;
+  setStep('stepCond', hasSched);
+
+  var isBare = hasSched && S.cond === 'bare';
+  var isIns  = hasSched && S.cond === 'insulated';
+  setStep('stepFillBare', isBare);
+  setStep('stepFillIns',  isIns);
+
+  var hasFill = hasSched && S.cond && S.fill;
+  setStep('stepTemp', isIns && !!S.fill);
+
+  document.getElementById('scSubmit').disabled = !isReady();
+}
+
+function setStep(id, visible) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('hidden', !visible);
+}
+
+/* ── Schedule toggle — rebuilt when NPS or material changes ────── */
+/* CS / LT : SCH 40 / SCH 80 only  (10S not applicable)
+   SS      : 10S only               (SCH 40 / SCH 80 not applicable)
+   Labels  : sch40 → SCH 40 (NPS ≤ 10) or ⅜″ (NPS ≥ 12)
+             sch80 → SCH 80 (NPS ≤ 6)  or ½″ (NPS ≥ 8)
+             10s   → 10S (always)                              */
+function buildScheduleButtons(nps, material) {
+  var grp = document.getElementById('scheduleGroup');
+
+  /* Clear previous selection if it is no longer valid for the new material */
+  var prevSched = S.schedule;
+  var mat = (material || '').toUpperCase();
+
+  var allOpts = [
+    { value: 'sch40', label: nps <= 10 ? 'SCH 40' : '⅜"' },
+    { value: 'sch80', label: nps <= 6  ? 'SCH 80' : '½"'  },
+    { value: '10s',   label: '10S' },
+  ];
+
+  /* Filter by material */
+  var opts;
+  if (mat === 'SS') {
+    opts = allOpts.filter(function(o){ return o.value === '10s'; });
+  } else {
+    /* CS / LT (and anything else that reaches Table 13) */
+    opts = allOpts.filter(function(o){ return o.value !== '10s'; });
+  }
+
+  /* If the previously chosen schedule is no longer in the valid set, clear it */
+  var validValues = opts.map(function(o){ return o.value; });
+  if (prevSched && validValues.indexOf(prevSched) < 0) {
+    S.schedule = null;
+    S.cond = S.fill = S.temp = null;
+    clearGroup('cond'); clearGroup('fill-bare'); clearGroup('fill-ins'); clearGroup('temp');
+  }
+
+  grp.innerHTML = '';
+  opts.forEach(function(o) {
+    var btn = document.createElement('button');
+    btn.className = 'sc-choice-btn narrow';
+    btn.dataset.group = 'sched';
+    btn.dataset.value = o.value;
+    btn.textContent = o.label;
+    /* Re-mark as active if it was already selected and still valid */
+    if (o.value === S.schedule) btn.classList.add('active');
+    btn.onclick = function() { choose(btn); };
+    grp.appendChild(btn);
+  });
+
+  var hintEl = document.getElementById('schedHint');
+  if (mat === 'SS') {
+    hintEl.textContent = 'Stainless Steel uses Schedule 10S only.';
+  } else if (nps <= 6) {
+    hintEl.textContent = 'SCH 40 and SCH 80 available for NPS ' + NPS_LBL[nps] + '.';
+  } else if (nps <= 10) {
+    hintEl.textContent = 'SCH 40 and ½″ wall (SCH 80 group) available for NPS ' + NPS_LBL[nps] + '.';
+  } else {
+    hintEl.textContent = '⅛″ wall (SCH 40 group) and ½″ wall (SCH 80 group) available.';
+  }
+}
+
+/* ── Generic choice-button handler ────────────────────────────── */
+window.choose = function(btn) {
+  var grp   = btn.dataset.group;
+  var value = btn.dataset.value;
+
+  /* Deactivate siblings in same group */
+  btn.closest('.sc-toggle').querySelectorAll('.sc-choice-btn').forEach(function(b){
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+
+  if (grp === 'sched') {
+    S.schedule = value;
+    /* Reset downstream */
+    S.cond = S.fill = S.temp = null;
+    clearGroup('cond'); clearGroup('fill-bare'); clearGroup('fill-ins'); clearGroup('temp');
+  } else if (grp === 'cond') {
+    S.cond = value;
+    S.fill = S.temp = null;
+    clearGroup('fill-bare'); clearGroup('fill-ins'); clearGroup('temp');
+  } else if (grp === 'fill') {
+    S.fill = value;
+    if (S.cond === 'bare') S.temp = null;  // temperature not used for bare
+    clearGroup('temp');
+  } else if (grp === 'temp') {
+    S.temp = value;
+  }
+
+  ui();
+};
+
+function clearGroup(name) {
+  /* Deactivate all buttons whose data-group starts with name (partial match not needed — exact) */
+  var map = {'cond':'cond','fill-bare':'fill','fill-ins':'fill','temp':'temp'};
+  var dg  = map[name] || name;
+  document.querySelectorAll('[data-group="' + dg + '"]').forEach(function(b){
+    b.classList.remove('active');
+  });
+}
+
+/* ── NPS grid ─────────────────────────────────────────────────── */
+var grid = document.getElementById('scNpsGrid');
+NPS_ALL.forEach(function(nps) {
+  var btn = document.createElement('button');
+  btn.className = 'sc-nps-btn';
+  btn.textContent = NPS_LBL[nps] || (nps+'"');
+  btn.dataset.nps = nps;
+  btn.addEventListener('click', function() {
+    if (btn.classList.contains('dim')) return;
+    grid.querySelectorAll('.sc-nps-btn').forEach(function(b){ b.classList.remove('selected'); });
+    btn.classList.add('selected');
+    S.nps = nps;
+    document.getElementById('scNpsDisplay').textContent = 'NPS ' + (NPS_LBL[nps]||nps+'"');
+    document.getElementById('scNpsDisplay').style.display = '';
+    /* Reset all downstream state */
+    S.schedule = S.cond = S.fill = S.temp = null;
+    clearGroup('cond'); clearGroup('fill-bare'); clearGroup('fill-ins'); clearGroup('temp');
+    if (!S.isT14 && S.material) buildScheduleButtons(nps, S.material);
+    ui();
+  });
+  grid.appendChild(btn);
+});
+
+function refreshNpsGrid() {
+  var valid = S.isT14 ? NPS_T14 : NPS_T13;
+  grid.querySelectorAll('.sc-nps-btn').forEach(function(btn) {
+    var n = parseFloat(btn.dataset.nps);
+    var ok = valid.indexOf(n) >= 0;
+    btn.classList.toggle('dim', !ok);
+    if (!ok && S.nps === n) {
+      btn.classList.remove('selected');
+      S.nps = null;
+      document.getElementById('scNpsDisplay').style.display = 'none';
+    }
+  });
+}
+
+/* ── Material change ──────────────────────────────────────────── */
+function applyMaterial(mat) {
+  S.material = mat || null;
+  S.isT14 = mat ? TABLE14_MATS.indexOf(mat.toUpperCase()) >= 0 : false;
+  /* Reset all downstream */
+  S.schedule = S.cond = S.fill = S.temp = null;
+  clearGroup('cond'); clearGroup('fill-bare'); clearGroup('fill-ins'); clearGroup('temp');
+  refreshNpsGrid();
+  if (!S.isT14 && S.nps) buildScheduleButtons(S.nps, S.material);
+  ui();
+}
+
+document.getElementById('scMaterial').addEventListener('change', function() {
+  clearAutoFill();
+  applyMaterial(this.value);
+});
+
+/* ── MPMS class input ─────────────────────────────────────────── */
+/* Build datalist */
+var dl = document.getElementById('mpmsList');
+var _classMap = {};
+if (MPMS_DATA && MPMS_DATA.groups) {
+  Object.keys(MPMS_DATA.groups).sort().forEach(function(mat) {
+    MPMS_DATA.groups[mat].forEach(function(e) {
+      var opt = document.createElement('option');
+      opt.value = e.code;
+      opt.label = e.code + ' — ' + e.desc + ' (' + e.rating + ')';
+      dl.appendChild(opt);
+      _classMap[e.code.toUpperCase()] = e;
+    });
+  });
+}
+if (MPMS_DATA && MPMS_DATA.excluded) {
+  Object.keys(MPMS_DATA.excluded).forEach(function(code) {
+    var opt = document.createElement('option');
+    opt.value = code;
+    dl.appendChild(opt);
+    _classMap[code.toUpperCase()] = {excluded:true, reason: MPMS_DATA.excluded[code]};
+  });
+}
+var matLabels = (MPMS_DATA && MPMS_DATA.material_labels) || {};
+
+var mpmsInput = document.getElementById('mpmsInput');
+var mpmsBar   = document.getElementById('mpmsBar');
+
+function resolveAndApply(code) {
+  var key = code.toUpperCase().trim();
+  if (!key) { clearMpms(); return; }
+  var entry = _classMap[key];
+  mpmsInput.className = 'mpms-input';
+
+  if (!entry) {
+    mpmsInput.classList.add('unknown');
+    mpmsBar.className = 'mpms-resolve-bar err';
+    mpmsBar.innerHTML = '<span class="mpms-code-tag">'+key+'</span> — Unknown class code.';
+    clearAutoFill();
+    return;
+  }
+  if (entry.excluded) {
+    mpmsInput.classList.add('excluded');
+    mpmsBar.className = 'mpms-resolve-bar warn';
+    mpmsBar.innerHTML = '<span class="mpms-code-tag">'+key+'</span> — Not supported: '+entry.reason;
+    clearAutoFill();
+    return;
+  }
+  mpmsInput.classList.add('resolved');
+  var mlbl = matLabels[entry.material] || entry.material;
+  mpmsBar.className = 'mpms-resolve-bar ok';
+  mpmsBar.innerHTML = '<span class="mpms-code-tag">'+key+'</span> → '+mlbl+
+    ' &nbsp;|&nbsp; Table '+entry.table+' &nbsp;&middot;&nbsp; '+entry.rating;
+
+  var sel = document.getElementById('scMaterial');
+  sel.value = entry.material;
+  sel.setAttribute('data-auto','true');
+  document.getElementById('matAutoBadge').style.display = '';
+  applyMaterial(entry.material);
+}
+
+function clearMpms() {
+  mpmsInput.value = '';
+  mpmsInput.className = 'mpms-input';
+  mpmsBar.className = 'mpms-resolve-bar';
+  mpmsBar.innerHTML = '';
+  clearAutoFill();
+}
+
+function clearAutoFill() {
+  var sel = document.getElementById('scMaterial');
+  sel.removeAttribute('data-auto');
+  document.getElementById('matAutoBadge').style.display = 'none';
+}
+
+document.getElementById('mpmsClear').addEventListener('click', clearMpms);
+
+var _debounce;
+mpmsInput.addEventListener('input', function() {
+  clearTimeout(_debounce);
+  var v = this.value.trim();
+  if (!v) { clearMpms(); return; }
+  _debounce = setTimeout(function(){ resolveAndApply(v); }, 300);
+});
+mpmsInput.addEventListener('change', function(){ resolveAndApply(this.value); });
+
+/* ── Submit ───────────────────────────────────────────────────── */
+window.runSpan = function() {
+  if (!isReady()) return;
+
+  var apiCond, apiTemp, apiSched;
+  if (S.isT14) {
+    apiCond  = 'vapor_liquid';
+    apiTemp  = 't1';
+    apiSched = 'sch40';
+  } else {
+    apiCond  = (S.cond === 'bare') ? ('bare_' + S.fill) : ('ins_' + S.fill);
+    apiTemp  = S.temp || 't1';
+    apiSched = S.schedule;
+  }
+
+  var payload = {
+    nps:        S.nps,
+    material:   S.material,
+    condition:  apiCond,
+    schedule:   apiSched,
+    temp_range: apiTemp,
+  };
+
+  var btn = document.getElementById('scSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Looking up…';
+
+  fetch('/api/span', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){ renderResult(d, payload); })
+  .catch(function(e){ alert('Request failed: '+e); })
+  .finally(function(){
+    btn.disabled = !isReady();
+    btn.textContent = 'LOOK UP SPAN';
+  });
+};
+
+/* ── Render result ────────────────────────────────────────────── */
+function renderResult(d, payload) {
+  hide('scEmpty');
+  if (!d.success || d.message) {
+    hide('scResultCard'); hide('scWeightCard'); hide('scChartCard');
+    var mc = document.getElementById('scMsgCard');
+    mc.innerHTML = '<strong style="color:var(--accent-amber-dk)">&#9888; No Tabulated Value</strong><br>' +
+                   (d.message || d.error || 'Unknown error');
+    show('scMsgCard');
+    return;
+  }
+  hide('scMsgCard');
+
+  document.getElementById('scValM').textContent  = d.span_m.toFixed(1) + ' m';
+  document.getElementById('scValFt').textContent = '(' + d.span_ft + ' ft)';
+  document.getElementById('scRef').textContent   = d.reference || '';
+
+  var warnEl = document.getElementById('scWarn');
+  if (d.warning) { warnEl.textContent = '⚠ ' + d.warning; show('scWarn'); }
+  else           { hide('scWarn'); }
+
+  var noteEl = document.getElementById('scNpsNote');
+  if (d.nps_used && Math.abs(d.nps_used - payload.nps) > 0.01) {
+    noteEl.textContent = 'Note: NPS '+payload.nps+'" not in table — nearest size ('+d.nps_used+'") used.';
+    show('scNpsNote');
+  } else { hide('scNpsNote'); }
+
+  show('scResultCard');
+
+  if (d.weight_kg_m != null) {
+    document.getElementById('scWtKg').textContent = d.weight_kg_m.toFixed(1);
+    document.getElementById('scWtLb').textContent = d.weight_lb_ft.toFixed(1);
+    show('scWeightCard');
+  } else { hide('scWeightCard'); }
+
+  if (d.chart_data && d.chart_data.length) {
+    renderChart(d.chart_data, payload.nps);
+    show('scChartCard');
+  } else { hide('scChartCard'); }
+}
+
+/* ── Chart ────────────────────────────────────────────────────── */
+function renderChart(data, selNps) {
+  var container = document.getElementById('scChart');
+  container.innerHTML = '';
+  var maxVal = Math.max.apply(null, data.map(function(r){ return r[1]; }));
+  data.forEach(function(row) {
+    var nps=row[0], val=row[1];
+    var pct = maxVal > 0 ? (val/maxVal*100).toFixed(1) : 0;
+    var isSel = Math.abs(nps-selNps) < 0.01;
+    var rowEl = document.createElement('div');
+    rowEl.className = 'sc-chart-row'+(isSel?' selected':'');
+    rowEl.innerHTML =
+      '<span class="sc-chart-lbl">NPS '+(NPS_LBL[nps]||nps+'"')+'</span>'+
+      '<div class="sc-chart-track"><div class="sc-chart-bar" style="width:'+pct+'%"></div></div>'+
+      '<span class="sc-chart-valtext">'+val.toFixed(1)+' m</span>';
+    container.appendChild(rowEl);
+  });
+}
+
+/* ── Util ─────────────────────────────────────────────────────── */
+function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
+function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
+
+document.getElementById('footerYear').textContent = '© '+new Date().getFullYear();
+
+})(); /* end IIFE */
+</script>
+
+<!-- dark/light -->
+<script>
+(function(){
+  var btn=document.getElementById('themeToggle'),icon=document.getElementById('themeIcon');
+  function applyTheme(t){
+    if(t==='dark'){document.documentElement.setAttribute('data-theme','dark');if(icon)icon.textContent='☀️';}
+    else{document.documentElement.removeAttribute('data-theme');if(icon)icon.textContent='🌙';}
+  }
+  applyTheme(document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light');
+  if(btn)btn.addEventListener('click',function(){
+    var next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    localStorage.setItem('pss-theme',next);applyTheme(next);
+  });
+})();
+</script>
+</body>
+</html>

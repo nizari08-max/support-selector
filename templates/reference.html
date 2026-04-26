@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JESA — Span Reference</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <script>
+    (function () {
+      var t = localStorage.getItem('pss-theme');
+      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+  </script>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
+        <span class="logo-label">JESA</span>
+        <div class="nav-divider"></div>
+        <div class="tool-title">
+          <span class="title-main">Span Reference</span>
+          <span class="title-sub">KS-PE-SPC-0073 Rev 0 · Assumptions, Formulae &amp; Tables</span>
+        </div>
+      </div>
+      <div class="navbar-right">
+        <div class="status-dot" title="Application ready"></div>
+        <a class="nav-tool-link" href="/">SUPPORT SEL</a>
+        <a class="nav-tool-link" href="/span">SPAN CALC</a>
+        <a class="nav-tool-link active" href="/reference">REFERENCE</a>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+          <span id="themeIcon">🌙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="ref-shell">
+
+    <a href="/span" class="ref-back">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+        <path d="M10 3L5 8l5 5"/>
+      </svg>
+      Back to Span Calculator
+    </a>
+
+    <div class="ref-header">
+      <h1>Span Calculation Reference</h1>
+      <div class="ref-docref">
+        <strong>Document:</strong> KS-PE-SPC-0073 Rev 0 — Onshore Support Specification
+        &nbsp;·&nbsp; <strong>Date:</strong> 01 December 2019
+        &nbsp;·&nbsp; <strong>Section:</strong> Appendix A, Maximum Recommended Support Spacing
+        &nbsp;·&nbsp; <strong>Authority:</strong> Worley / JESA
+      </div>
+    </div>
+
+    <!-- ── ASSUMPTIONS ─────────────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Assumptions</h2>
+      <ul class="ref-list">
+        <li>
+          <span class="ref-bullet"></span>
+          <span>All spans assume pipes are <strong>full of water</strong> and <strong>insulated</strong>.
+          Insulation density = 200 kg/m³ (12.5 lb/ft³), insulation thickness = 50 mm (2 in).</span>
+        </li>
+        <li>
+          <span class="ref-bullet"></span>
+          <span><strong>Low Temperature Carbon Steel (LT)</strong> pipe weights and spans are taken as
+          identical to Carbon Steel (CS).</span>
+        </li>
+        <li>
+          <span class="ref-bullet"></span>
+          <span>Spans for CS and SS are governed by the lesser of:
+          <strong>½ in (12.7 mm) self-weight deflection limit</strong>, or
+          <strong>5000 psi (34.5 MPa) self-weight bending stress limit</strong>
+          (whichever gives the smaller span).</span>
+        </li>
+        <li>
+          <span class="ref-bullet"></span>
+          <span>All spans are for <strong>continuous horizontal straight runs</strong> only.</span>
+        </li>
+        <li class="warn">
+          <span class="ref-bullet"></span>
+          <span><strong>Seismic loads are NOT included.</strong> For seismic zones, increase the pipe
+          weight by the seismic g-factor and reduce spans using the formulae below. Refer to the
+          project Seismic Analysis of Piping Procedures.</span>
+        </li>
+        <li class="warn">
+          <span class="ref-bullet"></span>
+          <span>Changes in direction, blast loading, elevated temperature beyond 400 °C, or passive
+          fire protection will require <strong>shorter spans</strong> than those tabulated.
+          Consult the stress engineer.</span>
+        </li>
+        <li class="warn">
+          <span class="ref-bullet"></span>
+          <span>For fluids <strong>denser than water</strong> (e.g. slurry ≈ 2500 kg/m³ / 156 lb/ft³),
+          the maximum allowable span must be recalculated by the stress engineer.</span>
+        </li>
+        <li>
+          <span class="ref-bullet"></span>
+          <span><strong>FRP spans</strong> are based on Fiberbond 20FR16 specifications with an allowable
+          stress of 1000 psi. Maximum spans are hard-capped at <strong>6.1 m (20 ft)</strong>.</span>
+        </li>
+        <li>
+          <span class="ref-bullet"></span>
+          <span>For individual applications such as flare lines, maximum allowable spans may be increased
+          only with written approval from the piping stress engineer.</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── GOVERNING FORMULAE ──────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Governing Formulae</h2>
+      <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">
+        From <em>Pipe Stress Engineering</em>, L.C. Peng — Chapter: Strength of Materials Basics.
+        The span is taken as the <strong>lesser</strong> value from both equations.
+      </p>
+
+      <div class="ref-formula-grid">
+        <div class="ref-formula-box">
+          <h3>Deflection Limit</h3>
+          <div class="ref-formula">
+            Δ = (3 · w · L⁴) / (384 · E · I)
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">
+            Allowable: Δ ≤ 12.7 mm (½ in)
+          </div>
+        </div>
+        <div class="ref-formula-box">
+          <h3>Bending Stress Limit</h3>
+          <div class="ref-formula">
+            S = M / Z = (w · L²) / (10 · Z)
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);">
+            Allowable: S ≤ 34.5 MPa (5000 psi)
+          </div>
+        </div>
+      </div>
+
+      <table class="ref-var-table">
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Quantity</th>
+            <th>Imperial Unit</th>
+            <th>SI Unit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Δ</td><td>Self-weight deflection</td><td>in</td><td>mm</td></tr>
+          <tr><td>S</td><td>Self-weight bending stress</td><td>psi</td><td>MPa</td></tr>
+          <tr><td>w</td><td>Weight per unit length (pipe + fluid + insulation)</td><td>lb/ft</td><td>kg/m</td></tr>
+          <tr><td>L</td><td>Span between adjacent supports</td><td>ft</td><td>m</td></tr>
+          <tr><td>E</td><td>Modulus of elasticity — CS &amp; SS: 27,905,700 psi (192,400 MPa)</td><td>psi</td><td>MPa</td></tr>
+          <tr><td>I</td><td>Moment of inertia</td><td>in⁴</td><td>mm⁴</td></tr>
+          <tr><td>M</td><td>Bending moment</td><td>lb·ft</td><td>N·m</td></tr>
+          <tr><td>Z</td><td>Section modulus</td><td>in³</td><td>mm³</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ── UNIT CONVERSIONS ────────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Unit Conversions (Display Layer)</h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Table values are stored in imperial units (feet, lb/ft). The calculator converts to metric
+        for display only — the underlying data is not altered.
+      </p>
+      <div class="ref-conv-strip">
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">1 ft = 0.3048 m</span>
+          <span class="ref-conv-lbl">Span</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">1 lb/ft = 1.4882 kg/m</span>
+          <span class="ref-conv-lbl">Pipe weight</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">≤ 347 °F → ≤ 175 °C</span>
+          <span class="ref-conv-lbl">Temperature band T1</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">348–599 °F → 176–315 °C</span>
+          <span class="ref-conv-lbl">Temperature band T2</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">600–752 °F → 316–400 °C</span>
+          <span class="ref-conv-lbl">Temperature band T3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TABLE 13 SUMMARY ────────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Table 13 — CS / LT / SS Spans (SCH 40) <span class="ref-badge">ft · imperial</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Abridged SCH 40 values. Full table (SCH 40, SCH 80, 10S) is in the calculator.
+        LT values identical to CS. All spans in <strong>feet</strong>.
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="ref-span-table">
+          <thead>
+            <tr>
+              <th rowspan="2" class="nps" style="text-align:left">NPS</th>
+              <th colspan="2">Bare Pipe</th>
+              <th colspan="3" class="group">Insulated — Vapor Filled</th>
+              <th colspan="3" class="group">Insulated — Liquid Filled</th>
+            </tr>
+            <tr>
+              <th>Empty</th>
+              <th>Water</th>
+              <th>≤175°C</th>
+              <th>176–315°C</th>
+              <th>316–400°C</th>
+              <th>≤175°C</th>
+              <th>176–315°C</th>
+              <th>316–400°C</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="nps">¾"</td><td>13</td><td>11</td><td>10</td><td>8</td><td>8</td><td>10</td><td>8</td><td>8</td></tr>
+            <tr><td class="nps">1"</td><td>15</td><td>13</td><td>11</td><td>10</td><td>10</td><td>11</td><td>10</td><td>8</td></tr>
+            <tr><td class="nps">1½"</td><td>18</td><td>16</td><td>15</td><td>11</td><td>11</td><td>15</td><td>11</td><td>11</td></tr>
+            <tr><td class="nps">2"</td><td>20</td><td>18</td><td>18</td><td>15</td><td>13</td><td>16</td><td>13</td><td>11</td></tr>
+            <tr><td class="nps">2½"</td><td>21</td><td>20</td><td>20</td><td>16</td><td>15</td><td>18</td><td>15</td><td>15</td></tr>
+            <tr><td class="nps">3"</td><td>24</td><td>21</td><td>23</td><td>18</td><td>18</td><td>21</td><td>16</td><td>16</td></tr>
+            <tr><td class="nps">4"</td><td>28</td><td>24</td><td>26</td><td>21</td><td>20</td><td>23</td><td>20</td><td>18</td></tr>
+            <tr><td class="nps">6"</td><td>34</td><td>29</td><td>33</td><td>26</td><td>24</td><td>29</td><td>23</td><td>23</td></tr>
+            <tr><td class="nps">8"</td><td>39</td><td>33</td><td>38</td><td>29</td><td>29</td><td>33</td><td>26</td><td>26</td></tr>
+            <tr><td class="nps">10"</td><td>44</td><td>38</td><td>42</td><td>34</td><td>33</td><td>36</td><td>29</td><td>29</td></tr>
+            <tr><td class="nps">12"</td><td>49</td><td>39</td><td>46</td><td>38</td><td>36</td><td>39</td><td>31</td><td>31</td></tr>
+            <tr><td class="nps">14"</td><td>51</td><td>41</td><td>47</td><td>39</td><td>38</td><td>39</td><td>33</td><td>33</td></tr>
+            <tr><td class="nps">16"</td><td>54</td><td>42</td><td>52</td><td>42</td><td>41</td><td>42</td><td>34</td><td>34</td></tr>
+            <tr><td class="nps">18"</td><td>57</td><td>44</td><td>56</td><td>44</td><td>44</td><td>44</td><td>36</td><td>36</td></tr>
+            <tr><td class="nps">20"</td><td>60</td><td>46</td><td>57</td><td>47</td><td>46</td><td>46</td><td>38</td><td>36</td></tr>
+            <tr><td class="nps">24"</td><td>67</td><td>49</td><td>64</td><td>52</td><td>51</td><td>47</td><td>41</td><td>39</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ref-note">Full SCH 80 and 10S values are available in the Span Calculator. Source: KS-PE-SPC-0073 Table 13.</p>
+    </div>
+
+    <!-- ── TABLE 14 SUMMARY ────────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Table 14 — DS / SD / AS / AL / AY / TI / CN / FRP Spans <span class="ref-badge">ft · imperial</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Single span value applies to both vapour and liquid service. No temperature-band distinction.
+        FRP spans capped at 20 ft (6.1 m). All values in <strong>feet</strong>.
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="ref-span-table">
+          <thead>
+            <tr>
+              <th style="text-align:left">NPS</th>
+              <th>DS / SD</th>
+              <th>AS / AL / AY</th>
+              <th>TI</th>
+              <th>CN</th>
+              <th>FRP</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="nps">¾"</td><td>11</td><td>10</td><td>8</td><td>6</td><td class="na">—</td></tr>
+            <tr><td class="nps">1"</td><td>13</td><td>12</td><td>10</td><td>7</td><td>10</td></tr>
+            <tr><td class="nps">1½"</td><td>16</td><td>16</td><td>13</td><td>10</td><td>11</td></tr>
+            <tr><td class="nps">2"</td><td>18</td><td>18</td><td>15</td><td>11</td><td>12</td></tr>
+            <tr><td class="nps">2½"</td><td>19</td><td>19</td><td>19</td><td>13</td><td class="na">—</td></tr>
+            <tr><td class="nps">3"</td><td>19</td><td>19</td><td>19</td><td>14</td><td>13</td></tr>
+            <tr><td class="nps">4"</td><td>19</td><td>19</td><td>19</td><td>16</td><td>14</td></tr>
+            <tr><td class="nps">6"</td><td>19</td><td>19</td><td>19</td><td>19</td><td>16</td></tr>
+            <tr><td class="nps">8"</td><td>19</td><td>19</td><td>19</td><td>19</td><td>18</td></tr>
+            <tr><td class="nps">10"</td><td>19</td><td>19</td><td>19</td><td>19</td><td>19</td></tr>
+            <tr><td class="nps">12"</td><td>19</td><td>19</td><td>19</td><td>19</td><td>19</td></tr>
+            <tr><td class="nps">14"</td><td>26</td><td>26</td><td>26</td><td>19</td><td>19</td></tr>
+            <tr><td class="nps">16"</td><td>26</td><td>26</td><td>26</td><td>26</td><td>19</td></tr>
+            <tr><td class="nps">18"</td><td>26</td><td>26</td><td>26</td><td>26</td><td>19</td></tr>
+            <tr><td class="nps">20"</td><td>26</td><td>26</td><td>26</td><td>26</td><td>19</td></tr>
+            <tr><td class="nps">22"</td><td>26</td><td>26</td><td>26</td><td>26</td><td>19</td></tr>
+            <tr><td class="nps">24"</td><td>26</td><td>26</td><td>26</td><td>26</td><td>19</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="ref-note">
+        FRP basis: Fiberbond 20FR16 series, allowable stress 1000 psi, maximum span 20 ft (6.1 m).
+        Source: KS-PE-SPC-0073 Table 14.
+      </p>
+    </div>
+
+    <!-- ── MATERIAL CODES ──────────────────────────────────────── -->
+    <div class="ref-section">
+      <h2>Material Code Reference</h2>
+      <table class="ref-var-table">
+        <thead>
+          <tr><th>Code</th><th>Material</th><th>Table</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>CS</td><td>Carbon Steel</td><td>13</td><td>Schedule-dependent spans; 3 temperature bands for insulated.</td></tr>
+          <tr><td>LT</td><td>Low Temperature Carbon Steel</td><td>13</td><td>Identical span values to CS per spec.</td></tr>
+          <tr><td>SS</td><td>Stainless Steel</td><td>13</td><td>Typically used with 10S schedule; 3 temperature bands for insulated.</td></tr>
+          <tr><td>DS</td><td>Duplex Stainless Steel</td><td>14</td><td>Single span; no temperature distinction.</td></tr>
+          <tr><td>SD</td><td>Super Duplex Stainless Steel</td><td>14</td><td>Same span column as DS.</td></tr>
+          <tr><td>AS</td><td>Alloy Steel</td><td>14</td><td>Same span column as AL / AY.</td></tr>
+          <tr><td>AL</td><td>Aluminium</td><td>14</td><td>Same span column as AS / AY.</td></tr>
+          <tr><td>AY</td><td>Aluminium Alloy</td><td>14</td><td>Same span column as AS / AL.</td></tr>
+          <tr><td>TI</td><td>Titanium</td><td>14</td><td>Own column.</td></tr>
+          <tr><td>CN</td><td>Copper-Nickel</td><td>14</td><td>Own column.</td></tr>
+          <tr><td>FRP</td><td>Fibre-Reinforced Plastic / GRE</td><td>14</td><td>Capped at 6.1 m (20 ft). Not available for ¾″ or 2½″.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /.ref-shell -->
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="footer-title">Span Reference — KS-PE-SPC-0073 Rev 0</span>
+        <span class="footer-dept">Piping Department · JESA</span>
+      </div>
+      <span class="footer-year" id="footerYear"></span>
+    </div>
+  </footer>
+
+  <script>
+  (function () {
+    document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
+    var btn  = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      if (t === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); if (icon) icon.textContent = '☀️'; }
+      else { document.documentElement.removeAttribute('data-theme'); if (icon) icon.textContent = '🌙'; }
+    }
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    if (btn) btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('pss-theme', next);
+      applyTheme(next);
+    });
+  })();
+  </script>
+
+</body>
+</html>

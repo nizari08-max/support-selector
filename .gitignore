@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+.env.local
+*.log
+.venv/
+venv/
+.claude/
+piping_support_tool/

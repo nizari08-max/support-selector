@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Blue rounded-square background -->
+  <rect width="200" height="200" rx="28" fill="#003DA5"/>
+
+  <!-- Pipe cross-section (end elevation) — white annulus -->
+  <!-- Outer pipe wall -->
+  <circle cx="100" cy="78" r="46" fill="#FFFFFF"/>
+  <!-- Pipe bore — cut-through using background colour -->
+  <circle cx="100" cy="78" r="28" fill="#003DA5"/>
+  <!-- Subtle bore highlight (lighter blue ring inside bore, 1.5px) -->
+  <circle cx="100" cy="78" r="28" fill="none" stroke="#1A5AC7" stroke-width="3"/>
+
+  <!-- Support pedestal stem — amber -->
+  <rect x="91" y="124" width="18" height="22" rx="3" fill="#F59E0B"/>
+
+  <!-- Support base plate — amber -->
+  <rect x="34" y="146" width="132" height="22" rx="8" fill="#F59E0B"/>
+</svg>
