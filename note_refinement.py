@@ -472,7 +472,7 @@ def _apply_hot_insulated_ss_al_rest_refinement(
 
     is_limit_stop = str(refinements.get(LIMIT_STOP_FIELD)).lower() == "true"
     if orientation == "straight" and is_limit_stop:
-        outcome.support_code = "WELDED SHOE (SH01)"
+        outcome.support_code = "WELDED SHOE (SH01) + WEAR PAD (WA01)"
         outcome.applied.append({
             "id": "pipe_orientation",
             "label": "Pipe Orientation",
@@ -526,10 +526,10 @@ def _apply_hot_insulated_ss_al_rest_refinement(
     else:
         if is_limit_stop:
             if design_temp_c < 400:
-                outcome.support_code = "WELDED SHOE (SH05)"
+                outcome.support_code = "WELDED SHOE (SH05) + WEAR PAD (WA01)"
                 temp_result = "< 400 °C at limit stop; selected SH05."
             else:
-                outcome.support_code = "WELDED SHOE (SH03)"
+                outcome.support_code = "WELDED SHOE (SH03) + WEAR PAD (WA01)"
                 temp_result = ">= 400 °C at limit stop; selected SH03."
         elif design_temp_c <= 350:
             outcome.support_code = "CLAMPED SHOE (SC06 OR SC07)"

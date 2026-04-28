@@ -1,3 +1,85 @@
+# WA01 Added to Sloping-Pipe Limit-Stop Result (SS/AL/CN Insulated)
+**Date:** 2026-04-28
+
+## What changed
+
+**File:** `note_refinement.py` — lines 529 and 532
+
+**Branch identified before coding:**
+`_apply_hot_insulated_ss_al_rest_refinement()` handles SS/DS/SD/SA/AL/AY/CN + Insulated + NPS 1.5"–24" REST cases. The sloping insulated line-stop result is generated under:
+
+```python
+if orientation == "sloping":
+    if is_limit_stop:
+        if design_temp_c < 400:
+            ...
+        else:
+            ...
+```
+
+**Before:**
+```python
+outcome.support_code = "WELDED SHOE (SH05)"
+outcome.support_code = "WELDED SHOE (SH03)"
+```
+
+**After:**
+```python
+outcome.support_code = "WELDED SHOE (SH05) + WEAR PAD (WA01)"
+outcome.support_code = "WELDED SHOE (SH03) + WEAR PAD (WA01)"
+```
+
+### Scope
+
+Only affects: SS/DS/SD/SA/AL/AY/CN + Insulated + NPS 1.5"–24" + REST support + Sloping Pipe + Limit Stop Location = Yes.
+
+The existing sloping shoe decision remains unchanged:
+- `< 400 °C` still selects SH05.
+- `>= 400 °C` still selects SH03.
+- WA01 is appended using the same support-code pattern as the straight-pipe fix, so drawing reference and PDF highlighting reuse existing WA01 behavior.
+
+Verified examples:
+- SS / Insulated / NPS 6" / Stop YES / Sloping → SH05 + WA01
+- DS / Insulated / NPS 12" / Stop YES / Sloping → SH05 + WA01
+- AL / Insulated / NPS 24" / Stop YES / Sloping → SH03 + WA01
+
+---
+
+# WA01 Added to Straight-Pipe Limit-Stop Result (SS/AL/CN Insulated)
+**Date:** 2026-04-28
+
+## What changed
+
+**File:** `note_refinement.py` — line 475 (one character change)
+
+**Before:**
+```python
+outcome.support_code = "WELDED SHOE (SH01)"
+```
+**After:**
+```python
+outcome.support_code = "WELDED SHOE (SH01) + WEAR PAD (WA01)"
+```
+
+### Why
+
+`_apply_hot_insulated_ss_al_rest_refinement()` handles the REST function for SS/DS/SD/SA/AL/AY/CN + Insulated + NPS 1.5"–24". When the user answers Straight Pipe + Limit Stop = Yes, it was setting the support code to bare `"WELDED SHOE (SH01)"` with no WA01. The standard requires a Wear Pad at every axial-stop location for these material groups.
+
+### How the fix propagates (no other files changed)
+
+- `get_drawings()` in `drawing_index.py` extracts both SH01 and WA01 from the compound string, looks each up in `DRAWING_INDEX`, and returns `JS-PE-DPS-0327` + `JS-PE-DPS-0322` (both within NPS range 1.5–24").
+- `label_drawings()` tags each ref with its support code, so the chips display "SH01" and "WA01" labels automatically.
+- PDF highlighting for WA01 works identically to all other results that reference WA01 — no new logic.
+- `get_image_key()` still resolves to `sh01` illustration (SH01 is the only SH/SC code in the string).
+
+### Scope
+
+Only affects: REST function + SS/DS/SD/SA/AL/AY/CN + hot_insulated + NPS 1.5"–24" + Straight Pipe + Limit Stop = Yes.
+
+All other combinations (CS, FRP, uninsulated, NPS >24", sloping pipe, stop=No) are unchanged.
+
+---
+
 # Support Span Calculator — New Feature
 **Date:** 2026-04-18
 
