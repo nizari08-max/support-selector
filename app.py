@@ -24,6 +24,9 @@ from selector import select_support                    # noqa: E402
 from pdf_service import get_drawing_pdf                # noqa: E402
 from span_calculator import calculate_span             # noqa: E402
 from material_classes import resolve_class, classes_for_api  # noqa: E402
+from pipe_flange_data import DN_SIZES, FLANGE_RATINGS  # noqa: E402
+from rack_calculator import calculate_rack             # noqa: E402
+from rack_diagram import generate_diagram              # noqa: E402
 
 app = Flask(__name__)
 
@@ -226,6 +229,64 @@ def drawing_link(drawing_ref: str):
 </body>
 </html>""",
         mimetype="text/html",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Rack Width Calculator routes
+# ---------------------------------------------------------------------------
+@app.route('/rack-calculator', methods=['GET'])
+def rack_calculator():
+    return render_template(
+        'rack_calculator.html',
+        dn_sizes=DN_SIZES,
+        flange_ratings=FLANGE_RATINGS,
+        pipes=None,
+        result=None,
+        diagram=None,
+        options={'expansion_pct': 20, 'steel_column_mm': 190},
+        error=None,
+    )
+
+
+@app.route('/rack-calculator', methods=['POST'])
+def rack_calculate():
+    dns = request.form.getlist('dn')
+    ratings = request.form.getlist('rating')
+    insulations = request.form.getlist('insulation')
+    try:
+        expansion_pct = int(request.form.get('expansion_pct', 20))
+        steel_column_mm = int(request.form.get('steel_column_mm', 190))
+    except ValueError:
+        expansion_pct, steel_column_mm = 20, 190
+    options = {'expansion_pct': expansion_pct, 'steel_column_mm': steel_column_mm}
+    pipes = []
+    for dn, rating, ins in zip(dns, ratings, insulations):
+        try:
+            pipes.append({'dn': int(dn), 'rating': int(rating), 'insulation': int(ins)})
+        except (ValueError, TypeError):
+            return render_template(
+                'rack_calculator.html',
+                dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+                pipes=None, result=None, diagram=None,
+                options=options,
+                error="Invalid input — please check all fields are filled with numbers.",
+            )
+    try:
+        result = calculate_rack(pipes, expansion_pct=expansion_pct, steel_column_mm=steel_column_mm)
+    except (ValueError, KeyError) as e:
+        return render_template(
+            'rack_calculator.html',
+            dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+            pipes=pipes, result=None, diagram=None,
+            options=options, error=str(e),
+        )
+    diagram = generate_diagram(pipes, result)
+    return render_template(
+        'rack_calculator.html',
+        dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+        pipes=pipes, result=result, diagram=diagram,
+        options=options, error=None,
     )
 
 
