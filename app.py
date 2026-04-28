@@ -24,11 +24,22 @@ from selector import select_support                    # noqa: E402
 from pdf_service import get_drawing_pdf                # noqa: E402
 from span_calculator import calculate_span             # noqa: E402
 from material_classes import resolve_class, classes_for_api  # noqa: E402
-from pipe_flange_data import DN_SIZES, FLANGE_RATINGS  # noqa: E402
+from pipe_flange_data import DN_SIZES, FLANGE_RATINGS, rating_label  # noqa: E402
 from rack_calculator import calculate_rack             # noqa: E402
 from rack_diagram import generate_diagram              # noqa: E402
 
 app = Flask(__name__)
+
+
+RATING_LABELS = {str(r): rating_label(r) for r in FLANGE_RATINGS}
+
+
+def _normalize_rating(raw):
+    s = str(raw).strip()
+    try:
+        return int(s)
+    except ValueError:
+        return s
 
 
 # ---------------------------------------------------------------------------
@@ -241,10 +252,11 @@ def rack_calculator():
         'rack_calculator.html',
         dn_sizes=DN_SIZES,
         flange_ratings=FLANGE_RATINGS,
+        rating_labels=RATING_LABELS,
         pipes=None,
         result=None,
         diagram=None,
-        options={'expansion_pct': 20, 'steel_column_mm': 190},
+        options={'expansion_pct': 20, 'steel_column_mm': 330},
         error=None,
     )
 
@@ -256,18 +268,19 @@ def rack_calculate():
     insulations = request.form.getlist('insulation')
     try:
         expansion_pct = int(request.form.get('expansion_pct', 20))
-        steel_column_mm = int(request.form.get('steel_column_mm', 190))
+        steel_column_mm = int(request.form.get('steel_column_mm', 330))
     except ValueError:
-        expansion_pct, steel_column_mm = 20, 190
+        expansion_pct, steel_column_mm = 20, 330
     options = {'expansion_pct': expansion_pct, 'steel_column_mm': steel_column_mm}
     pipes = []
     for dn, rating, ins in zip(dns, ratings, insulations):
         try:
-            pipes.append({'dn': int(dn), 'rating': int(rating), 'insulation': int(ins)})
+            pipes.append({'dn': int(dn), 'rating': _normalize_rating(rating), 'insulation': int(ins)})
         except (ValueError, TypeError):
             return render_template(
                 'rack_calculator.html',
                 dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+                rating_labels=RATING_LABELS,
                 pipes=None, result=None, diagram=None,
                 options=options,
                 error="Invalid input — please check all fields are filled with numbers.",
@@ -278,6 +291,7 @@ def rack_calculate():
         return render_template(
             'rack_calculator.html',
             dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+            rating_labels=RATING_LABELS,
             pipes=pipes, result=None, diagram=None,
             options=options, error=str(e),
         )
@@ -285,6 +299,7 @@ def rack_calculate():
     return render_template(
         'rack_calculator.html',
         dn_sizes=DN_SIZES, flange_ratings=FLANGE_RATINGS,
+        rating_labels=RATING_LABELS,
         pipes=pipes, result=result, diagram=diagram,
         options=options, error=None,
     )

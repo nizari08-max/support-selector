@@ -3,91 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rack Width Calculator — JESA</title>
+<title>JESA - Pipe Spacing & Rack Width Calculator</title>
 <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="/static/css/style.css">
-
-<!-- Restore saved theme before render to prevent flash -->
-<script>
-  (function () {
-    var t = localStorage.getItem('pss-theme');
-    if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-  })();
-</script>
-
+<script>(function(){var t=localStorage.getItem('pss-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
 <style>
-  /* ── Rack calculator page layout ── */
-  .rack-shell {
+  .container {
     flex: 1;
-    padding: 28px 32px 48px;
     max-width: 1280px;
-    margin: 0 auto;
     width: 100%;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
   }
 
-  .rack-header {
+  .rack-page-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 12px;
-    border-bottom: 2px solid var(--accent-blue);
-    padding-bottom: 14px;
-    margin-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
   }
-  .rack-header h1 {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-    color: var(--text-primary);
+  .rack-page-header h1 {
     margin: 0;
+    font-family: var(--font-ui);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
   }
-  .rack-header .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 12px;
-    color: var(--text-muted);
-    text-decoration: none;
-    margin-bottom: 4px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
-    transition: color 0.12s;
-  }
-  .rack-header .back-link:hover { color: var(--accent-blue); }
-  .rack-header-meta {
+  .rack-page-header .meta {
     font-size: 11px;
     color: var(--text-muted);
     text-align: right;
     line-height: 1.6;
   }
+  .rack-page-header .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+    color: var(--accent-blue);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    text-transform: uppercase;
+    opacity: 0.82;
+    transition: opacity var(--anim-fast);
+  }
+  .rack-page-header .back-link:hover { opacity: 1; }
 
-  /* ── Panels ── */
-  .rack-panel {
+  .panel {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 22px 24px;
-    margin-bottom: 18px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
     box-shadow: var(--shadow);
   }
-  .rack-panel h2 {
-    margin: 0 0 16px;
+  .panel h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-ui);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.3px;
     color: var(--text-muted);
     border-bottom: 1px solid var(--border);
-    padding-bottom: 10px;
+    padding-bottom: 9px;
   }
 
-  /* ── Pipes table ── */
   table.pipes {
     width: 100%;
     border-collapse: collapse;
@@ -99,32 +92,31 @@
     border-bottom: 1px solid var(--border);
   }
   table.pipes th {
+    font-family: var(--font-ui);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--text-muted);
-    font-weight: 600;
-    font-family: var(--font-ui);
+    font-weight: 700;
   }
   table.pipes td:first-child {
     width: 40px;
     color: var(--text-muted);
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-variant-numeric: tabular-nums;
     font-weight: 600;
   }
   table.pipes select, table.pipes input[type="number"] {
     width: 100%;
-    padding: 6px 9px;
+    padding: 7px 9px;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 14px;
-    background: var(--bg-surface);
-    color: var(--text-primary);
+    border-radius: var(--radius-sm);
     font-family: var(--font-body);
-    transition: border-color 0.12s, box-shadow 0.12s;
+    font-size: 13px;
+    background: var(--bg-card);
+    color: var(--text-primary);
   }
-  table.pipes select:focus, table.pipes input[type="number"]:focus {
+  table.pipes select:focus, table.pipes input:focus {
     outline: none;
     border-color: var(--accent-blue);
     box-shadow: 0 0 0 2px rgba(0,87,217,0.15);
@@ -135,129 +127,95 @@
     color: var(--text-muted);
     width: 28px;
     height: 28px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     cursor: pointer;
     font-size: 16px;
     line-height: 1;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.12s, color 0.12s;
+    transition: border-color var(--anim-fast), color var(--anim-fast), background var(--anim-fast);
   }
-  .remove-btn:hover { border-color: var(--red); color: var(--red); }
+  .remove-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-lt); }
 
   .row-actions {
     display: flex;
     gap: 10px;
-    margin-top: 16px;
+    margin-top: 14px;
     flex-wrap: wrap;
   }
 
-  /* ── Buttons (matches site design) ── */
   .btn {
     border: none;
-    padding: 9px 20px;
-    border-radius: var(--radius);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
+    padding: 9px 18px;
+    border-radius: var(--radius-sm);
     font-family: var(--font-ui);
-    letter-spacing: 0.5px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
-    transition: background 0.12s, box-shadow 0.12s;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    cursor: pointer;
+    transition: background var(--anim-fast), border-color var(--anim-fast), color var(--anim-fast);
   }
-  .btn-primary {
-    background: var(--accent-blue);
-    color: #fff;
-    box-shadow: 0 1px 3px rgba(0,87,217,0.25);
-  }
-  .btn-primary:hover { background: var(--accent-blue-dk); box-shadow: 0 2px 6px rgba(0,87,217,0.30); }
-  .btn-secondary {
-    background: var(--bg-surface);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-  }
+  .btn-primary { background: var(--accent-blue); color: white; }
+  .btn-primary:hover { background: var(--accent-blue-dk); }
+  .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); }
   .btn-secondary:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
-  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  /* ── Options panel ── */
   .options-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    gap: 14px;
   }
   .options-grid label {
     display: block;
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
     font-family: var(--font-ui);
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
   }
   .options-grid input {
     width: 100%;
-    padding: 7px 10px;
+    padding: 7px 9px;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 14px;
-    background: var(--bg-surface);
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
     color: var(--text-primary);
-    transition: border-color 0.12s, box-shadow 0.12s;
+    font-size: 13px;
   }
-  .options-grid input:focus {
-    outline: none;
-    border-color: var(--accent-blue);
-    box-shadow: 0 0 0 2px rgba(0,87,217,0.15);
-  }
+  .options-grid input:focus { outline: none; border-color: var(--accent-blue); }
 
-  /* ── Results summary cards ── */
   .results-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
   .summary-card {
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 13px 15px;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
   }
   .summary-card .label {
+    font-family: var(--font-ui);
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.8px;
     color: var(--text-muted);
     margin-bottom: 4px;
-    font-weight: 600;
-    font-family: var(--font-ui);
   }
   .summary-card .value {
-    font-size: 22px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
     font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
     color: var(--text-primary);
   }
-  .summary-card .unit {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 400;
-    margin-left: 3px;
-    font-family: var(--font-body);
-  }
-  .summary-card.highlight {
-    background: var(--accent-blue-lt);
-    border-color: var(--accent-blue);
-  }
+  .summary-card .unit { font-family: var(--font-body); font-size: 12px; color: var(--text-muted); font-weight: 400; margin-left: 3px; }
+  .summary-card.highlight { background: var(--accent-blue-lt); border-color: var(--accent-blue); }
   .summary-card.highlight .value { color: var(--accent-blue); }
 
-  /* ── Breakdown table ── */
   .breakdown {
     width: 100%;
     border-collapse: collapse;
@@ -265,329 +223,312 @@
     margin-top: 8px;
   }
   .breakdown th, .breakdown td {
-    padding: 8px 11px;
+    padding: 7px 10px;
     border-bottom: 1px solid var(--border);
     text-align: left;
   }
   .breakdown th {
+    font-family: var(--font-ui);
     font-size: 10px;
     text-transform: uppercase;
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.8px;
-    font-family: var(--font-ui);
   }
   .breakdown td.num {
     text-align: right;
-    font-variant-numeric: tabular-nums;
     font-family: var(--font-mono);
-    font-weight: 600;
     color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ── Diagram ── */
   .diagram-wrap {
     background: var(--bg-surface);
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm);
     padding: 16px;
     overflow-x: auto;
   }
   .diagram-wrap svg { display: block; min-width: 100%; }
 
-  /* ── Alerts ── */
   .alert {
-    padding: 10px 15px;
-    border-radius: var(--radius);
+    padding: 10px 14px;
+    border-radius: 4px;
     margin-bottom: 14px;
-    font-size: 14px;
-    border-left: 3px solid;
+    font-size: 13px;
+    border-left: 4px solid;
   }
-  .alert-error {
-    background: var(--red-lt);
-    border-color: var(--red);
-    color: var(--red-dk);
-  }
-  .alert-warn {
-    background: var(--accent-amber-lt);
-    border-color: var(--accent-amber);
-    color: var(--text-primary);
-  }
+  .alert-error { background: var(--red-lt); border-color: var(--red); color: var(--red-dk); }
+  .alert-warn { background: var(--accent-amber-lt); border-color: var(--accent-amber); color: var(--accent-amber-dk); }
 
   .help-text {
     font-size: 11px;
     color: var(--text-muted);
-    margin-top: 5px;
+    margin-top: 6px;
   }
 
-  /* ── Notes panel list ── */
-  .notes-list {
-    margin: 0;
-    padding-left: 18px;
+  .notes-panel {
+    font-size: 12px;
     color: var(--text-secondary);
-    font-size: 13px;
+  }
+  .notes-panel ul {
+    margin: 0;
+    padding-left: 20px;
     line-height: 1.7;
+  }
+  .breakdown-total { background: var(--bg-surface); font-weight: 600; }
+  .breakdown-final { background: var(--accent-blue-lt); font-weight: 700; }
+
+  @media print {
+    .no-print { display: none; }
+    body { background: white; }
+    .panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+    .navbar, .footer { display: none; }
   }
 
   @media (max-width: 680px) {
-    .rack-shell { padding: 18px 16px 40px; }
+    .container { padding: 18px 12px 36px; }
     .results-summary { grid-template-columns: 1fr 1fr; }
-  }
-
-  @media print {
-    .no-print { display: none !important; }
-    body { background: white; }
-    .rack-panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
-    .navbar { display: none; }
-    .footer { display: none; }
+    .rack-page-header .meta { text-align: left; }
   }
 </style>
 </head>
 <body>
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
+      <span class="logo-label">JESA</span>
+      <div class="nav-divider"></div>
+      <div class="tool-title">
+        <span class="title-main">Pipe Spacing & Rack Width Calculator</span>
+        <span class="title-sub">Engineering Reference Tool - JESA Standard</span>
+      </div>
+    </div>
+    <div class="navbar-right">
+      <div class="status-dot" title="Application ready"></div>
+      <a class="nav-tool-link" href="/">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <circle cx="10" cy="8" r="5"/>
+          <rect x="4" y="14" width="12" height="4" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
+        </svg>
+        SUPPORT SEL
+      </a>
+      <a class="nav-tool-link" href="/span">SPAN CALC</a>
+      <a class="nav-tool-link active" href="/rack-calculator">RACK CALC</a>
+      <a class="nav-tool-link" href="/reference">REFERENCE</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </div>
+</header>
 
-  <!-- ══════════════════════════ TOP BAR ══════════════════════════ -->
-  <header class="navbar">
-    <div class="navbar-inner">
-      <div class="brand">
-        <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
-        <span class="logo-label">JESA</span>
-        <div class="nav-divider"></div>
-        <div class="tool-title">
-          <span class="title-main">Pipe Support Selector</span>
-          <span class="title-sub">Engineering Reference Tool · JESA Standard</span>
+<div class="container">
+
+  <div class="rack-page-header">
+    <div>
+      <a href="{{ url_for('index') }}" class="back-link no-print">&larr; Back to Support Selector</a>
+      <h1>Pipe Spacing & Rack Width Calculator</h1>
+    </div>
+    <div class="meta">
+      ASME B36.10M / B16.5 / B16.47<br>
+      Max 16 pipes per tier
+    </div>
+  </div>
+
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('rack_calculate') }}" id="rackForm">
+
+    <div class="panel">
+      <h2>Pipes on Tier <span style="color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0;" id="pipeCount"></span></h2>
+
+      <table class="pipes">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nominal Size (DN)</th>
+            <th>Flange Rating</th>
+            <th>Insulation (mm)</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="pipeRows">
+          {% set initial = pipes if pipes else [{'dn': 50, 'rating': 150, 'insulation': 0}] %}
+          {% for p in initial %}
+          <tr class="pipe-row">
+            <td class="row-num"></td>
+            <td>
+              <select name="dn" required>
+                {% for dn in dn_sizes %}
+                  <option value="{{ dn }}" {% if dn == p.dn %}selected{% endif %}>DN {{ dn }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <select name="rating" required>
+                {% for r in flange_ratings %}
+                  <option value="{{ r }}" {% if r|string == p.rating|string %}selected{% endif %}>{{ rating_labels[r|string] }}</option>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="number" name="insulation" min="0" max="500" step="5" value="{{ p.insulation }}" required>
+            </td>
+            <td>
+              <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">&times;</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div class="row-actions no-print">
+        <button type="button" class="btn btn-secondary" onclick="addRow()">+ Add Pipe</button>
+        <button type="submit" class="btn btn-primary">Calculate</button>
+      </div>
+    </div>
+
+    <div class="panel no-print">
+      <h2>Options</h2>
+      <div class="options-grid">
+        <div>
+          <label for="expansion_pct">Expansion Margin (%)</label>
+          <input type="number" id="expansion_pct" name="expansion_pct" min="0" max="100" step="5"
+                 value="{{ options.expansion_pct if options else 20 }}">
+          <div class="help-text">Spare capacity for future pipes</div>
+        </div>
+        <div>
+          <label for="steel_column_mm">Rack Steel Column Width (mm)</label>
+          <input type="number" id="steel_column_mm" name="steel_column_mm" min="0" max="800" step="10"
+                 value="{{ options.steel_column_mm if options else 330 }}">
+          <div class="help-text">Width of the rack support column (default 330 mm)</div>
         </div>
       </div>
-      <div class="navbar-right">
-        <div class="status-dot" title="Application ready"></div>
-        <span class="navbar-badge">Engineering Tool</span>
-        <a class="nav-tool-link" href="/" title="Support Selector">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-            <path d="M3 10h14M3 5h14M3 15h14" stroke-linecap="round"/>
-          </svg>
-          SUPPORT SEL
-        </a>
-        <a class="nav-tool-link" href="/span" title="Support Span Calculator">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-            <path d="M2 10h16M2 5h16M2 15h16" stroke-linecap="round"/>
-            <rect x="7" y="7" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
-          </svg>
-          SPAN CALC
-        </a>
-        <a class="nav-tool-link active" href="/rack-calculator" title="Rack Width Calculator">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-            <rect x="2" y="8" width="16" height="4" rx="1"/>
-            <line x1="5" y1="4" x2="5" y2="8" stroke-linecap="round"/>
-            <line x1="10" y1="4" x2="10" y2="8" stroke-linecap="round"/>
-            <line x1="15" y1="4" x2="15" y2="8" stroke-linecap="round"/>
-          </svg>
-          RACK CALC
-        </a>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
-          <span id="themeIcon">🌙</span>
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- ══════════════════════════ PAGE BODY ══════════════════════════ -->
-  <div class="rack-shell">
-
-    <div class="rack-header">
-      <div>
-        <a href="{{ url_for('index') }}" class="back-link no-print">
-          &#8592; Back to Support Selector
-        </a>
-        <h1>Pipe Spacing &amp; Rack Width Calculator</h1>
-      </div>
-      <div class="rack-header-meta">
-        ASME B36.10M / B16.5 / B16.47<br>
-        Max 16 pipes per tier
-      </div>
     </div>
 
-    {% if error %}
-      <div class="alert alert-error">{{ error }}</div>
+  </form>
+
+  {% if result %}
+    {% if result.warnings %}
+      {% for w in result.warnings %}
+        <div class="alert alert-warn">{{ w }}</div>
+      {% endfor %}
     {% endif %}
 
-    <form method="POST" action="{{ url_for('rack_calculate') }}" id="rackForm">
+    <div class="panel">
+      <h2>Results</h2>
 
-      <div class="rack-panel">
-        <h2>Pipes on Tier <span style="color: var(--text-muted); font-weight: 400; text-transform: none; letter-spacing: 0;" id="pipeCount"></span></h2>
-
-        <table class="pipes">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nominal Size (DN)</th>
-              <th>Flange Rating</th>
-              <th>Insulation (mm)</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="pipeRows">
-            {% set initial = pipes if pipes else [{'dn': 50, 'rating': 150, 'insulation': 0}] %}
-            {% for p in initial %}
-            <tr class="pipe-row">
-              <td class="row-num"></td>
-              <td>
-                <select name="dn" required>
-                  {% for dn in dn_sizes %}
-                    <option value="{{ dn }}" {% if dn == p.dn %}selected{% endif %}>DN {{ dn }}</option>
-                  {% endfor %}
-                </select>
-              </td>
-              <td>
-                <select name="rating" required>
-                  {% for r in flange_ratings %}
-                    <option value="{{ r }}" {% if r == p.rating %}selected{% endif %}>Class #{{ r }}</option>
-                  {% endfor %}
-                </select>
-              </td>
-              <td>
-                <input type="number" name="insulation" min="0" max="500" step="5" value="{{ p.insulation }}" required>
-              </td>
-              <td>
-                <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">&times;</button>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-
-        <div class="row-actions no-print">
-          <button type="button" class="btn btn-secondary" onclick="addRow()">+ Add Pipe</button>
-          <button type="submit" class="btn btn-primary">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
-              <path d="M5 10h10M12 6l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Calculate
-          </button>
+      <div class="results-summary">
+        <div class="summary-card">
+          <div class="label">Pipes</div>
+          <div class="value">{{ pipes|length }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Inner Total</div>
+          <div class="value">{{ result.inner_total }}<span class="unit">mm</span></div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Expansion (+{{ result.expansion_pct }}%)</div>
+          <div class="value">{{ result.expansion }}<span class="unit">mm</span></div>
+        </div>
+        <div class="summary-card highlight">
+          <div class="label">Rack Width</div>
+          <div class="value">{{ result.rack_width }}<span class="unit">mm</span></div>
         </div>
       </div>
 
-      <div class="rack-panel no-print">
-        <h2>Options</h2>
-        <div class="options-grid">
-          <div>
-            <label for="expansion_pct">Expansion Margin (%)</label>
-            <input type="number" id="expansion_pct" name="expansion_pct" min="0" max="100" step="5"
-                   value="{{ options.expansion_pct if options else 20 }}">
-            <div class="help-text">Spare capacity for future pipes</div>
-          </div>
-          <div>
-            <label for="steel_column_mm">Rack Steel Allowance (mm)</label>
-            <input type="number" id="steel_column_mm" name="steel_column_mm" min="0" max="500" step="10"
-                   value="{{ options.steel_column_mm if options else 190 }}">
-            <div class="help-text">Rack column width to add to total</div>
-          </div>
-        </div>
+      <h2 style="margin-top: 20px;">Breakdown</h2>
+      <table class="breakdown">
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th class="num" style="text-align: right;">Value (mm)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Edge offset (rack column &rarr; pipe 1 centerline)</td>
+            <td class="num">{{ result.edge_offset }}</td>
+          </tr>
+          {% for s in result.spacings %}
+            <tr>
+              <td>Spacing: pipe {{ loop.index }} (DN{{ pipes[loop.index0].dn }}) &rarr; pipe {{ loop.index + 1 }} (DN{{ pipes[loop.index].dn }})</td>
+              <td class="num">{{ s }}</td>
+            </tr>
+          {% endfor %}
+          <tr>
+            <td>Per-pipe buffer ({{ pipes|length + 1 }} &times; 50 mm)</td>
+            <td class="num">{{ result.pipe_buffer }}</td>
+          </tr>
+          <tr class="breakdown-total">
+            <td>Inner total</td>
+            <td class="num">{{ result.inner_total }}</td>
+          </tr>
+          <tr>
+            <td>Expansion margin (+{{ result.expansion_pct }}%)</td>
+            <td class="num">{{ result.expansion }}</td>
+          </tr>
+          <tr>
+            <td>Half rack column ({{ result.steel_column }} / 2)</td>
+            <td class="num">{{ (result.steel_column / 2)|int }}</td>
+          </tr>
+          <tr class="breakdown-final">
+            <td>Total Rack Width</td>
+            <td class="num">{{ result.rack_width }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top: 20px;">Schematic</h2>
+      <div class="diagram-wrap">
+        {{ diagram|safe }}
       </div>
 
-    </form>
-
-    {% if result %}
-      {% if result.warnings %}
-        {% for w in result.warnings %}
-          <div class="alert alert-warn">{{ w }}</div>
-        {% endfor %}
-      {% endif %}
-
-      <div class="rack-panel">
-        <h2>Results</h2>
-
-        <div class="results-summary">
-          <div class="summary-card">
-            <div class="label">Pipes</div>
-            <div class="value">{{ pipes|length }}</div>
-          </div>
-          <div class="summary-card">
-            <div class="label">Pipe-to-Pipe Run</div>
-            <div class="value">{{ result.pipe_run }}<span class="unit">mm</span></div>
-          </div>
-          <div class="summary-card">
-            <div class="label">Inner Width</div>
-            <div class="value">{{ result.total_width }}<span class="unit">mm</span></div>
-          </div>
-          <div class="summary-card">
-            <div class="label">Expansion (+{{ options.expansion_pct }}%)</div>
-            <div class="value">{{ result.expansion }}<span class="unit">mm</span></div>
-          </div>
-          <div class="summary-card highlight">
-            <div class="label">Rack Width</div>
-            <div class="value">{{ result.rack_width }}<span class="unit">mm</span></div>
-          </div>
-        </div>
-
-        <h2 style="margin-top: 22px;">Center-to-Center Spacings</h2>
-        <table class="breakdown">
-          <thead>
-            <tr>
-              <th>Between</th>
-              <th style="text-align: right;">Spacing (mm)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Rack edge &rarr; Pipe 1 (DN{{ pipes[0].dn }})</td>
-              <td class="num">{{ result.left_offset }}</td>
-            </tr>
-            {% for s in result.spacings %}
-              <tr>
-                <td>Pipe {{ loop.index }} (DN{{ pipes[loop.index0].dn }}) &rarr; Pipe {{ loop.index + 1 }} (DN{{ pipes[loop.index].dn }})</td>
-                <td class="num">{{ s }}</td>
-              </tr>
-            {% endfor %}
-            <tr>
-              <td>Pipe {{ pipes|length }} (DN{{ pipes[-1].dn }}) &rarr; Rack edge</td>
-              <td class="num">{{ result.right_offset }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h2 style="margin-top: 22px;">Schematic</h2>
-        <div class="diagram-wrap">
-          {{ diagram|safe }}
-        </div>
-
-        <div class="row-actions no-print" style="margin-top: 16px;">
-          <button type="button" class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
-        </div>
+      <div class="row-actions no-print" style="margin-top: 16px;">
+        <button type="button" class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
       </div>
-    {% endif %}
-
-    <div class="rack-panel" style="font-size: 13px; color: var(--text-secondary);">
-      <h2>Notes &amp; Assumptions</h2>
-      <ul class="notes-list">
-        <li>Pipe sizes per ASME B36.10M-2000 (DN 15 to DN 1000).</li>
-        <li>Flange ODs per ASME B16.5-2009 (DN 15 to DN 600) and ASME B16.47-2017 (DN 650 to DN 1000).</li>
-        <li>Adjacent flanges are assumed to be staggered (alternating sides of the support beam).</li>
-        <li>Pipe thermal expansion effects are <strong>not</strong> included.</li>
-        <li>Minimum centerline spacing: 250 mm (DN &le; 200) / 350 mm (DN &gt; 200).</li>
-        <li>All values rounded to nearest 5 mm.</li>
-        <li>Reference Excel methodology by Boutrih Boujemaa, April 2024.</li>
-      </ul>
     </div>
+  {% endif %}
 
-  </div><!-- /.rack-shell -->
+  <div class="panel notes-panel">
+    <h2>Notes & Assumptions</h2>
+    <ul>
+      <li>Pipe sizes per ASME B36.10M-2000 (DN 15 to DN 1000).</li>
+      <li>Flange ODs per ASME B16.5-2009 (DN 15 to DN 600) and ASME B16.47-2017 Series A & B (DN 650 to DN 1000).</li>
+      <li>Adjacent flanges are assumed to be staggered (alternating sides of the support beam).</li>
+      <li>Pipe thermal expansion effects are <strong>not</strong> included.</li>
+      <li>All values rounded to nearest 5 mm.</li>
+      <li>Calculation methodology by Boutrih Boujemaa (April 2024 Rev. 1). Output is bit-identical to the source spreadsheet.</li>
+    </ul>
+  </div>
 
-  <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <span class="footer-title">Pipe Support Selector — Engineering Tool</span>
-        <span class="footer-dept">Piping Department · JESA</span>
-      </div>
-      <span class="footer-year" id="footerYear"></span>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-title">Pipe Support Selector - Engineering Tool</span>
+      <span class="footer-dept">Piping Department - JESA</span>
     </div>
-  </footer>
+    <span class="footer-year" id="footerYear"></span>
+  </div>
+</footer>
 
 <script>
   const dnOptions = {{ dn_sizes|tojson }};
   const ratingOptions = {{ flange_ratings|tojson }};
+  const ratingLabels = {{ rating_labels|tojson }};
 
   function buildRow() {
     const tr = document.createElement('tr');
     tr.className = 'pipe-row';
+    const ratingOpts = ratingOptions.map(r =>
+      `<option value="${r}" ${String(r)==='150'?'selected':''}>${ratingLabels[r]}</option>`
+    ).join('');
     tr.innerHTML = `
       <td class="row-num"></td>
       <td>
@@ -596,9 +537,7 @@
         </select>
       </td>
       <td>
-        <select name="rating" required>
-          ${ratingOptions.map(r => `<option value="${r}" ${r===150?'selected':''}>Class #${r}</option>`).join('')}
-        </select>
+        <select name="rating" required>${ratingOpts}</select>
       </td>
       <td><input type="number" name="insulation" min="0" max="500" step="5" value="0" required></td>
       <td><button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">&times;</button></td>
@@ -635,12 +574,12 @@
   }
 
   refreshNumbers();
+</script>
 
-  // Footer year
+<script>
   var fy = document.getElementById('footerYear');
   if (fy) fy.textContent = '© ' + new Date().getFullYear();
 
-  // Dark / light toggle
   (function () {
     var btn  = document.getElementById('themeToggle');
     var icon = document.getElementById('themeIcon');
