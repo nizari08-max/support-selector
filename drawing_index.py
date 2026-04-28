@@ -45,6 +45,14 @@ DRAWING_INDEX = {
     "SH05":  [f"{DRAWING_PREFIX}0331"],
 
     # -------------------------------------------------------------------------
+    # SHOE CLAMP COMPONENTS (CL series)
+    # Referenced inside SC01-SC08 drawings; not returned as primary result chips.
+    # -------------------------------------------------------------------------
+    "CL01":  [f"{DRAWING_PREFIX}0335"],
+    "CL02":  [f"{DRAWING_PREFIX}0336"],
+    "CL03":  [f"{DRAWING_PREFIX}0337"],
+
+    # -------------------------------------------------------------------------
     # SHOE CLAMPS / SADDLE SUPPORTS (SC series)
     # -------------------------------------------------------------------------
     "SC01":  [f"{DRAWING_PREFIX}0342"],
@@ -151,6 +159,11 @@ DRAWING_SIZE_RANGES = {
     "0329":  (1.5,  48.0),  # SH03  (line stop + SS/AL + temp > 400°C)
     "0330":  (1.5,   4.0),  # SH04  (sloping, 1½"–4")
     "0331":  (6.0,  48.0),  # SH05  (sloping, 6"–48")
+
+    # Shoe Clamp Components
+    "0335":  (1.5,  24.0),  # CL01
+    "0336":  (1.5,  24.0),  # CL02
+    "0337":  (1.5,  24.0),  # CL03
 
     # Shoe Clamps — non-sloping
     "0342":  (1.5,  24.0),  # SC01

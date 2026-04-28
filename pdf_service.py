@@ -14,6 +14,9 @@ PDF location is resolved in this order:
 import io
 import os
 import re
+from urllib.parse import quote
+
+from drawing_index import DRAWING_INDEX, get_drawings
 
 # ---------------------------------------------------------------------------
 # PDF path resolution
@@ -68,6 +71,11 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0329":     [35, 36],    # SH03 (sheet 001 plan + sheet 002 table)
     "JS-PE-DPS-0330":     [37, 38],    # SH04 (sheet 001 plan + sheet 002 table)
     "JS-PE-DPS-0331":     [39],        # SH05 (single page)
+
+    # Shoe Clamp Components
+    "JS-PE-DPS-0335":     [40],        # CL01
+    "JS-PE-DPS-0336":     [41, 42],    # CL02
+    "JS-PE-DPS-0337":     [43],        # CL03
 
     # Shoe Clamps — non-sloping
     "JS-PE-DPS-0342":     [50],        # SC01
@@ -199,6 +207,17 @@ _NPS_TO_DN: dict[float, int] = {
     48.0: 1200,
 }
 
+_CLAMPED_SHOE_REFS = {
+    "JS-PE-DPS-0342",
+    "JS-PE-DPS-0343",
+    "JS-PE-DPS-0344",
+    "JS-PE-DPS-0345",
+    "JS-PE-DPS-0346",
+    "JS-PE-DPS-0347",
+    "JS-PE-DPS-0348",
+    "JS-PE-DPS-0349",
+}
+
 
 def _nps_patterns(nps: float) -> list[str]:
     """Return text patterns to search for in the PDF for the given NPS."""
@@ -296,11 +315,53 @@ def _find_row_rect(page, nps: float):
     return fitz.Rect(best.x0 - 1, table_y0, best.x1 + 1, table_y1)
 
 
+def _drawing_link_uri(drawing_ref: str, nps: float | None, base_url: str | None) -> str:
+    uri = f"/drawing-link/{quote(drawing_ref, safe='')}"
+    if nps is not None:
+        nps_label = f"{nps:g}"
+        uri = f"{uri}?nps={quote(nps_label)}"
+    if base_url:
+        uri = f"{base_url.rstrip('/')}{uri}"
+    return uri
+
+
+def _add_reference_links(page, source_ref: str, nps: float | None, base_url: str | None) -> None:
+    """Add URI links to known support-code references in clamped shoe drawings."""
+    import fitz
+
+    for code in DRAWING_INDEX:
+        refs = get_drawings(code, nps=nps)
+        if not refs:
+            continue
+
+        target_ref = refs[0]
+        if target_ref.upper() == source_ref.upper():
+            continue
+
+        for rect in page.search_for(code, quads=False):
+            page.draw_rect(
+                rect + (-1, -1, 1, 1),
+                color=None,
+                fill=(1.0, 0.65, 0.0),
+                fill_opacity=0.28,
+                overlay=False,
+            )
+            page.insert_link({
+                "kind": fitz.LINK_URI,
+                "from": rect,
+                "uri": _drawing_link_uri(target_ref, nps, base_url),
+            })
+
+
 # ---------------------------------------------------------------------------
 # Core extraction function
 # ---------------------------------------------------------------------------
 
-def get_drawing_pdf(drawing_ref: str, nps: float | None = None) -> bytes | None:
+def get_drawing_pdf(
+    drawing_ref: str,
+    nps: float | None = None,
+    base_url: str | None = None,
+) -> bytes | None:
     """
     Extract the drawing page(s) for *drawing_ref* from the standard PDF and
     return the result as PDF bytes.
@@ -338,20 +399,21 @@ def get_drawing_pdf(drawing_ref: str, nps: float | None = None) -> bytes | None:
         out_doc.insert_pdf(src_doc, from_page=page_idx, to_page=page_idx)
         out_page = out_doc[-1]
 
-        if nps is None:
-            continue
+        if nps is not None:
+            # Drawing pages have rotation=270: visual rows are x-stripes in
+            # coordinate space.  _find_row_rect() returns the correct x-band.
+            row_rect = _find_row_rect(out_page, nps)
+            if row_rect:
+                out_page.draw_rect(
+                    row_rect,
+                    color=None,
+                    fill=(1.0, 0.93, 0.0),   # #FFED00 yellow
+                    fill_opacity=0.40,
+                    overlay=True,
+                )
 
-        # Drawing pages have rotation=270: visual rows are x-stripes in
-        # coordinate space.  _find_row_rect() returns the correct x-band.
-        row_rect = _find_row_rect(out_page, nps)
-        if row_rect:
-            out_page.draw_rect(
-                row_rect,
-                color=None,
-                fill=(1.0, 0.93, 0.0),   # #FFED00 yellow
-                fill_opacity=0.40,
-                overlay=True,
-            )
+        if ref_upper in _CLAMPED_SHOE_REFS:
+            _add_reference_links(out_page, ref_upper, nps, base_url)
 
     pdf_bytes = out_doc.tobytes(garbage=3, deflate=True)
     src_doc.close()

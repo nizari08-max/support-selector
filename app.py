@@ -5,6 +5,7 @@ Run:  python app.py   then open  http://localhost:5000
 import os
 import sys
 import re
+from urllib.parse import quote
 
 # Load .env.local (local dev overrides) before anything else.
 # Requires python-dotenv (pip install python-dotenv).  Safe to skip if missing.
@@ -181,7 +182,7 @@ def api_drawing(drawing_ref: str):
         except ValueError:
             abort(400, description="Invalid nps parameter")
 
-    pdf_bytes = get_drawing_pdf(drawing_ref, nps=nps)
+    pdf_bytes = get_drawing_pdf(drawing_ref, nps=nps, base_url=request.url_root)
     if pdf_bytes is None:
         abort(404, description=(
             f"Drawing '{drawing_ref}' not found. "
@@ -203,6 +204,28 @@ def api_drawing(drawing_ref: str):
             "Content-Disposition": f'inline; filename="{filename}"',
             "Content-Length": str(len(pdf_bytes)),
         },
+    )
+
+
+@app.route("/drawing-link/<path:drawing_ref>")
+def drawing_link(drawing_ref: str):
+    """Open a drawing link from inside a PDF without replacing the PDF tab."""
+    nps_raw = request.args.get("nps")
+    query = f"?nps={re.sub(r'[^0-9.]', '', nps_raw)}" if nps_raw else ""
+    target = f"/api/drawing/{quote(drawing_ref, safe='')}{query}"
+    return Response(
+        f"""<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Opening drawing...</title></head>
+<body>
+<script>
+  const target = {target!r};
+  window.open(target, "_blank", "noopener");
+  history.back();
+</script>
+</body>
+</html>""",
+        mimetype="text/html",
     )
 
 
