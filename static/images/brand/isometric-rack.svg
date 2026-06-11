@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220" fill="none"
+     stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+     role="img" aria-label="Isometric pipe rack">
+  <style>
+    .accent { stroke: var(--datum, #0E7C86); }
+    .ink    { stroke: currentColor; }
+    .faint  { opacity: .45; }
+  </style>
+
+  <!-- ground / datum line -->
+  <path class="ink faint" d="M14 196 L250 196 L346 150"/>
+
+  <!-- left bent: two columns + cap beam (isometric) -->
+  <path class="ink" d="M70 188 L70 96"/>
+  <path class="ink" d="M150 166 L150 74"/>
+  <path class="ink" d="M70 96 L150 74"/>
+  <!-- column bases -->
+  <path class="ink faint" d="M58 188 L82 188 M138 166 L162 166"/>
+
+  <!-- right bent (depth) -->
+  <path class="ink faint" d="M178 168 L178 76"/>
+  <path class="ink faint" d="M258 146 L258 54"/>
+  <path class="ink faint" d="M178 76 L258 54"/>
+
+  <!-- beam top-chord runs (front + back) -->
+  <path class="ink" d="M70 96 L178 76"/>
+  <path class="ink" d="M150 74 L258 54"/>
+
+  <!-- pipe runs lying across the beam (front bent), drawn as ellipses -->
+  <ellipse class="accent" cx="92" cy="84" rx="11" ry="6" transform="rotate(-10 92 84)"/>
+  <path class="accent" d="M92 84 L200 64"/>
+  <ellipse class="accent" cx="200" cy="64" rx="11" ry="6" transform="rotate(-10 200 64)"/>
+
+  <ellipse class="ink" cx="118" cy="89" rx="8" ry="4.4" transform="rotate(-10 118 89)"/>
+  <path class="ink" d="M118 89 L226 69"/>
+  <ellipse class="ink" cx="226" cy="69" rx="8" ry="4.4" transform="rotate(-10 226 69)"/>
+
+  <ellipse class="ink faint" cx="138" cy="92" rx="6" ry="3.4" transform="rotate(-10 138 92)"/>
+  <path class="ink faint" d="M138 92 L246 72"/>
+
+  <!-- shoe details under the accent pipe at the beam -->
+  <path class="ink faint" d="M86 92 L98 90 L98 96 L86 98 Z"/>
+</svg>

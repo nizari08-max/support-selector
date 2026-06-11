@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 290">
+  <defs>
+    <linearGradient id="frpPipe" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#DCFCE7"/>
+      <stop offset="52%" stop-color="#86EFAC"/>
+      <stop offset="100%" stop-color="#16A34A"/>
+    </linearGradient>
+    <linearGradient id="clamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0EA5E9"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9CA3AF"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </linearGradient>
+  </defs>
+  <rect width="380" height="290" rx="12" fill="#EEF2F7"/>
+  <g stroke="#D1D5DB" stroke-width="0.5" opacity="0.62">
+    <line x1="0" y1="72" x2="380" y2="72"/>
+    <line x1="0" y1="144" x2="380" y2="144"/>
+    <line x1="0" y1="216" x2="380" y2="216"/>
+    <line x1="95" y1="0" x2="95" y2="290"/>
+    <line x1="190" y1="0" x2="190" y2="290"/>
+    <line x1="285" y1="0" x2="285" y2="290"/>
+  </g>
+  <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">FRP RISER - ELEVATION</text>
+  <rect x="72" y="206" width="256" height="12" rx="2" fill="url(#steel)" stroke="#374151"/>
+  <rect x="168" y="44" width="64" height="168" rx="30" fill="url(#frpPipe)" stroke="#166534" stroke-width="2"/>
+  <path d="M181 55 V200" stroke="#F0FDF4" stroke-width="4" opacity="0.5"/>
+  <g fill="url(#clamp)" stroke="#075985" stroke-width="1.4">
+    <path d="M132 121 Q190 88 248 121 V157 Q190 190 132 157 Z"/>
+    <rect x="104" y="135" width="54" height="14" rx="2"/>
+    <rect x="222" y="135" width="54" height="14" rx="2"/>
+    <rect x="110" y="112" width="34" height="70" rx="2" opacity="0.95"/>
+    <rect x="236" y="112" width="34" height="70" rx="2" opacity="0.95"/>
+  </g>
+  <g fill="#E5E7EB" stroke="#075985" stroke-width="0.8">
+    <circle cx="127" cy="124" r="3"/>
+    <circle cx="127" cy="170" r="3"/>
+    <circle cx="253" cy="124" r="3"/>
+    <circle cx="253" cy="170" r="3"/>
+  </g>
+  <line x1="190" y1="36" x2="190" y2="226" stroke="#64748B" stroke-width="0.8" stroke-dasharray="6,4"/>
+  <path d="M86 144 H126 M92 138 L86 144 L92 150 M120 138 L126 144 L120 150" stroke="#0EA5E9" stroke-width="1.5" fill="none"/>
+  <path d="M254 144 H294 M260 138 L254 144 L260 150 M288 138 L294 144 L288 150" stroke="#0EA5E9" stroke-width="1.5" fill="none"/>
+  <text x="23" y="104" font-family="Arial,sans-serif" font-size="8" fill="#166534" font-weight="700">FRP VERTICAL PIPE</text>
+  <line x1="104" y1="102" x2="169" y2="96" stroke="#166534" stroke-width="0.8"/>
+  <text x="272" y="126" font-family="Arial,sans-serif" font-size="8" fill="#075985" font-weight="700">ALL AROUND</text>
+  <text x="272" y="137" font-family="Arial,sans-serif" font-size="8" fill="#075985" font-weight="700">GUIDE CLAMP</text>
+  <line x1="258" y1="142" x2="270" y2="135" stroke="#075985" stroke-width="0.8"/>
+  <rect x="50" y="270" width="280" height="14" rx="4" fill="#166534"/>
+  <text x="190" y="281" text-anchor="middle" font-family="Arial,sans-serif" font-size="8.5" font-weight="700" fill="white" letter-spacing="0.5">FRP RISER CLAMP ALL AROUND GUIDE (RC73)</text>
+</svg>

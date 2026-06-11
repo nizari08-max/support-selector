@@ -31,6 +31,7 @@ const NPS_SIZES = [
   { label: "40",   value: 40.0 },
   { label: "42",   value: 42.0 },
   { label: "48",   value: 48.0 },
+  { label: "80",   value: 80.0 },
 ];
 
 // ── DN → NPS mapping (ISO 6708 / ASME B36.10M) ───────────────────────────────
@@ -56,71 +57,20 @@ const ILLUS_LABELS = {
   guide:         "Guide Support (GL) — End Elevation",
   line_stop:     "Line Stop Support (LS) — End Elevation",
   hold_down:     "Hold Down Support (GH) — End Elevation",
-  frp_clamp:     "FRP Clamp Shoe (CF) — End Elevation",
-  not_applicable:"Not Applicable",
+  frp_clamp:          "FRP Clamp Shoe (CF) — End Elevation",
+  flange_frame:       "Flange Frame Support (FF) — End Elevation",
+  frp_flange_holder:  "FRP Flanged Valve Holder (FF71) — End Elevation",
+  vertical_lug:       "Vertical Pipe Lug Support (WL) - Side Elevation",
+  rc71:               "FRP Riser Clamp Rest (RC71) - Elevation",
+  rc72:               "FRP Riser Clamp Rest + Guide + Hold Down (RC72) - Elevation",
+  rc73:               "FRP Riser Clamp All Around Guide (RC73) - Elevation",
+  not_applicable:     "Not Applicable",
 };
 
-// ── MPMS Piping Class mapping ─────────────────────────────────────────────────
-// Metallic + FRP classes only. Source: Master Piping Material Specification.
-const MPMS_CLASSES = {
-  BA1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Galvanized" },
-  BA2:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Galvanized" },
-  BB1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
-  BB1U: { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel + PE Coating" },
-  BB2:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel + PE Coating" },
-  BB3:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
-  BB4:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
-  BB5:  { material: "CS",  rating: "150 Lb.", desc: "Impact Tested Carbon Steel" },
-  BB6:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel" },
-  BD1:  { material: "SS",  rating: "150 Lb.", desc: "316/316L Stainless Steel" },
-  BD2:  { material: "SS",  rating: "150 Lb.", desc: "316/316L Stainless Steel" },
-  BD2U: { material: "SS",  rating: "150 Lb.", desc: "316/316L SS + PE Coated" },
-  BG1:  { material: "SS",  rating: "150 Lb.", desc: "904L Stainless Steel" },
-  BG2:  { material: "SS",  rating: "150 Lb.", desc: "904L Stainless Steel" },
-  BK1:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
-  BK2:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
-  BK3:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
-  BK4:  { material: "FRP", rating: "150 Lb.", desc: "Fiberglass Reinforced Pipe" },
-  BP1:  { material: "CS",  rating: "150 Lb.", desc: "Carbon Steel Jacketed" },
-  BS1:  { material: "SS",  rating: "150 Lb.", desc: "Duplex Stainless Steel S32205" },
-  BS2:  { material: "SS",  rating: "150 Lb.", desc: "Duplex S32750" },
-  BS3:  { material: "SS",  rating: "150 Lb.", desc: "Duplex S32205" },
-  BV1:  { material: "FRP", rating: "150 Lb.", desc: "Dual Laminate PP/FRP" },
-  CB1:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
-  CB2:  { material: "CS",  rating: "300 Lb.", desc: "Impact Tested Carbon Steel" },
-  CB3:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
-  CD1:  { material: "SS",  rating: "300 Lb.", desc: "316/316L Stainless Steel" },
-  CD2:  { material: "SS",  rating: "300 Lb.", desc: "316/316L Stainless Steel" },
-  CG1:  { material: "SS",  rating: "300 Lb.", desc: "904L Stainless Steel" },
-  CG2:  { material: "SS",  rating: "300 Lb.", desc: "904L Stainless Steel" },
-  CJ1:  { material: "CS",  rating: "300 Lb.", desc: "1-1/4 Cr-1/2 Mo Chrome Moly" },
-  CK3:  { material: "FRP", rating: "300 Lb.", desc: "Fiberglass Reinforced Pipe" },
-  CP1:  { material: "CS",  rating: "300 Lb.", desc: "Carbon Steel" },
-  CS1:  { material: "SS",  rating: "300 Lb.", desc: "Duplex Stainless Steel S32205" },
-  ES2:  { material: "SS",  rating: "600 Lb.", desc: "Super Duplex S32750" },
-  FB1:  { material: "CS",  rating: "900/1500 Lb.", desc: "Carbon Steel" },
-  FJ1:  { material: "CS",  rating: "900/1500 Lb.", desc: "1-1/4 Cr-1/2 Mo Chrome Moly" },
-  GC1:  { material: "SS",  rating: "1500 Lb.", desc: "Stainless Steel SS304H" },
-  GD1:  { material: "SS",  rating: "1500 Lb.", desc: "316/316L Stainless Steel" },
-  GD2:  { material: "SS",  rating: "1500 Lb.", desc: "316/316L Stainless Steel" },
-  KD1:  { material: "SS",  rating: "N/A",      desc: "316/316L Stainless Steel" },
-};
-
-// Non-metallic / non-FRP excluded classes — show warning, no auto-fill.
-const MPMS_EXCLUDED = {
-  BH1: "HDPE",
-  BH2: "HDPE",
-  BL5: "Rubber Lined Carbon Steel",
-  BN1: "PTFE Lined Carbon Steel",
-  BR1: "CPVC",
-  BT1: "Reinforced Flexible Rubber",
-  BX1: "Polypropylene",
-  BX2: "Polypropylene",
-  BX3: "Polypropylene",
-  BY1: "PVC",
-  BY3: "PVC",
-  BZ1: "PVDF",
-};
+// ── MPMS material → selector dropdown mapping ─────────────────────────────────
+// The span calculator backend uses "AS" for Alloy Steel; the selector dropdown
+// option value is "SA". All other material codes are identical between the two.
+const SPAN_MATERIAL_TO_SELECTOR = { AS: "SA" };
 
 // ── Material class readable names ─────────────────────────────────────────────
 const MATERIAL_NAMES = {
@@ -138,14 +88,21 @@ const MATERIAL_NAMES = {
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let state = {
-  nps:         null,
-  material:    "",
-  pwht:        false,
-  insulation:  "uninsulated",
-  fn:          null,
-  pipingClass: "",
-  refinements: {},
+  nps:              null,
+  material:         "",
+  pwht:             false,
+  insulation:       "uninsulated",
+  fn:               null,
+  pipingClass:      "",
+  pipingClassEntry: null,   // resolved entry from /api/resolve-class
+  refinements:      {},
   pendingQuestions: [],
+  pipeOrientation: "horizontal",
+  verticalRestraint: null,
+  frpVerticalSupport: null,
+  // Flange support state (REST only)
+  isFlange:    false,
+  flangeClass: null,  // int: 150 | 300 | 600 | 900 | 1500 | 2500 (ignored for FRP)
 };
 
 // ── Initialise ────────────────────────────────────────────────────────────────
@@ -153,13 +110,30 @@ document.addEventListener("DOMContentLoaded", () => {
   buildNPSGrid();
   bindToggleGroup("pwhtGroup",      v => { state.pwht = (v === "true"); clearRefinements(); });
   bindToggleGroup("insulationGroup",v => { state.insulation = v; clearRefinements(); });
+  bindToggleGroup("orientationGroup", v => {
+    state.pipeOrientation = v;
+    clearRefinements();
+    updateOrientationUI();
+  });
+  bindToggleGroup("verticalRestraintGroup", v => {
+    state.verticalRestraint = v;
+    clearRefinements();
+  });
+  bindToggleGroup("frpVerticalSupportGroup", v => {
+    state.frpVerticalSupport = v;
+    clearRefinements();
+  });
   bindFunctionButtons();
   document.getElementById("materialSelect").addEventListener("change", e => {
     state.material = e.target.value;
     clearRefinements();
+    _updateFlangeClassVisibility();
+    updateOrientationUI();
   });
   document.getElementById("dnInput").addEventListener("input", handleDNInput);
   document.getElementById("pipingClassInput").addEventListener("input", handlePipingClassInput);
+  bindFlangeControls();
+  updateOrientationUI();
 });
 
 // ── DN converter ─────────────────────────────────────────────────────────────
@@ -201,10 +175,11 @@ function handleDNInput(e) {
 }
 
 // ── Piping class lookup ───────────────────────────────────────────────────────
-function handlePipingClassInput(e) {
+async function handlePipingClassInput(e) {
   const raw       = e.target.value.trim().toUpperCase();
   const feedback  = document.getElementById("pcFeedback");
-  state.pipingClass = raw;
+  state.pipingClass      = raw;
+  state.pipingClassEntry = null;
 
   if (!raw) {
     feedback.textContent = "";
@@ -212,30 +187,51 @@ function handlePipingClassInput(e) {
     return;
   }
 
-  const excluded = MPMS_EXCLUDED[raw];
-  if (excluded) {
-    feedback.textContent =
-      `Class ${raw} is a non-metallic pipe class (${excluded}). ` +
-      `This app covers metallic and FRP pipes only. ` +
-      `Please consult the appropriate support standard.`;
-    feedback.className = "pc-feedback pc-excluded";
+  feedback.textContent = "…";
+  feedback.className   = "pc-feedback";
+
+  let data;
+  try {
+    const res = await fetch(`/api/resolve-class/${encodeURIComponent(raw)}`);
+    data = await res.json();
+  } catch (_) {
+    feedback.textContent = "Lookup unavailable. Please select material manually.";
+    feedback.className   = "pc-feedback pc-unknown";
     return;
   }
 
-  const entry = MPMS_CLASSES[raw];
-  if (!entry) {
+  // Guard: user may have typed something new while the request was in flight
+  if (state.pipingClass !== raw) return;
+
+  if (!data.found) {
     feedback.textContent = "Class code not found. Please select material manually.";
     feedback.className   = "pc-feedback pc-unknown";
     return;
   }
 
+  if (data.excluded) {
+    feedback.textContent =
+      `Class ${raw} is not covered by this standard. ${data.reason}`;
+    feedback.className = "pc-feedback pc-excluded";
+    return;
+  }
+
+  // Map span-material code to selector dropdown value (AS → SA for Alloy Steel)
+  const selectorMaterial = SPAN_MATERIAL_TO_SELECTOR[data.material] || data.material;
+
   // Auto-fill material dropdown
   const sel  = document.getElementById("materialSelect");
-  sel.value  = entry.material;
-  state.material = entry.material;
+  sel.value  = selectorMaterial;
+  state.material         = selectorMaterial;
+  state.pipingClassEntry = data;
   clearRefinements();
+  _updateFlangeClassVisibility();
 
-  feedback.textContent = `${raw} → ${entry.desc} | ${entry.rating} ✓`;
+  // Trigger the AUTO badge on the material field wrapper
+  const wrapper = document.getElementById("materialSelectWrapper");
+  if (wrapper) wrapper.dataset.auto = "true";
+
+  feedback.textContent = `${raw} → ${data.desc} | ${data.rating} ✓`;
   feedback.className   = "pc-feedback pc-ok";
 }
 
@@ -284,6 +280,99 @@ function bindFunctionButtons() {
       btn.classList.add("selected");
       state.fn = btn.dataset.value;
       clearRefinements();
+      // Show flange section only when REST is selected
+      const flangeSection = document.getElementById("flangeSection");
+      if (flangeSection) {
+        flangeSection.style.display = (state.fn === "rest") ? "" : "none";
+        if (state.fn !== "rest") {
+          _resetFlangeState();
+        }
+      }
+    });
+  });
+}
+
+// ── Flange section controls ───────────────────────────────────────────────────
+function updateOrientationUI() {
+  const isVertical = state.pipeOrientation === "vertical";
+  const isFrpVertical = isVertical && _isFrpSelected();
+  const verticalDetails = document.getElementById("verticalDetails");
+  const frpVerticalDetails = document.getElementById("frpVerticalDetails");
+  const functionSection = document.getElementById("functionSection");
+  const flangeSection = document.getElementById("flangeSection");
+
+  if (verticalDetails) verticalDetails.style.display = (isVertical && !isFrpVertical) ? "" : "none";
+  if (frpVerticalDetails) frpVerticalDetails.style.display = isFrpVertical ? "" : "none";
+  if (functionSection) functionSection.style.display = isVertical ? "none" : "";
+
+  if (isVertical) {
+    _resetFlangeState();
+    if (flangeSection) flangeSection.style.display = "none";
+    if (isFrpVertical) {
+      state.verticalRestraint = null;
+      document.querySelectorAll("#verticalRestraintGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+    } else {
+      state.frpVerticalSupport = null;
+      document.querySelectorAll("#frpVerticalSupportGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+    }
+  } else if (flangeSection) {
+    state.frpVerticalSupport = null;
+    document.querySelectorAll("#frpVerticalSupportGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+    flangeSection.style.display = (state.fn === "rest") ? "" : "none";
+  }
+}
+
+function _isFrpSelected() {
+  return (state.material || "").toUpperCase() === "FRP";
+}
+
+function _updateFlangeClassVisibility() {
+  const fcs = document.getElementById("flangeClassSection");
+  const fri = document.getElementById("frpFlangeInfo");
+  const isFrp = _isFrpSelected();
+  if (fcs) fcs.style.display = isFrp ? "none" : "";
+  if (fri) fri.style.display = isFrp ? "" : "none";
+  if (isFrp) {
+    state.flangeClass = null;
+    document.querySelectorAll("#flangeClassGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+  }
+}
+
+function _resetFlangeState() {
+  state.isFlange    = false;
+  state.flangeClass = null;
+  document.querySelectorAll("#flangeToggleGroup .toggle-btn").forEach((b, i) => {
+    b.classList.toggle("active", i === 0);
+  });
+  const fd = document.getElementById("flangeDetails");
+  if (fd) fd.style.display = "none";
+}
+
+function bindFlangeControls() {
+  // "Support at a flange?" toggle
+  document.querySelectorAll("#flangeToggleGroup .toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#flangeToggleGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.isFlange = (btn.dataset.value === "true");
+      clearRefinements();
+      const fd = document.getElementById("flangeDetails");
+      if (fd) fd.style.display = state.isFlange ? "" : "none";
+      if (!state.isFlange) {
+        state.flangeClass = null;
+        document.querySelectorAll("#flangeClassGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+      }
+      _updateFlangeClassVisibility();
+    });
+  });
+
+  // Pressure class buttons (CL 150 / 300 / 600 / 900 / 1500 / 2500)
+  document.querySelectorAll("#flangeClassGroup .toggle-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#flangeClassGroup .toggle-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      state.flangeClass = parseInt(btn.dataset.value, 10);
+      clearRefinements();
     });
   });
 }
@@ -313,19 +402,24 @@ async function runSelection() {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({
-        nps:          state.nps,
-        material:     state.material,
-        pwht:         state.pwht,
-        insulation:   state.insulation,
-        function:     state.fn,
-        piping_class: state.pipingClass || null,
-        refinements:  state.refinements || {},
+        nps:              state.nps,
+        material:         state.material,
+        pwht:             state.pwht,
+        insulation:       state.insulation,
+        function:         state.pipeOrientation === "vertical" ? "rest" : state.fn,
+        pipe_orientation: state.pipeOrientation,
+        vertical_restraint: state.pipeOrientation === "vertical" ? state.verticalRestraint : null,
+        frp_vertical_support: state.pipeOrientation === "vertical" ? state.frpVerticalSupport : null,
+        piping_class:     state.pipingClass || null,
+        refinements:      state.refinements || {},
+        is_flange:    state.pipeOrientation === "vertical" ? false : state.isFlange,
+        flange_class: state.flangeClass,
       }),
     });
     const data = await res.json();
 
     if (!data.success)      { showError(data.error); return; }
-    if (!data.is_applicable){ showNA(); return; }
+    if (!data.is_applicable){ showNA(data); return; }
     if (data.status === "needs_refinement") { showRefinement(data); return; }
     showResult(data);
 
@@ -354,10 +448,32 @@ function validateInputs() {
     shake("materialSelect");
     ok = false;
   }
-  if (!state.fn) {
-    shake("functionGrid" in document ? "functionGrid" : "submitBtn");
+  if (state.pipeOrientation !== "vertical" && !state.fn) {
+    shake("functionGrid");
     document.querySelectorAll(".fn-btn").forEach(b => b.classList.add("shake"));
     setTimeout(() => document.querySelectorAll(".fn-btn").forEach(b => b.classList.remove("shake")), 500);
+    ok = false;
+  }
+  if (state.pipeOrientation === "vertical" && _isFrpSelected() && !state.frpVerticalSupport) {
+    shake("frpVerticalDetails");
+    document.querySelectorAll("#frpVerticalSupportGroup .toggle-btn").forEach(b => b.classList.add("shake"));
+    setTimeout(() => document.querySelectorAll("#frpVerticalSupportGroup .toggle-btn").forEach(b => b.classList.remove("shake")), 500);
+    ok = false;
+  }
+  if (state.pipeOrientation === "vertical" && !_isFrpSelected() && !state.verticalRestraint) {
+    shake("verticalDetails");
+    document.querySelectorAll("#verticalRestraintGroup .toggle-btn").forEach(b => b.classList.add("shake"));
+    setTimeout(() => document.querySelectorAll("#verticalRestraintGroup .toggle-btn").forEach(b => b.classList.remove("shake")), 500);
+    ok = false;
+  }
+  // Flange: require pressure class for metallic materials (FRP uses FF71, no class needed)
+  if (state.pipeOrientation !== "vertical" && state.isFlange && !_isFrpSelected() && !state.flangeClass) {
+    document.querySelectorAll("#flangeClassGroup .toggle-btn").forEach(b => {
+      b.classList.add("shake");
+      setTimeout(() => b.classList.remove("shake"), 500);
+    });
+    const fcs = document.getElementById("flangeClassSection");
+    if (fcs) { fcs.classList.add("shake"); setTimeout(() => fcs.classList.remove("shake"), 500); }
     ok = false;
   }
   return ok;
@@ -385,10 +501,21 @@ function buildSummaryPills(targetId) {
     { key: "Material",   val: MATERIAL_NAMES[state.material] || state.material },
     { key: "PWHT",       val: state.pwht ? "Required" : "Not Required" },
     { key: "Insulation", val: state.insulation === "hot_insulated" ? "Hot Insulated" : "Uninsulated" },
-    { key: "Function",   val: state.fn.replace("_"," ").replace(/\b\w/g,c=>c.toUpperCase()) },
+    { key: "Orientation", val: state.pipeOrientation === "vertical" ? "Vertical" : "Horizontal" },
   ];
-  if (state.pipingClass && MPMS_CLASSES[state.pipingClass]) {
-    const pc = MPMS_CLASSES[state.pipingClass];
+  if (state.pipeOrientation === "vertical") {
+    pills.push({
+      key: _isFrpSelected() ? "Riser Clamp" : "Restraint",
+      val: _verticalSelectionLabel(),
+    });
+  } else {
+    pills.push({
+      key: "Function",
+      val: state.fn.replace("_"," ").replace(/\b\w/g,c=>c.toUpperCase()),
+    });
+  }
+  if (state.pipingClass && state.pipingClassEntry) {
+    const pc = state.pipingClassEntry;
     pills.push({ key: "Piping Class", val: `${state.pipingClass} — ${pc.desc}` });
   }
   pills.forEach(({ key, val }) => {
@@ -397,6 +524,15 @@ function buildSummaryPills(targetId) {
     pill.innerHTML = `<strong>${key}:</strong> ${val}`;
     summaryEl.appendChild(pill);
   });
+}
+
+function _verticalSelectionLabel() {
+  if (_isFrpSelected()) {
+    if (state.frpVerticalSupport === "rest_guide_hold_down") return "Rest + Guide + Hold Down";
+    if (state.frpVerticalSupport === "all_around_guide") return "All Around Guide";
+    return "Rest";
+  }
+  return state.verticalRestraint === "fixed" ? "Fixed" : "Sliding / Shear";
 }
 
 function showRefinement(data) {
@@ -551,6 +687,36 @@ function showResult(data) {
   }
   document.getElementById("drawingsCard").style.display = "";
 
+  const relatedCard = document.getElementById("relatedDrawingsCard");
+  const relatedChips = document.getElementById("relatedDrawingChips");
+  const related = data.related_drawings_labeled ||
+    (data.related_drawings || []).map(r => ({ code: "", ref: r }));
+  if (relatedCard && relatedChips) {
+    relatedChips.innerHTML = "";
+    if (related.length > 0) {
+      related.forEach(({ code, ref }) => {
+        const chip = document.createElement("a");
+        chip.className = "dwg-chip dwg-chip-link";
+        if (code) {
+          chip.innerHTML =
+            `<span class="chip-code-label">${code}</span>` +
+            `<span class="chip-ref-text">${ref}</span>`;
+        } else {
+          chip.innerHTML = `<span class="chip-ref-text">${ref}</span>`;
+        }
+        const npsParam = state.nps !== null ? `?nps=${state.nps}` : "";
+        chip.href = `/api/drawing/${encodeURIComponent(ref)}${npsParam}`;
+        chip.target = "_blank";
+        chip.rel = "noopener noreferrer";
+        chip.title = `${code ? code + " - " : ""}${ref}  (NPS ${state.nps || "?"}") - click to open drawing`;
+        relatedChips.appendChild(chip);
+      });
+      relatedCard.style.display = "";
+    } else {
+      relatedCard.style.display = "none";
+    }
+  }
+
   // -- Engineering notes --
   const notesEl = document.getElementById("notesList");
   notesEl.innerHTML = "";
@@ -587,7 +753,7 @@ function showResult(data) {
   }
 }
 
-function showNA() {
+function showNA(data) {
   hideAll(PANELS);
   showAll(["naState"]);
 
@@ -599,9 +765,19 @@ function showNA() {
     `NPS ${npsLabel}"`,
     MATERIAL_NAMES[state.material] || state.material,
     state.insulation === "hot_insulated" ? "Hot Insulated" : "Uninsulated",
-    state.fn.replace("_"," ").replace(/\b\w/g, c => c.toUpperCase()),
+    state.pipeOrientation === "vertical" ? "Vertical" : state.fn.replace("_"," ").replace(/\b\w/g, c => c.toUpperCase()),
   ];
+  if (state.pipeOrientation === "vertical" && (state.verticalRestraint || state.frpVerticalSupport)) {
+    pills.push(_verticalSelectionLabel());
+  }
   pills.forEach(text => {
+    const p = document.createElement("span");
+    p.className = "summary-pill";
+    p.textContent = text;
+    paramsEl.appendChild(p);
+  });
+
+  (data?.refinement_warnings || []).forEach(text => {
     const p = document.createElement("span");
     p.className = "summary-pill";
     p.textContent = text;

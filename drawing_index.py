@@ -92,13 +92,20 @@ DRAWING_INDEX = {
     "PR02":  [f"{DRAWING_PREFIX}0381"],   # welded,  ¾"–10"
 
     # -------------------------------------------------------------------------
+    # VERTICAL PIPE LUG SUPPORTS (WL series)
+    # WL01/WL02 are attachment details and are intentionally deferred.
+    # -------------------------------------------------------------------------
+    "WL03":  [f"{DRAWING_PREFIX}0386"],   # shear lug / sliding vertical bare pipe
+    "WL04":  [f"{DRAWING_PREFIX}0387"],   # fixed lug / vertical bare pipe
+    "WL05":  [f"{DRAWING_PREFIX}0388"],   # shear lug / sliding vertical insulated pipe
+    "WL06":  [f"{DRAWING_PREFIX}0389"],   # fixed lug / vertical insulated pipe
+
+    # -------------------------------------------------------------------------
     # FRP CLAMP SHOES (CF series)
     # -------------------------------------------------------------------------
     "CF01":  [f"{DRAWING_PREFIX}0369"],
     "CF02":  [f"{DRAWING_PREFIX}0370"],
     "CF03":  [f"{DRAWING_PREFIX}0371"],
-    # CF04: drawing 0372 in this PDF revision is SF01 (FRP Thrust Collar),
-    # not CF04.  CF04 has no drawing in this revision of the standard.
 
     # -------------------------------------------------------------------------
     # FRP SADDLE SUPPORTS (SC7x series)
@@ -129,6 +136,39 @@ DRAWING_INDEX = {
         f"{DRAWING_PREFIX}0704-01",         #   1"   – 8"
         f"{DRAWING_PREFIX}0704-02",         #   10"  – 60"
     ],
+    "RC71":  [                              # FRP Riser Clamp Rest — 3/4" to 80"
+        f"{DRAWING_PREFIX}0707-01",         #   3/4" – 4"
+        f"{DRAWING_PREFIX}0707-02",         #   6"   – 10"
+        f"{DRAWING_PREFIX}0707-03",         #   12"  – 80"
+    ],
+    "RC72":  [                              # FRP Riser Clamp Rest + Guide + Hold Down
+        f"{DRAWING_PREFIX}0708-01",         #   3/4" – 4"
+        f"{DRAWING_PREFIX}0708-02",         #   6"   – 10"
+        f"{DRAWING_PREFIX}0708-03",         #   12"  – 80"
+    ],
+    "RC73":  [                              # FRP Riser Clamp All Around Guide
+        f"{DRAWING_PREFIX}0709-01",         #   3/4" – 4"
+        f"{DRAWING_PREFIX}0709-02",         #   6"   – 10"
+        f"{DRAWING_PREFIX}0709-03",         #   12"  – 80"
+    ],
+
+    # -------------------------------------------------------------------------
+    # FLANGE FRAME SUPPORTS (FF series) — REST support at a pipe flange,
+    # applicable to all piping materials, selected by ASME pressure class.
+    # -------------------------------------------------------------------------
+    "FF01":  [f"{DRAWING_PREFIX}0417"],   # CL 150  — 1"–24"
+    "FF02":  [f"{DRAWING_PREFIX}0418"],   # CL 300  — 1"–24"
+    "FF03":  [f"{DRAWING_PREFIX}0419"],   # CL 600  — 2"–16"
+    "FF04":  [f"{DRAWING_PREFIX}0420"],   # CL 900  — 2"–16"
+    "FF05":  [f"{DRAWING_PREFIX}0421"],   # CL 1500 — 2"–16"
+    "FF06":  [f"{DRAWING_PREFIX}0422"],   # CL 2500 — 2"–12"
+
+    # -------------------------------------------------------------------------
+    # FRP FLANGED VALVE HOLDER (FF71) — REST support for a flanged valve on
+    # FRP piping only. Selected by NPS (no pressure class). 1"–18".
+    # Under "FRP PIPE SUPPORT" section of the standard (not FLANGE FRAME).
+    # -------------------------------------------------------------------------
+    "FF71":  [f"{DRAWING_PREFIX}0705"],   # FRP valve holder — 1"–18"
 }
 
 
@@ -198,11 +238,16 @@ DRAWING_SIZE_RANGES = {
     "0380":  (0.75, 48.0),  # PR01  (bonded)
     "0381":  (0.75, 48.0),  # PR02  (welded)
 
+    # Vertical Pipe Lug Supports
+    "0386":  (1.0,  24.0),  # WL03
+    "0387":  (1.0,  24.0),  # WL04
+    "0388":  (1.0,  24.0),  # WL05
+    "0389":  (1.0,  24.0),  # WL06
+
     # FRP Clamp Shoes (CF series — older standard drawings)
     "0369":  (2.0,  24.0),  # CF01
     "0370":  (2.0,  24.0),  # CF02
     "0371":  (2.0,  24.0),  # CF03
-    # 0372 is SF01 (FRP Thrust Collar) in this PDF rev — not CF04, no size range needed
 
     # FRP Saddle Supports — SC71 (2-digit sub-range suffix, full key kept as-is)
     # Confirmed from PDF index page 7: drawing numbers JS-PE-DPS-0701-01 to 0701-04.
@@ -227,6 +272,43 @@ DRAWING_SIZE_RANGES = {
     # FRP Sloped Saddle — SC74
     "0704-01": (1.0,   8.0),   # SC74 sub-range 1: 1"–8"
     "0704-02": (10.0, 60.0),   # SC74 sub-range 2: 10"–60" (tool max 48")
+
+    # FRP Riser Clamp Supports — RC71/RC72/RC73
+    "0707-01": (0.75,  4.0),   # RC71 sub-range 1
+    "0707-02": (6.0,  10.0),   # RC71 sub-range 2
+    "0707-03": (12.0, 80.0),   # RC71 sub-range 3
+    "0708-01": (0.75,  4.0),   # RC72 sub-range 1
+    "0708-02": (6.0,  10.0),   # RC72 sub-range 2
+    "0708-03": (12.0, 80.0),   # RC72 sub-range 3
+    "0709-01": (0.75,  4.0),   # RC73 sub-range 1
+    "0709-02": (6.0,  10.0),   # RC73 sub-range 2
+    "0709-03": (12.0, 80.0),   # RC73 sub-range 3
+
+    # Flange Frame Supports (FF01–FF06) — NPS ranges per pressure class
+    "0417":  (1.0,  24.0),  # FF01 CL 150
+    "0418":  (1.0,  24.0),  # FF02 CL 300
+    "0419":  (2.0,  16.0),  # FF03 CL 600
+    "0420":  (2.0,  16.0),  # FF04 CL 900
+    "0421":  (2.0,  16.0),  # FF05 CL 1500
+    "0422":  (2.0,  12.0),  # FF06 CL 2500
+
+    # FRP Flanged Valve Holder (FF71)
+    "0705":  (1.0,  18.0),  # FF71 — 1"–18"
+}
+
+
+# Referenced drawings called out inside WL03-WL06 notes/details.
+# Only refs that can be opened via DRAWING_PAGES are returned here; general
+# support specification refs such as JS-PE-DPS-0073 are tracked separately.
+RELATED_DRAWINGS_BY_REF = {
+    "JS-PE-DPS-0386": ["JS-PE-DPS-0387"],
+    "JS-PE-DPS-0387": ["JS-PE-DPS-0386"],
+    "JS-PE-DPS-0388": ["JS-PE-DPS-0386"],
+    "JS-PE-DPS-0389": ["JS-PE-DPS-0386", "JS-PE-DPS-0388"],
+}
+
+UNMAPPED_RELATED_REFS_BY_REF = {
+    "JS-PE-DPS-0386": ["JS-PE-DPS-0073"],
 }
 
 
@@ -257,7 +339,7 @@ def _drawing_covers_nps(ref: str, nps: float) -> bool:
 def _expand_code_ranges(s: str) -> str:
     """Expand shorthand range notation like SC02-SC04 into SC02/SC03/SC04.
 
-    The support rules use compact range strings (e.g. "SC02-SC04, SC06-SC09")
+    The support rules use compact range strings (e.g. "SC02-SC04, SC06-SC08")
     to mean "any of SC02, SC03, SC04".  Without expansion the regex below only
     sees the first and last code of each range.
     """
@@ -274,7 +356,7 @@ def get_drawings(support_code: str, nps: float = None) -> list:
     """
     Return drawing reference numbers for a given support code or compound support string.
 
-    Extracts all drawing codes (e.g. SH01, GL02, CF04) from the string using a
+    Extracts all drawing codes (e.g. SH01, GL02, SC06) from the string using a
     regex, then looks each one up in DRAWING_INDEX.  Codes not in the index are
     silently skipped.  Results are de-duplicated and ordered by first appearance.
 
@@ -301,7 +383,7 @@ def get_drawings(support_code: str, nps: float = None) -> list:
     # Expand range notation (e.g. "SC02-SC04" → "SC02/SC03/SC04") before parsing
     expanded = _expand_code_ranges(support_code.upper())
 
-    # Match codes like SH01, GL02, CF04, SC71 — 2 uppercase letters + 2 digits
+    # Match codes like SH01, GL02, SC71 — 2 uppercase letters + 2 digits
     codes = re.findall(r'\b([A-Z]{2}\d{2})\b', expanded)
 
     seen = set()
@@ -334,3 +416,16 @@ def label_drawings(drawing_refs: list) -> list:
     label alongside the drawing number on each chip.
     """
     return [{"code": _REF_TO_CODE.get(ref, ""), "ref": ref} for ref in drawing_refs]
+
+
+def get_related_drawings(drawing_refs: list) -> list:
+    """Return secondary drawing references called out by the primary drawings."""
+    primary = {ref.upper() for ref in drawing_refs}
+    related = []
+    for ref in drawing_refs:
+        for related_ref in RELATED_DRAWINGS_BY_REF.get(ref.upper(), []):
+            if related_ref.upper() in primary:
+                continue
+            if related_ref not in related:
+                related.append(related_ref)
+    return related

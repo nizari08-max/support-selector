@@ -7,8 +7,8 @@ the user-selected pipe size.
 
 PDF location is resolved in this order:
   1. PDF_PATH environment variable
-  2. Same directory as this file (QW2507-00-PE-STD-00001.pdf)
-  3. User Downloads folder
+  2. Same directory as this file (project root)
+  3. piping_support_tool/ subdirectory (legacy layout)
 """
 
 import io
@@ -28,8 +28,6 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _SEARCH_PATHS = [
     os.path.join(_HERE, _FILENAME),
     os.path.join(_HERE, "piping_support_tool", _FILENAME),
-    os.path.expanduser(f"~/Downloads/{_FILENAME}"),
-    os.path.expanduser(f"~/OneDrive - KLAUS/Desktop/{_FILENAME}"),
 ]
 
 
@@ -106,11 +104,16 @@ DRAWING_PAGES: dict[str, list[int]] = {
     "JS-PE-DPS-0369":     [69, 70],    # CF01 (two pages)
     "JS-PE-DPS-0370":     [71],        # CF02
     "JS-PE-DPS-0371":     [72],        # CF03
-    # CF04 / JS-PE-DPS-0372 omitted: PDF index confirms 0372 = SF01 (FRP Thrust Collar), not CF04
 
     # Isolation Pads (PR series)
     "JS-PE-DPS-0380":     [78],        # PR01 (bonded, ¾"–10")
     "JS-PE-DPS-0381":     [79],        # PR02 (welded, ¾"–10")
+
+    # Vertical Pipe Lug Supports (WL03-WL06 only)
+    "JS-PE-DPS-0386":     [84],        # WL03
+    "JS-PE-DPS-0387":     [85],        # WL04
+    "JS-PE-DPS-0388":     [86],        # WL05
+    "JS-PE-DPS-0389":     [87],        # WL06
 
     # FRP Saddle Supports — SC71 (JS-PE-DPS-0701-xx)
     # Pages confirmed by text-layer SC71 keyword scan; sequential order matches PDF index.
@@ -135,6 +138,30 @@ DRAWING_PAGES: dict[str, list[int]] = {
     # FRP Sloped Saddle — SC74 (JS-PE-DPS-0704-xx)
     "JS-PE-DPS-0704-01":  [177],       # SC74: 1"–8"
     "JS-PE-DPS-0704-02":  [178],       # SC74: 10"–60"
+
+    # FRP Riser Clamp Supports — RC71/RC72/RC73
+    "JS-PE-DPS-0707-01":  [181],       # RC71: 3/4"–4"
+    "JS-PE-DPS-0707-02":  [182],       # RC71: 6"–10"
+    "JS-PE-DPS-0707-03":  [183],       # RC71: 12"–80"
+    "JS-PE-DPS-0708-01":  [184],       # RC72: 3/4"–4"
+    "JS-PE-DPS-0708-02":  [185],       # RC72: 6"–10"
+    "JS-PE-DPS-0708-03":  [186],       # RC72: 12"–80"
+    "JS-PE-DPS-0709-01":  [187],       # RC73: 3/4"–4"
+    "JS-PE-DPS-0709-02":  [188],       # RC73: 6"–10"
+    "JS-PE-DPS-0709-03":  [189],       # RC73: 12"–80"
+
+    # Flange Frame Supports (FF01–FF06) — REST support at a pipe flange
+    # Pages confirmed by searching the PDF text layer for "FF01"–"FF06".
+    "JS-PE-DPS-0417":     [111],       # FF01 CL 150 — 1"–24"
+    "JS-PE-DPS-0418":     [112],       # FF02 CL 300 — 1"–24"
+    "JS-PE-DPS-0419":     [113],       # FF03 CL 600 — 2"–16"
+    "JS-PE-DPS-0420":     [114],       # FF04 CL 900 — 2"–16"
+    "JS-PE-DPS-0421":     [115],       # FF05 CL 1500 — 2"–16"
+    "JS-PE-DPS-0422":     [116],       # FF06 CL 2500 — 2"–12"
+
+    # FRP Flanged Valve Holder (FF71) — REST support for FRP piping
+    # Page confirmed by searching the PDF text layer for "FF71".
+    "JS-PE-DPS-0705":     [179],       # FF71 — 1"–18"
 }
 
 
@@ -216,6 +243,13 @@ _CLAMPED_SHOE_REFS = {
     "JS-PE-DPS-0347",
     "JS-PE-DPS-0348",
     "JS-PE-DPS-0349",
+}
+
+_WL_COLUMN_HIGHLIGHT_REFS = {
+    "JS-PE-DPS-0386",
+    "JS-PE-DPS-0387",
+    "JS-PE-DPS-0388",
+    "JS-PE-DPS-0389",
 }
 
 
@@ -315,6 +349,132 @@ def _find_row_rect(page, nps: float):
     return fitz.Rect(best.x0 - 1, table_y0, best.x1 + 1, table_y1)
 
 
+def _find_ff71_row_rect(page, nps: float):
+    """
+    Locate the FF71 table row.
+
+    JS-PE-DPS-0705 uses bare NPS labels in the text layer (for example
+    "10" and "18", without inch marks) and does not expose the DN fallback
+    values used by the generic finder.  The dimension table size row sits in a
+    tight band near the "NB" header, so exact word matching in that band avoids
+    false matches from notes and the title block.
+    """
+    import fitz
+
+    nps_label = f"{nps:g}"
+    page_words = page.get_text("words")
+    size_words = [
+        w for w in page_words
+        if 300 <= w[0] <= 445
+        and 306 <= w[1] <= 322
+        and w[4] == nps_label
+    ]
+    if not size_words:
+        return None
+
+    best = min(size_words, key=lambda w: w[0])
+    x0, _y0, x1, _y1, *_ = best
+
+    header_words = [
+        w for w in page_words
+        if 440 <= w[0] <= 458
+        and 306 <= w[1] <= 324
+        and w[4] in {"NB", "NPS", "DN"}
+    ]
+    table_y0 = (min(w[1] for w in header_words) - 4) if header_words else 306
+
+    x_lo = x0 - 2
+    x_hi = x1 + 2
+    column_words = [w for w in page_words if x_lo <= w[0] <= x_hi and 306 <= w[1] <= 375]
+    table_y1 = (max(w[3] for w in column_words) + 3) if column_words else 372
+
+    return fitz.Rect(x0 - 1, table_y0, x1 + 1, table_y1)
+
+
+def _find_wl_column_rect(page, nps: float):
+    """
+    Locate the selected size column in WL03-WL06 tables.
+
+    WL dimension/load tables are arranged visually as columns by pipe size.
+    In the rotated PDF coordinate space, those visual columns correspond to
+    narrow y-bands spanning the DN/NPS/R/A/B/LOAD rows.
+    """
+    import fitz
+
+    words = page.get_text("words")
+    dn = _NPS_TO_DN.get(nps)
+    if dn is None:
+        return None
+
+    dn_header = [
+        w for w in words
+        if w[4] == "DN" and 620 <= w[0] <= 690 and 90 <= w[1] <= 125
+    ]
+    if not dn_header:
+        return None
+
+    header_x0 = min(w[0] for w in dn_header) - 10
+    header_x1 = max(w[2] for w in dn_header) + 10
+    dn_words = [
+        w for w in words
+        if header_x0 <= w[0] <= header_x1
+        and 125 <= w[1] <= 485
+        and w[4] == str(dn)
+    ]
+    if not dn_words:
+        return None
+
+    target = min(dn_words, key=lambda w: abs(w[0] - dn_header[0][0]))
+    target_center = (target[1] + target[3]) / 2
+
+    size_centers = sorted(
+        (w[1] + w[3]) / 2
+        for w in words
+        if header_x0 <= w[0] <= header_x1
+        and 125 <= w[1] <= 485
+        and re.fullmatch(r"\d+", w[4])
+    )
+    size_centers = [c for i, c in enumerate(size_centers) if i == 0 or abs(c - size_centers[i - 1]) > 2]
+    try:
+        idx = min(range(len(size_centers)), key=lambda i: abs(size_centers[i] - target_center))
+    except ValueError:
+        return None
+
+    prev_center = size_centers[idx - 1] if idx > 0 else None
+    next_center = size_centers[idx + 1] if idx + 1 < len(size_centers) else None
+    y0 = ((prev_center + target_center) / 2) if prev_center is not None else target_center - 10
+    y1 = ((next_center + target_center) / 2) if next_center is not None else target_center + 10
+
+    column_words = [
+        w for w in words
+        if 560 <= w[0] <= 690
+        and y0 <= ((w[1] + w[3]) / 2) <= y1
+    ]
+    if not column_words:
+        return None
+
+    x0 = min(w[0] for w in column_words) - 2
+    x1 = max(w[2] for w in column_words) + 2
+    return fitz.Rect(x0, y0 - 1, x1, y1 + 1)
+
+
+def _highlight_mode_for_ref(ref_upper: str) -> str:
+    if ref_upper in _WL_COLUMN_HIGHLIGHT_REFS:
+        return "column"
+    if ref_upper == "JS-PE-DPS-0705":
+        return "ff71_row"
+    return "row"
+
+
+def _highlight_rect_for_ref(page, ref_upper: str, nps: float):
+    mode = _highlight_mode_for_ref(ref_upper)
+    if mode == "column":
+        return _find_wl_column_rect(page, nps)
+    if mode == "ff71_row":
+        return _find_ff71_row_rect(page, nps)
+    return _find_row_rect(page, nps)
+
+
 def _drawing_link_uri(drawing_ref: str, nps: float | None, base_url: str | None) -> str:
     uri = f"/drawing-link/{quote(drawing_ref, safe='')}"
     if nps is not None:
@@ -402,7 +562,7 @@ def get_drawing_pdf(
         if nps is not None:
             # Drawing pages have rotation=270: visual rows are x-stripes in
             # coordinate space.  _find_row_rect() returns the correct x-band.
-            row_rect = _find_row_rect(out_page, nps)
+            row_rect = _highlight_rect_for_ref(out_page, ref_upper, nps)
             if row_rect:
                 out_page.draw_rect(
                     row_rect,

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JESA — Piping Engineering Tools Platform</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  {% include "_theme_toggle_script.html" %}
+</head>
+<body>
+
+  {% include "_shell_open.html" %}
+
+  <!-- ══════════════════════ 1 · HERO / IDENTITY BAND ══════════════════════ -->
+  <section class="wh-hero">
+    <div class="wh-hero-bg" aria-hidden="true"></div>
+    <div class="wh-hero-grid" aria-hidden="true"></div>
+    <div class="wh-hero-inner">
+      <div class="wh-hero-kicker">
+        <span class="wh-hero-seal">JESA</span>
+        Piping Engineering · Engineering Tools Platform
+      </div>
+      <h1 class="wh-hero-title">Select supports. Verify spans. Arrange racks.</h1>
+      <p class="wh-hero-sub">Engineering decisions you can stand behind.</p>
+      <div class="wh-hero-rule"></div>
+      <p class="wh-hero-lede">One governed workflow — grounded in proven standards, traceable from
+        the first input to the final drawing.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 1b · CONTINUE BAND ══════════════════════ -->
+  <section class="wh-section" style="padding-bottom: 0;">
+    <div class="wh-continue" id="whContinue">
+      <svg class="wh-continue-icon" aria-hidden="true"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-carry"></use></svg>
+      <div class="wh-continue-body">
+        <span class="wh-continue-label" id="whContinueLabel">Start your workflow</span>
+        <span class="wh-continue-line" id="whContinueLine"><span class="muted">Set a pipe size and material — the workspace threads it through selection, verification, and arrangement.</span></span>
+      </div>
+      <a class="wh-continue-act is-empty" id="whContinueAct" href="/support-selector">
+        Start a line <kbd>⏎</kbd>
+      </a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 2 · MODULE LAUNCHER (THE BOARD) ══════════════════════ -->
+  <section class="wh-section">
+    <div class="wh-container">
+      <div class="wh-section-head">
+        <h2 class="wh-section-title">The Board</h2>
+        <span class="wh-section-note">4 live · more in development</span>
+      </div>
+
+      <div class="wh-spine" aria-label="Engineering workflow: select, verify, arrange, with reference">
+        <span class="wh-spine-step"><span class="wh-spine-num">01</span>Select</span>
+        <span class="wh-spine-arrow" aria-hidden="true">→</span>
+        <span class="wh-spine-step"><span class="wh-spine-num">02</span>Verify</span>
+        <span class="wh-spine-arrow" aria-hidden="true">→</span>
+        <span class="wh-spine-step"><span class="wh-spine-num">03</span>Arrange</span>
+        <span class="wh-spine-sep" aria-hidden="true"></span>
+        <span class="wh-spine-step wh-spine-step--aside"><span class="wh-spine-num">04</span>Reference</span>
+      </div>
+
+      <div class="tools-grid">
+        <!-- 01 · Support Selector -->
+        <a href="/support-selector" class="tool-card">
+          <span class="tool-card-index">01</span>
+          <span class="tool-card-status">Live</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-selection"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Pipe Support Selector</h3>
+          <p class="tool-card-desc">Select the correct support type per JESA standard, by size, material class, and configuration.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag">Tables 15 &amp; 16</span>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- 02 · Span Calculator -->
+        <a href="/span" class="tool-card">
+          <span class="tool-card-index">02</span>
+          <span class="tool-card-status">Live</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-verify"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Span Calculator</h3>
+          <p class="tool-card-desc">Verify maximum support spans per KS-PE-SPC-0073 with temperature and condition inputs.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag">KS-PE-SPC-0073</span>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- 03 · Rack Calculator -->
+        <a href="/rack-calculator" class="tool-card">
+          <span class="tool-card-index">03</span>
+          <span class="tool-card-status">Live</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-arrange"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Rack Calculator</h3>
+          <p class="tool-card-desc">Calculate rack width and spacing, then export a designer-ready DXF arrangement drawing.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag">DXF export</span>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- 04 · Reference Tables -->
+        <a href="/reference" class="tool-card">
+          <span class="tool-card-index">04</span>
+          <span class="tool-card-status">Live</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-reference"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Reference Tables</h3>
+          <p class="tool-card-desc">Span reference data, assumptions, formulae, and material class lookups.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag">Span data &amp; codes</span>
+            <span class="tool-card-arrow">→</span>
+          </div>
+        </a>
+
+        <!-- Future modules · higher-priority next -->
+        <div class="tool-card tool-card--placeholder">
+          <span class="tool-card-status">Soon</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-linelist"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Critical Line List</h3>
+          <p class="tool-card-desc">Identify and track critical piping systems that need enhanced review and engineering attention.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag tool-card-tag--muted">In development</span>
+          </div>
+        </div>
+
+        <div class="tool-card tool-card--placeholder">
+          <span class="tool-card-status">Soon</span>
+          <div class="tool-card-icon">
+            <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-report"></use></svg>
+          </div>
+          <h3 class="tool-card-title">Report Viewer</h3>
+          <p class="tool-card-desc">View and manage engineering reports, calculations, and generated outputs in one place.</p>
+          <div class="tool-card-foot">
+            <span class="tool-card-tag tool-card-tag--muted">In development</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════ 3 · CAPABILITIES ══════════════════════ -->
+  <section class="wh-section wh-section--alt">
+    <div class="wh-container">
+      <div class="wh-section-head">
+        <h2 class="wh-section-title">Capabilities</h2>
+      </div>
+      <div class="wh-cap-grid">
+        <div class="wh-cap">
+          <div class="wh-cap-name">Selection</div>
+          <p class="wh-cap-desc">Resolve the correct support type from size, material class, temperature, and function — Tables 15 &amp; 16.</p>
+        </div>
+        <div class="wh-cap">
+          <div class="wh-cap-name">Verification</div>
+          <p class="wh-cap-desc">Confirm maximum support spans against the governing span tables for the selected service condition.</p>
+        </div>
+        <div class="wh-cap">
+          <div class="wh-cap-name">Arrangement</div>
+          <p class="wh-cap-desc">Compute rack width and pipe spacing to true scale, then export a designer-ready DXF drawing.</p>
+        </div>
+        <div class="wh-cap">
+          <div class="wh-cap-name">Reference</div>
+          <p class="wh-cap-desc">Look up span data, drawing references, and MPMS material-class mappings behind every result.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 4 · STANDARDS + 5 · ROADMAP ══════════════════ -->
+  <section class="wh-section">
+    <div class="wh-container wh-two-col">
+
+      <div class="sheet sheet--authority">
+        <div class="sheet-tb">
+          <span class="sheet-tb-label">Standards &amp; Traceability</span>
+          <span class="sheet-tb-seal">Governed</span>
+        </div>
+        <div class="sheet-body">
+          <p class="wh-panel-lede">Every recommendation resolves to a governing clause, table, and
+            drawing — results arrive review-ready, never improvised.</p>
+          <ul class="wh-std-list">
+            <li class="wh-std-row"><span class="wh-std-name">JESA Piping Support Standard — Rev A</span><span class="wh-std-code">QW2507-00-PE-STD-00001</span></li>
+            <li class="wh-std-row"><span class="wh-std-name">Support selection — REST · GUIDE · LINE STOP · HOLD DOWN</span><span class="wh-std-code">Tables 15 &amp; 16</span></li>
+            <li class="wh-std-row"><span class="wh-std-name">Drawing index — NPS-filtered sheets, PDF row highlighting</span><span class="wh-std-code">Index</span></li>
+            <li class="wh-std-row"><span class="wh-std-name">Span verification</span><span class="wh-std-code">KS-PE-SPC-0073</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="sheet">
+        <div class="sheet-tb">
+          <span class="sheet-tb-label">What's New / Roadmap</span>
+          <span class="sheet-tb-ref">LIVE</span>
+        </div>
+        <div class="sheet-body">
+          <div class="wh-rm-item"><span class="wh-rm-tag wh-rm-tag--new">New</span><span>Rack DXF export — designer-ready arrangement drawings in true millimetre modelspace.</span></div>
+          <div class="wh-rm-item"><span class="wh-rm-tag">Soon</span><span>Critical Line List — identify and track critical piping systems needing enhanced review.</span></div>
+          <div class="wh-rm-item"><span class="wh-rm-tag">Soon</span><span>Report Viewer — centralized viewing of engineering reports, calculations, and outputs.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {% include "_shell_close.html" %}
+
+  <!-- Theme toggle (shared pattern; button lives in the top bar) -->
+  <script>
+  (function () {
+    var btn  = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
+    function applyTheme(t) {
+      if (t === 'dark') { document.documentElement.setAttribute('data-theme', 'dark'); if (icon) icon.textContent = '☀️'; }
+      else { document.documentElement.removeAttribute('data-theme'); if (icon) icon.textContent = '🌙'; }
+    }
+    applyTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light');
+    if (btn) btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('pss-theme', next);
+      applyTheme(next);
+    });
+  })();
+  </script>
+
+  <!-- Continue band — hydrates from the active Line (sessionStorage; Phase-3 seed). -->
+  <script>
+  (function () {
+    var line = null;
+    try { line = JSON.parse(sessionStorage.getItem('datum-line') || 'null'); } catch (e) {}
+    if (!line || !line.summary) return;            // keep the empty state
+
+    var label = document.getElementById('whContinueLabel');
+    var text  = document.getElementById('whContinueLine');
+    var act   = document.getElementById('whContinueAct');
+    if (!label || !text || !act) return;
+
+    label.textContent = 'Continue your line';
+    text.textContent  = line.summary;             // e.g. 8" · CS · BB3
+    if (line.lastLabel && line.lastPath) {
+      act.href = line.lastPath;
+      act.innerHTML = 'Resume — ' + line.lastLabel + ' <kbd>⏎</kbd>';
+    } else {
+      act.innerHTML = 'Resume <kbd>⏎</kbd>';
+    }
+    act.classList.remove('is-empty');
+  })();
+  </script>
+
+</body>
+</html>

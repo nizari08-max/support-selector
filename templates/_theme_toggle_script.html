@@ -1,0 +1,7 @@
+<!-- Restore saved theme before render to prevent flash -->
+<script>
+  (function () {
+    var t = localStorage.getItem('pss-theme');
+    if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  })();
+</script>

@@ -1,0 +1,21 @@
+<!-- Shared footer — parameterized via footer_title, footer_dept -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="footer-title">{{ footer_title }}</span>
+      <span class="footer-dept">{{ footer_dept }}</span>
+    </div>
+    <span class="footer-credit">Designed and developed by Nizar Maniani</span>
+    <span class="footer-year" id="footerYear"></span>
+  </div>
+</footer>
+
+<script>
+  // Set current year in footer
+  document.addEventListener('DOMContentLoaded', function() {
+    var yearEl = document.getElementById('footerYear');
+    if (yearEl) {
+      yearEl.textContent = '© ' + new Date().getFullYear();
+    }
+  });
+</script>

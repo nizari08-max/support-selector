@@ -1,0 +1,107 @@
+<!-- Command palette (⌘K). Self-contained; additive inline script — no app.js. -->
+<div class="cmdk-backdrop" id="cmdkBackdrop" role="dialog" aria-modal="true" aria-label="Command palette" hidden>
+  <div class="cmdk-panel" role="document">
+    <div class="cmdk-head">
+      <svg class="ic" aria-hidden="true"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-command"></use></svg>
+      <input class="cmdk-input" id="cmdkInput" type="text" placeholder="Jump to a tool, set theme…"
+             autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Command search">
+      <span class="cmdk-esc">ESC</span>
+    </div>
+    <div class="cmdk-list" id="cmdkList" role="listbox" aria-label="Commands"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var SPRITE = "{{ url_for('static', filename='images/icons/datum-icons.svg') }}";
+  var backdrop = document.getElementById('cmdkBackdrop');
+  var input    = document.getElementById('cmdkInput');
+  var list     = document.getElementById('cmdkList');
+  if (!backdrop || !input || !list) return;
+
+  function setTheme(next) {
+    if (next === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    else document.documentElement.removeAttribute('data-theme');
+    try { localStorage.setItem('pss-theme', next); } catch (e) {}
+    var icon = document.getElementById('themeIcon');
+    if (icon) icon.textContent = next === 'dark' ? '☀️' : '🌙';
+  }
+
+  var COMMANDS = [
+    { group: 'Navigate', name: 'Workspace Home',   hint: '/',                 icon: 'ic-workspace', run: function () { location.href = '/'; } },
+    { group: 'Navigate', name: 'Support Selector', hint: 'select a support',  icon: 'ic-selection', run: function () { location.href = '/support-selector'; } },
+    { group: 'Navigate', name: 'Span Calculator',  hint: 'verify a span',     icon: 'ic-verify',    run: function () { location.href = '/span'; } },
+    { group: 'Navigate', name: 'Rack Calculator',  hint: 'arrange a rack',    icon: 'ic-arrange',   run: function () { location.href = '/rack-calculator'; } },
+    { group: 'Navigate', name: 'Reference Tables', hint: 'span data & codes', icon: 'ic-reference', run: function () { location.href = '/reference'; } },
+    { group: 'Workspace', name: 'Toggle dark / light theme', hint: 'switch theme', icon: 'ic-drawing',
+      run: function () { setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); render(); } }
+  ];
+
+  var active = 0;
+  var filtered = COMMANDS.slice();
+
+  function render() {
+    var q = input.value.trim().toLowerCase();
+    filtered = COMMANDS.filter(function (c) {
+      return !q || (c.name + ' ' + c.hint + ' ' + c.group).toLowerCase().indexOf(q) !== -1;
+    });
+    if (active >= filtered.length) active = Math.max(0, filtered.length - 1);
+
+    if (!filtered.length) {
+      list.innerHTML = '<div class="cmdk-empty">No matching commands</div>';
+      return;
+    }
+    var html = '', lastGroup = null;
+    filtered.forEach(function (c, i) {
+      if (c.group !== lastGroup) { html += '<div class="cmdk-group-label">' + c.group + '</div>'; lastGroup = c.group; }
+      html += '<div class="cmdk-item' + (i === active ? ' active' : '') + '" role="option" data-i="' + i + '">' +
+                '<svg class="ic" aria-hidden="true"><use href="' + SPRITE + '#' + c.icon + '"></use></svg>' +
+                '<span class="cmdk-item-text">' +
+                  '<span class="cmdk-item-name">' + c.name + '</span>' +
+                  '<span class="cmdk-item-hint">' + c.hint + '</span>' +
+                '</span>' +
+                (i === active ? '<span class="cmdk-item-key">↵</span>' : '') +
+              '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  function open() {
+    backdrop.hidden = false;
+    requestAnimationFrame(function () { backdrop.classList.add('open'); });
+    input.value = ''; active = 0; render();
+    setTimeout(function () { input.focus(); }, 20);
+  }
+  function close() {
+    backdrop.classList.remove('open');
+    setTimeout(function () { backdrop.hidden = true; }, 150);
+  }
+  function isOpen() { return backdrop.classList.contains('open'); }
+  function run(i) { var c = filtered[i]; if (c) { close(); c.run(); } }
+
+  document.addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); isOpen() ? close() : open(); return; }
+    if (!isOpen()) return;
+    if (e.key === 'Escape') { e.preventDefault(); close(); }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); active = Math.min(active + 1, filtered.length - 1); render(); }
+    else if (e.key === 'ArrowUp')   { e.preventDefault(); active = Math.max(active - 1, 0); render(); }
+    else if (e.key === 'Enter')     { e.preventDefault(); run(active); }
+  });
+
+  input.addEventListener('input', function () { active = 0; render(); });
+  list.addEventListener('mousemove', function (e) {
+    var item = e.target.closest('.cmdk-item'); if (!item) return;
+    var i = parseInt(item.getAttribute('data-i'), 10);
+    if (i !== active) { active = i; render(); }
+  });
+  list.addEventListener('click', function (e) {
+    var item = e.target.closest('.cmdk-item'); if (!item) return;
+    run(parseInt(item.getAttribute('data-i'), 10));
+  });
+  backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
+
+  document.querySelectorAll('[data-cmdk-open]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) { e.preventDefault(); open(); });
+  });
+})();
+</script>

@@ -444,7 +444,7 @@ def _is_hot_insulated_ss_al_rest_case(inputs: dict[str, Any], code: str) -> bool
         and material_key in {"ss_ds_sd_sa", "al_ay_cn"}
         and 1.5 <= nps <= 24.0
         and "SC02-SC04" in upper_code
-        and "SC06-SC09" in upper_code
+        and "SC06-SC08" in upper_code
     )
 
 
@@ -630,7 +630,6 @@ def _needs_orientation(code: str) -> bool:
         "SH02/SH05",
         "SC01/SC05",
         "SC02-SC04",
-        "SC06-SC09",
         "SC06-SC08",
     ))
 
@@ -646,7 +645,6 @@ def _resolve_orientation_codes(code: str, orientation: str, nps: float) -> str:
             (r"SH01/SH05", "SH01"),
             (r"SH02/SH05", "SH02"),
             (r"SC01/SC05", "SC01"),
-            (r"SC02-SC04,\s*SC06-SC09", "SC02-SC04"),
             (r"SC02-SC04,\s*SC06-SC08", "SC02-SC04"),
         ]
     else:
@@ -656,7 +654,6 @@ def _resolve_orientation_codes(code: str, orientation: str, nps: float) -> str:
             (r"SH01/SH05", sloped_small),
             (r"SH02/SH05", "SH05"),
             (r"SC01/SC05", "SC05"),
-            (r"SC02-SC04,\s*SC06-SC09", "SC06-SC08"),
             (r"SC02-SC04,\s*SC06-SC08", "SC06-SC08"),
         ]
 

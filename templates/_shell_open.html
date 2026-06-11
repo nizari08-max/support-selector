@@ -1,0 +1,39 @@
+<!-- App shell — slim top bar + global rail. Opens .workspace-main; close with _shell_close.html. -->
+<header class="topbar">
+  <a class="topbar-brand" href="/" title="JESA — Piping Engineering Tools Platform">
+    <!-- JESA endorsement seal. When the official logo asset is supplied,
+         replace this span with:
+         <img class="topbar-seal-logo" src="{{ url_for('static', filename='logo_jesa.svg') }}" alt="JESA"> -->
+    <span class="topbar-seal">JESA</span>
+    <span class="topbar-divider" aria-hidden="true"></span>
+    <span class="topbar-platform">
+      <span class="topbar-platform-name">Piping Engineering</span>
+      <span class="topbar-platform-sub">Tools Platform</span>
+    </span>
+  </a>
+
+  {% if tool_title %}
+  <div class="topbar-context">
+    <span class="topbar-sep">/</span>
+    <div class="topbar-crumb">
+      <span class="topbar-crumb-main">{{ tool_title }}</span>
+      {% if tool_subtitle %}<span class="topbar-crumb-sub">{{ tool_subtitle }}</span>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="topbar-right">
+    <button class="topbar-cmdk" data-cmdk-open type="button" aria-label="Open command palette" title="Command palette">
+      <span class="topbar-cmdk-keys"><kbd>⌘</kbd><kbd>K</kbd></span>
+      <span class="topbar-cmdk-label">Command</span>
+    </button>
+    <span class="topbar-status" title="Application ready"><span class="topbar-status-dot"></span>Ready</span>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
+      <span id="themeIcon">🌙</span>
+    </button>
+  </div>
+</header>
+
+<div class="workspace">
+  {% include "_rail.html" %}
+  <main class="workspace-main">

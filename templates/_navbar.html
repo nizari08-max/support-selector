@@ -1,0 +1,74 @@
+<!-- Shared navbar — parameterized via active_page, tool_title, tool_subtitle -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <div class="brand">
+      <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
+      <span class="logo-label">JESA</span>
+      {% if tool_title %}
+      <div class="nav-divider"></div>
+      <div class="tool-title">
+        <span class="title-main">{{ tool_title }}</span>
+        {% if tool_subtitle %}<span class="title-sub">{{ tool_subtitle }}</span>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    <div class="navbar-right">
+      <div class="status-dot" title="Application ready"></div>
+      <span class="navbar-badge">Engineering Tool</span>
+
+      <!-- Unified 5-link nav set -->
+      <a class="nav-tool-link{% if active_page == 'landing' %} active{% endif %}" href="/" title="Workspace / Tools Dashboard">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <rect x="2" y="2" width="4" height="4" rx="0.5"/>
+          <rect x="8" y="2" width="4" height="4" rx="0.5"/>
+          <rect x="14" y="2" width="4" height="4" rx="0.5"/>
+          <rect x="2" y="8" width="4" height="4" rx="0.5"/>
+          <rect x="8" y="8" width="4" height="4" rx="0.5"/>
+          <rect x="14" y="8" width="4" height="4" rx="0.5"/>
+          <rect x="2" y="14" width="4" height="4" rx="0.5"/>
+          <rect x="8" y="14" width="4" height="4" rx="0.5"/>
+          <rect x="14" y="14" width="4" height="4" rx="0.5"/>
+        </svg>
+        WORKSPACE
+      </a>
+
+      <a class="nav-tool-link{% if active_page == 'support-selector' %} active{% endif %}" href="/support-selector" title="Pipe Support Selector">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <circle cx="10" cy="8" r="4" fill="#DBEAFE" stroke="currentColor"/>
+          <rect x="4" y="13" width="12" height="3" rx="1" fill="currentColor" opacity="0.3"/>
+        </svg>
+        SUPPORT SEL
+      </a>
+
+      <a class="nav-tool-link{% if active_page == 'span' %} active{% endif %}" href="/span" title="Support Span Calculator">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <path d="M2 10h16M2 5h16M2 15h16" stroke-linecap="round"/>
+          <rect x="7" y="7" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
+        </svg>
+        SPAN CALC
+      </a>
+
+      <a class="nav-tool-link{% if active_page == 'rack-calculator' %} active{% endif %}" href="/rack-calculator" title="Rack Width Calculator">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <rect x="2" y="8" width="16" height="4" rx="1"/>
+          <line x1="5" y1="4" x2="5" y2="8" stroke-linecap="round"/>
+          <line x1="10" y1="4" x2="10" y2="8" stroke-linecap="round"/>
+          <line x1="15" y1="4" x2="15" y2="8" stroke-linecap="round"/>
+        </svg>
+        RACK CALC
+      </a>
+
+      <a class="nav-tool-link{% if active_page == 'reference' %} active{% endif %}" href="/reference" title="Span Reference Tables">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
+          <rect x="2" y="2" width="16" height="16" rx="1"/>
+          <path d="M2 6h16M6 2v16M10 2v16M14 2v16"/>
+        </svg>
+        REFERENCE
+      </a>
+
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
+        <span id="themeIcon">🌙</span>
+      </button>
+    </div>
+  </div>
+</header>

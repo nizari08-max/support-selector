@@ -7,41 +7,13 @@
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css">
-  <script>(function(){var t=localStorage.getItem('pss-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');})();</script>
+  {% include "_theme_toggle_script.html" %}
 </head>
 <body>
 
-<!-- ══ TOP BAR ══ -->
-<header class="navbar">
-  <div class="navbar-inner">
-    <div class="brand">
-      <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
-      <span class="logo-label">JESA</span>
-      <div class="nav-divider"></div>
-      <div class="tool-title">
-        <span class="title-main">Support Span Calculator</span>
-        <span class="title-sub">KS-PE-SPC-0073 Rev 0 · Appendix A Tables 13 &amp; 14</span>
-      </div>
-    </div>
-    <div class="navbar-right">
-      <div class="status-dot" title="Application ready"></div>
-      <a class="nav-tool-link" href="/">
-        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-          <circle cx="10" cy="8" r="5"/>
-          <rect x="4" y="14" width="12" height="4" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
-        </svg>
-        SUPPORT SEL
-      </a>
-      <a class="nav-tool-link active" href="/span">SPAN CALC</a>
-      <a class="nav-tool-link" href="/reference">REFERENCE</a>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
-        <span id="themeIcon">🌙</span>
-      </button>
-    </div>
-  </div>
-</header>
+{% include "_shell_open.html" %}
 
 <!-- ══ MAIN ══ -->
 <div class="sc-shell">
@@ -95,6 +67,21 @@
       </div>
 
       <!-- ── 2. NPS ─────────────────────────────────────────────────── -->
+      <div class="sc-step dn-converter-section" id="stepDn">
+        <label class="sc-label" for="scDnInput">
+          Quick DN Converter
+        </label>
+        <div class="dn-row">
+          <div class="dn-input-wrap">
+            <span class="dn-prefix">DN →</span>
+            <input type="number" id="scDnInput" class="dn-input"
+                   placeholder="150" min="1" max="1200" step="1">
+          </div>
+          <span class="dn-result" id="scDnResult"></span>
+        </div>
+        <p class="sc-hint">Enter DN to auto-select matching NPS below.</p>
+      </div>
+
       <div class="sc-step" id="stepNps">
         <label class="sc-label">
           Nominal Pipe Size — NPS
@@ -277,15 +264,7 @@
   </div><!-- /.sc-layout -->
 </div><!-- /.sc-shell -->
 
-<footer class="footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="footer-title">Support Span Calculator — KS-PE-SPC-0073 Rev 0</span>
-      <span class="footer-dept">Piping Department · JESA</span>
-    </div>
-    <span class="footer-year" id="footerYear"></span>
-  </div>
-</footer>
+{% include "_shell_close.html" %}
 
 <!-- ══ SERVER-INJECTED MPMS DATA ══ -->
 <script>var MPMS_DATA={{ mpms_data|tojson|safe }};</script>
@@ -302,6 +281,11 @@ var NPS_ALL = [0.75,1,1.5,2,2.5,3,4,6,8,10,12,14,16,18,20,22,24];
 var NPS_LBL = {0.75:'¾"',1:'1"',1.5:'1½"',2:'2"',2.5:'2½"',3:'3"',4:'4"',
                6:'6"',8:'8"',10:'10"',12:'12"',14:'14"',16:'16"',18:'18"',
                20:'20"',22:'22"',24:'24"'};
+var DN_TO_NPS = {
+  15: 0.5, 20: 0.75, 25: 1, 40: 1.5, 50: 2, 65: 2.5, 80: 3, 100: 4,
+  150: 6, 200: 8, 250: 10, 300: 12, 350: 14, 400: 16, 450: 18,
+  500: 20, 550: 22, 600: 24
+};
 
 var TABLE14_MATS = ['DS','SD','AS','AL','AY','TI','CN','FRP'];
 
@@ -477,6 +461,39 @@ NPS_ALL.forEach(function(nps) {
   });
   grid.appendChild(btn);
 });
+
+var scDnInput = document.getElementById('scDnInput');
+var scDnResult = document.getElementById('scDnResult');
+if (scDnInput && scDnResult) {
+  scDnInput.addEventListener('input', function() {
+    var raw = scDnInput.value.trim();
+    scDnResult.className = 'dn-result';
+    scDnResult.textContent = '';
+    if (!raw) return;
+
+    var dn = parseInt(raw, 10);
+    if (!Number.isFinite(dn)) return;
+
+    var npsValue = DN_TO_NPS[dn];
+    if (!npsValue) {
+      scDnResult.textContent = 'DN ' + dn + ' not found. Select NPS manually.';
+      scDnResult.classList.add('dn-warn');
+      return;
+    }
+
+    var btn = grid.querySelector('.sc-nps-btn[data-nps="' + npsValue + '"]');
+    var label = NPS_LBL[npsValue] || (npsValue + '"');
+    if (!btn || btn.classList.contains('dim')) {
+      scDnResult.textContent = 'DN ' + dn + ' = NPS ' + label + ' - not available for selected material.';
+      scDnResult.classList.add('dn-warn');
+      return;
+    }
+
+    btn.click();
+    scDnResult.textContent = 'DN ' + dn + ' = NPS ' + label;
+    scDnResult.classList.add('dn-ok');
+  });
+}
 
 function refreshNpsGrid() {
   var valid = S.isT14 ? NPS_T14 : NPS_T13;
@@ -699,8 +716,6 @@ function renderChart(data, selNps) {
 /* ── Util ─────────────────────────────────────────────────────── */
 function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
 function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
-
-document.getElementById('footerYear').textContent = '© '+new Date().getFullYear();
 
 })(); /* end IIFE */
 </script>

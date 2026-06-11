@@ -4,13 +4,25 @@
       <stop offset="0%" stop-color="#E8ECF4"/>
       <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
+    <radialGradient id="pg_back" cx="42%" cy="36%" r="65%">
+      <stop offset="0%" stop-color="#B8C4D9"/>
+      <stop offset="100%" stop-color="#6B7A93"/>
+    </radialGradient>
     <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#6B7280"/>
       <stop offset="100%" stop-color="#374151"/>
     </linearGradient>
+    <linearGradient id="sg_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9CA3AF"/>
+      <stop offset="100%" stop-color="#6B7280"/>
+    </linearGradient>
     <linearGradient id="shoe" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#2563EB"/>
       <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <linearGradient id="shoe_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
     </linearGradient>
     <marker id="slide_arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <path d="M0,0 L8,3 L0,6 z" fill="#60A5FA"/>
@@ -31,51 +43,69 @@
   </g>
   <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
-  <!-- I-beam structural steel — top flange at y=220 -->
-  <rect x="68" y="220" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
-  <rect x="182" y="230" width="16" height="18" fill="#374151"/>
-  <rect x="68" y="248" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <!-- I-beam structural steel — top flange front face + receding deck + dark rear edge -->
+  <polygon points="68,218 312,218 304,212 76,212" fill="url(#sg_top)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="68" y="218" width="244" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <polygon points="68,227 312,227 308,231 72,231" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="182" y="231" width="16" height="17" fill="#374151"/>
+  <polygon points="68,248 312,248 308,252 72,252" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="68" y="252" width="244" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Shoe sole plate — slides on I-beam top flange -->
+  <!-- Sole plate — top surface (machined deck, lighter) + front face -->
+  <polygon points="116,208 124,202 256,202 264,208" fill="url(#shoe_top)" stroke="#001F5C" stroke-width="1"/>
   <rect x="116" y="208" width="148" height="12" rx="2" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Sole plate surface (machined for sliding) -->
-  <g stroke="rgba(255,255,255,0.18)" stroke-width="1">
-    <line x1="126" y1="208" x2="116" y2="220"/><line x1="141" y1="208" x2="128" y2="220"/>
-    <line x1="156" y1="208" x2="143" y2="220"/><line x1="171" y1="208" x2="158" y2="220"/>
-    <line x1="186" y1="208" x2="173" y2="220"/><line x1="201" y1="208" x2="188" y2="220"/>
-    <line x1="216" y1="208" x2="203" y2="220"/><line x1="231" y1="208" x2="218" y2="220"/>
-    <line x1="246" y1="208" x2="233" y2="220"/><line x1="261" y1="210" x2="248" y2="220"/>
+  <!-- Sole plate thin shadow under -->
+  <rect x="116" y="220" width="148" height="2" fill="#001F5C" opacity="0.55"/>
+  <!-- Slide-direction texture lines on top deck -->
+  <g stroke="rgba(255,255,255,0.35)" stroke-width="0.7">
+    <line x1="135" y1="203" x2="143" y2="207"/>
+    <line x1="160" y1="203" x2="168" y2="207"/>
+    <line x1="185" y1="203" x2="193" y2="207"/>
+    <line x1="210" y1="203" x2="218" y2="207"/>
+    <line x1="235" y1="203" x2="243" y2="207"/>
   </g>
 
-  <!-- Shoe side webs — vertical side plates connecting saddle to sole plate -->
-  <rect x="116" y="172" width="18" height="36" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
-  <rect x="246" y="172" width="18" height="36" rx="1" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Side webs — front face + receding right-side depth face + small top deck -->
+  <!-- Left web -->
+  <polygon points="116,172 134,172 140,166 122,166" fill="url(#shoe_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="134,172 140,166 140,202 134,208" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="116" y="172" width="18" height="36" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.3"/>
+  <!-- Right web -->
+  <polygon points="246,172 264,172 270,166 252,166" fill="url(#shoe_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="264,172 270,166 270,202 264,208" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="246" y="172" width="18" height="36" fill="url(#shoe)" stroke="#001F5C" stroke-width="1.3"/>
 
-  <!-- Shoe saddle — curved plate welded to pipe OD bottom -->
-  <!-- Pipe cy=108, r=64 → bottom at y=172 -->
-  <!-- Saddle inner follows pipe OD (r=64), outer r=73 (9px), arc ±50° from bottom -->
-  <!-- inner ±50°: x=190±49=141,239; y=108+41=149 -->
-  <!-- outer ±50°: x=190±55.9=134,246; y=108+46.9=155 -->
+  <!-- Saddle — back arc (offset, darker) creates depth illusion -->
+  <path d="M 137,145 A 64 64 0 0 1 235,145 L 242,151 A 73 73 0 0 0 130,151 Z"
+        fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <!-- Saddle — front face arc -->
   <path d="M 141,149 A 64 64 0 0 1 239,149 L 246,155 A 73 73 0 0 0 134,155 Z"
         fill="url(#shoe)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Saddle — inner machined-face highlight -->
+  <path d="M 144,148 A 60 60 0 0 1 236,148"
+        fill="none" stroke="rgba(147,197,253,0.55)" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Saddle — outer rim sheen -->
+  <path d="M 134,155 A 73 73 0 0 1 246,155"
+        fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.4"/>
 
-  <!-- Weld symbols (triangle) at saddle-to-side-web junction -->
-  <polygon points="134,172 128,184 140,184" fill="#EF4444" opacity="0.8"/>
-  <polygon points="246,172 240,184 252,184" fill="#EF4444" opacity="0.8"/>
-  <!-- Fillet weld indicator label -->
-  <text x="16" y="179" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="600">WELD</text>
-  <line x1="44" y1="178" x2="127" y2="178" stroke="#EF4444" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <!-- Weld bead at saddle/web junction -->
+  <polygon points="134,172 128,184 140,184" fill="#EF4444" opacity="0.85"/>
+  <polygon points="246,172 240,184 252,184" fill="#EF4444" opacity="0.85"/>
+  <text x="14" y="179" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">WELD</text>
+  <line x1="42" y1="178" x2="127" y2="178" stroke="#EF4444" stroke-width="0.7" stroke-dasharray="3,2"/>
 
-  <!-- Pipe — cy=108, r=64 -->
+  <!-- Pipe — back face (depth) + front face + wall thickness ring + highlight -->
+  <circle cx="184" cy="103" r="60" fill="url(#pg_back)" stroke="#475569" stroke-width="0.9" opacity="0.55"/>
   <circle cx="190" cy="108" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
-  <ellipse cx="172" cy="90" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
-  <line x1="190" y1="93" x2="190" y2="123" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="175" y1="108" x2="205" y2="108" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <circle cx="190" cy="108" r="56" fill="none" stroke="#64748B" stroke-width="0.8" opacity="0.45"/>
+  <ellipse cx="172" cy="90" rx="20" ry="13" fill="rgba(255,255,255,0.45)"/>
+  <line x1="190" y1="94" x2="190" y2="122" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="176" y1="108" x2="204" y2="108" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
 
-  <!-- Sliding freedom arrows at sole plate bottom edge -->
+  <!-- Sliding freedom arrows -->
   <line x1="160" y1="226" x2="140" y2="226" stroke="#60A5FA" stroke-width="1.5" marker-end="url(#slide_arr_l)"/>
   <line x1="220" y1="226" x2="240" y2="226" stroke="#60A5FA" stroke-width="1.5" marker-end="url(#slide_arr)"/>
-  <text x="167" y="237" font-family="'Arial',sans-serif" font-size="7.5" fill="#60A5FA" font-weight="600" text-anchor="middle">SLIDES FREELY</text>
+  <text x="190" y="237" font-family="'Arial',sans-serif" font-size="7.5" fill="#60A5FA" font-weight="700" text-anchor="middle">SLIDES FREELY</text>
 
   <!-- Labels -->
   <text x="296" y="104" font-family="'Arial',sans-serif" font-size="8.5" fill="#475569" font-weight="700">PIPE</text>

@@ -4,13 +4,25 @@
       <stop offset="0%" stop-color="#E8ECF4"/>
       <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
+    <radialGradient id="pg_back" cx="42%" cy="36%" r="65%">
+      <stop offset="0%" stop-color="#B8C4D9"/>
+      <stop offset="100%" stop-color="#6B7A93"/>
+    </radialGradient>
     <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#6B7280"/>
       <stop offset="100%" stop-color="#374151"/>
     </linearGradient>
+    <linearGradient id="sg_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9CA3AF"/>
+      <stop offset="100%" stop-color="#6B7280"/>
+    </linearGradient>
     <linearGradient id="guide" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#2563EB"/>
       <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <linearGradient id="guide_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
     </linearGradient>
     <marker id="axial_r" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
       <path d="M0,0 L8,3 L0,6 z" fill="#64748B"/>
@@ -37,53 +49,63 @@
   </g>
   <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
-  <!-- I-beam structural steel — top flange at y=212 -->
-  <rect x="68" y="212" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
-  <rect x="182" y="222" width="16" height="18" fill="#374151"/>
-  <rect x="68" y="240" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <!-- I-beam structural steel with 3D depth -->
+  <polygon points="68,212 312,212 304,206 76,206" fill="url(#sg_top)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="68" y="212" width="244" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <polygon points="68,221 312,221 308,225 72,225" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="182" y="225" width="16" height="15" fill="#374151"/>
+  <polygon points="68,240 312,240 308,244 72,244" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="68" y="244" width="244" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Base plate — spans full guide width -->
+  <!-- Base plate of guide -->
+  <polygon points="96,200 104,194 276,194 284,200" fill="url(#guide_top)" stroke="#001F5C" stroke-width="1"/>
   <rect x="96" y="200" width="188" height="12" rx="2" fill="url(#guide)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="96" y="212" width="188" height="2" fill="#001F5C" opacity="0.55"/>
 
-  <!-- Left guide plate — x=96 to x=118 (22px wide), y=100 to y=200 -->
-  <rect x="96" y="100" width="22" height="100" rx="2" fill="url(#guide)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Right guide plate — x=262 to x=284 -->
-  <rect x="262" y="100" width="22" height="100" rx="2" fill="url(#guide)" stroke="#001F5C" stroke-width="1.5"/>
+  <!-- Left guide plate — thick steel, with 3D depth -->
+  <polygon points="96,100 118,100 126,94 104,94" fill="url(#guide_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="118,100 126,94 126,194 118,200" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="96" y="100" width="22" height="100" fill="url(#guide)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="98" y="102" width="6" height="96" fill="rgba(96,165,250,0.30)"/>
+
+  <!-- Right guide plate — thick steel, with 3D depth -->
+  <polygon points="262,100 284,100 292,94 270,94" fill="url(#guide_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="284,100 292,94 292,194 284,200" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="262" y="100" width="22" height="100" fill="url(#guide)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="278" y="102" width="4" height="96" fill="rgba(96,165,250,0.30)"/>
 
   <!-- Clearance gap indicators (amber) between guide plates and pipe -->
-  <!-- Pipe side edges at x=126 and x=254 (r=64, cx=190) -->
-  <!-- Left gap: x=118 to x=126 -->
   <rect x="118" y="126" width="8" height="28" fill="#FEF3C7" stroke="#F59E0B" stroke-width="0.8" stroke-dasharray="2,1"/>
-  <!-- Right gap: x=254 to x=262 -->
   <rect x="254" y="126" width="8" height="28" fill="#FEF3C7" stroke="#F59E0B" stroke-width="0.8" stroke-dasharray="2,1"/>
-  <!-- Gap arrows -->
   <line x1="119" y1="140" x2="125" y2="140" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#gap_r)" marker-start="url(#gap_l)"/>
   <line x1="255" y1="140" x2="261" y2="140" stroke="#F59E0B" stroke-width="1.5" marker-end="url(#gap_r)" marker-start="url(#gap_l)"/>
 
-  <!-- Pipe — cx=190, cy=140, r=64 → sides at x=126 and x=254 -->
+  <!-- Pipe — back face + front + ID ring + highlight -->
+  <circle cx="184" cy="135" r="60" fill="url(#pg_back)" stroke="#475569" stroke-width="0.9" opacity="0.55"/>
   <circle cx="190" cy="140" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
-  <ellipse cx="172" cy="122" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
-  <line x1="190" y1="125" x2="190" y2="155" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="175" y1="140" x2="205" y2="140" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <circle cx="190" cy="140" r="56" fill="none" stroke="#64748B" stroke-width="0.8" opacity="0.45"/>
+  <ellipse cx="172" cy="122" rx="20" ry="13" fill="rgba(255,255,255,0.45)"/>
+  <line x1="190" y1="126" x2="190" y2="154" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="176" y1="140" x2="204" y2="140" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
 
-  <!-- Axial freedom arrow (pipe slides in/out of page) — shown as double-headed at top -->
-  <text x="190" y="64" text-anchor="middle" font-family="'Arial',sans-serif" font-size="8" fill="#64748B" font-weight="600">AXIAL MOVEMENT FREE</text>
+  <!-- Axial freedom indicator -->
+  <text x="190" y="64" text-anchor="middle" font-family="'Arial',sans-serif" font-size="8" fill="#64748B" font-weight="700">AXIAL MOVEMENT FREE</text>
   <line x1="152" y1="56" x2="134" y2="56" stroke="#64748B" stroke-width="1.5" marker-end="url(#axial_l)"/>
   <line x1="228" y1="56" x2="246" y2="56" stroke="#64748B" stroke-width="1.5" marker-end="url(#axial_r)"/>
   <line x1="152" y1="56" x2="228" y2="56" stroke="#64748B" stroke-width="1" stroke-dasharray="3,2"/>
 
   <!-- Gap label -->
-  <text x="16" y="139" font-family="'Arial',sans-serif" font-size="7.5" fill="#D97706" font-weight="700">THERMAL</text>
-  <text x="16" y="149" font-family="'Arial',sans-serif" font-size="7.5" fill="#D97706" font-weight="700">GAP</text>
-  <line x1="46" y1="144" x2="118" y2="140" stroke="#D97706" stroke-width="0.7" stroke-dasharray="3,2"/>
+  <text x="14" y="139" font-family="'Arial',sans-serif" font-size="7.5" fill="#D97706" font-weight="700">THERMAL</text>
+  <text x="14" y="149" font-family="'Arial',sans-serif" font-size="7.5" fill="#D97706" font-weight="700">GAP</text>
+  <line x1="44" y1="144" x2="118" y2="140" stroke="#D97706" stroke-width="0.7" stroke-dasharray="3,2"/>
 
   <!-- Labels -->
   <text x="296" y="136" font-family="'Arial',sans-serif" font-size="8.5" fill="#475569" font-weight="700">PIPE</text>
   <line x1="256" y1="132" x2="293" y2="134" stroke="#475569" stroke-width="0.8"/>
 
-  <text x="296" y="158" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">GL01 / GL02</text>
-  <text x="296" y="168" font-family="'Arial',sans-serif" font-size="7" fill="#003087">GUIDE PLATES</text>
-  <line x1="284" y1="152" x2="293" y2="155" stroke="#003087" stroke-width="0.8"/>
+  <text x="296" y="170" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">GL01 / GL02</text>
+  <text x="296" y="180" font-family="'Arial',sans-serif" font-size="7" fill="#003087">GUIDE PLATES</text>
+  <line x1="284" y1="170" x2="293" y2="172" stroke="#003087" stroke-width="0.8"/>
 
   <rect x="68" y="258" width="244" height="22" rx="4" fill="#003087"/>
   <text x="190" y="274" text-anchor="middle"

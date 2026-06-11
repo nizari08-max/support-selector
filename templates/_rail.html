@@ -1,0 +1,57 @@
+<!-- Global capability rail — grouped by engineering domain. Active item driven by active_page. -->
+<nav class="rail" aria-label="Workspace modules">
+
+  <a class="rail-item rail-home{% if active_page == 'landing' %} active{% endif %}" href="/" title="Workspace home">
+    <span class="rail-icon">
+      <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-workspace"></use></svg>
+    </span>
+    <span class="rail-label">Workspace</span>
+  </a>
+
+  <div class="rail-group">
+    <div class="rail-group-label">Selection</div>
+    <a class="rail-item{% if active_page == 'support-selector' %} active{% endif %}" href="/support-selector" title="Pipe Support Selector">
+      <span class="rail-icon">
+        <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-selection"></use></svg>
+      </span>
+      <span class="rail-label">Support Selector</span>
+    </a>
+  </div>
+
+  <div class="rail-group">
+    <div class="rail-group-label">Verification</div>
+    <a class="rail-item{% if active_page == 'span' %} active{% endif %}" href="/span" title="Support Span Calculator">
+      <span class="rail-icon">
+        <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-verify"></use></svg>
+      </span>
+      <span class="rail-label">Span Calculator</span>
+    </a>
+  </div>
+
+  <div class="rail-group">
+    <div class="rail-group-label">Arrangement</div>
+    <a class="rail-item{% if active_page == 'rack-calculator' %} active{% endif %}" href="/rack-calculator" title="Pipe Rack Width Calculator">
+      <span class="rail-icon">
+        <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-arrange"></use></svg>
+      </span>
+      <span class="rail-label">Rack Calculator</span>
+    </a>
+  </div>
+
+  <div class="rail-group">
+    <div class="rail-group-label">Reference</div>
+    <a class="rail-item{% if active_page == 'reference' %} active{% endif %}" href="/reference" title="Span Reference Tables">
+      <span class="rail-icon">
+        <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-reference"></use></svg>
+      </span>
+      <span class="rail-label">Reference Tables</span>
+    </a>
+  </div>
+
+  <div class="rail-roadmap">
+    <div class="rail-group-label">Roadmap</div>
+    <span class="rail-soon">Critical Line List</span>
+    <span class="rail-soon">Report Viewer</span>
+  </div>
+
+</nav>

@@ -68,13 +68,13 @@ SUPPORT_RULES = {
             "ss_ds_sd_sa": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09)  OR  WELDED SHOE (SH01/SH03/SH04) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08)  OR  WELDED SHOE (SH01/SH03/SH04) + WEAR PAD (WA01)",
                                   "notes": []},
             },
             "al_ay_cn": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09)  OR  WELDED SHOE (SH01/SH03/SH04) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08)  OR  WELDED SHOE (SH01/SH03/SH04) + WEAR PAD (WA01)",
                                   "notes": []},
             },
             "frp": {
@@ -99,13 +99,13 @@ SUPPORT_RULES = {
             "ss_ds_sd_sa": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09)  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08)  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
                                   "notes": []},
             },
             "al_ay_cn": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09)  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08)  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
                                   "notes": []},
             },
             "frp": {
@@ -131,13 +131,13 @@ SUPPORT_RULES = {
             "ss_ds_sd_sa": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09) per temp criteria  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08) per temp criteria  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
                                   "notes": [4]},
             },
             "al_ay_cn": {
                 "uninsulated":   {"support": "BEARING PLATE (BP02) / ISOLATION PAD (PR01/PR02) / WEAR PAD (WA01)",
                                   "notes": [1, 2, 4]},
-                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC09) per temp criteria  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
+                "hot_insulated": {"support": "CLAMPED SHOE (SC02-SC04, SC06-SC08) per temp criteria  OR  WELDED SHOE (SH01/SH03/SH05) + WEAR PAD (WA01)",
                                   "notes": [4]},
             },
             "frp": {

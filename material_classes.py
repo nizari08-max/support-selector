@@ -6,14 +6,16 @@ Used by:
   • Support Selector  (app.py / selector.py)  — material category routing
   • Span Calculator   (app.py /api/mpms-classes) — Table 13 / Table 14 lookup
 
-Corrections vs. app.js (Support Selector):
+Corrections applied (this file is the single source of truth):
   • BS1, BS3 → DS  (Duplex SS S32205)         — Table 14, not Table 13 SS
   • BS2     → SD  (Super Duplex SS S32750)    — Table 14, not Table 13 SS
   • CS1     → DS  (Duplex SS S32205)          — Table 14, not Table 13 SS
   • ES2     → SD  (Super Duplex SS S32750)    — Table 14, not Table 13 SS
   • CJ1     → AS  (1¼Cr–½Mo Alloy Steel)     — Table 14, not Table 13 CS
   • FJ1     → AS  (1¼Cr–½Mo Alloy Steel)     — Table 14, not Table 13 CS
-  The Support Selector's app.js is left unchanged (separate concern).
+  Note: the span calculator uses material code "AS"; the support selector
+  dropdown uses "SA" for the same alloy-steel category. The /api/resolve-class
+  endpoint returns "AS"; app.js maps AS→SA before setting the dropdown.
 
 Excluded classes and reason:
   BH1, BH2 — HDPE:

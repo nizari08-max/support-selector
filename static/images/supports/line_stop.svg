@@ -4,13 +4,25 @@
       <stop offset="0%" stop-color="#E8ECF4"/>
       <stop offset="100%" stop-color="#8FA0BB"/>
     </radialGradient>
+    <radialGradient id="pg_back" cx="42%" cy="36%" r="65%">
+      <stop offset="0%" stop-color="#B8C4D9"/>
+      <stop offset="100%" stop-color="#6B7A93"/>
+    </radialGradient>
     <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#6B7280"/>
       <stop offset="100%" stop-color="#374151"/>
     </linearGradient>
+    <linearGradient id="sg_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9CA3AF"/>
+      <stop offset="100%" stop-color="#6B7280"/>
+    </linearGradient>
     <linearGradient id="stop_g" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#2563EB"/>
       <stop offset="100%" stop-color="#003087"/>
+    </linearGradient>
+    <linearGradient id="stop_top" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#1E40AF"/>
     </linearGradient>
     <marker id="force_arr" markerWidth="9" markerHeight="7" refX="9" refY="3.5" orient="auto">
       <path d="M0,0 L0,7 L9,3.5 z" fill="#EF4444"/>
@@ -31,56 +43,77 @@
   </g>
   <text x="18" y="20" font-family="'Courier New',monospace" font-size="9" fill="#94A3B8" letter-spacing="1">END ELEVATION</text>
 
-  <!-- I-beam structural steel — top flange at y=218 -->
-  <rect x="68" y="218" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
-  <rect x="182" y="228" width="16" height="18" fill="#374151"/>
-  <rect x="68" y="246" width="244" height="10" rx="2" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <!-- I-beam with 3D depth -->
+  <polygon points="40,218 340,218 332,212 48,212" fill="url(#sg_top)" stroke="#374151" stroke-width="0.5"/>
+  <rect x="40" y="218" width="300" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
+  <polygon points="40,227 340,227 336,231 44,231" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="182" y="231" width="16" height="15" fill="#374151"/>
+  <polygon points="40,246 340,246 336,250 44,250" fill="#1F2937" stroke="#374151" stroke-width="0.4"/>
+  <rect x="40" y="250" width="300" height="9" rx="1" fill="url(#sg)" stroke="#374151" stroke-width="0.5"/>
 
-  <!-- Shoe sole plate -->
-  <rect x="116" y="204" width="148" height="14" rx="2" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Shoe side webs and saddle arc -->
-  <rect x="116" y="170" width="16" height="34" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <rect x="248" y="170" width="16" height="34" rx="1" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
-  <!-- Pipe cy=106, r=64 → bottom at y=170; saddle ±50° arc -->
+  <!-- Sole plate of shoe -->
+  <polygon points="124,206 132,200 248,200 256,206" fill="url(#stop_top)" stroke="#001F5C" stroke-width="1"/>
+  <rect x="124" y="206" width="132" height="12" rx="2" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="124" y="218" width="132" height="2" fill="#001F5C" opacity="0.55"/>
+
+  <!-- Side webs of shoe -->
+  <polygon points="124,176 138,176 144,170 130,170" fill="url(#stop_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="138,176 144,170 144,200 138,206" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="124" y="176" width="14" height="30" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.3"/>
+  <polygon points="242,176 256,176 262,170 248,170" fill="url(#stop_top)" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="256,176 262,170 262,200 256,206" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="242" y="176" width="14" height="30" fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.3"/>
+
+  <!-- Saddle — back arc + front arc + machined inner highlight -->
+  <path d="M 137,143 A 64 64 0 0 1 235,143 L 242,149 A 73 73 0 0 0 130,149 Z"
+        fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
   <path d="M 141,147 A 64 64 0 0 1 239,147 L 246,153 A 73 73 0 0 0 134,153 Z"
         fill="url(#stop_g)" stroke="#001F5C" stroke-width="1.5"/>
+  <path d="M 144,146 A 60 60 0 0 1 236,146"
+        fill="none" stroke="rgba(147,197,253,0.55)" stroke-width="2.2" stroke-linecap="round"/>
 
-  <!-- Stop lug — welded to left side of shoe, acts as axial bearing face -->
-  <!-- A solid vertical plate on the left side of the shoe assembly -->
-  <rect x="74" y="110" width="42" height="108" rx="3" fill="#1E3A8A" stroke="#001F5C" stroke-width="2"/>
-  <!-- Lug highlight bar -->
-  <rect x="76" y="112" width="10" height="104" rx="2" fill="rgba(96,165,250,0.22)"/>
-  <!-- Lug-to-shoe weld mark -->
-  <polygon points="116,204 110,218 122,218" fill="#EF4444" opacity="0.85"/>
+  <!-- LEFT stop lug — solid welded plate with 3D depth (parallelogram side face) -->
+  <polygon points="76,114 116,114 124,108 84,108" fill="#3B82F6" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="116,114 124,108 124,210 116,218" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="76" y="114" width="40" height="104" fill="#1E3A8A" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="78" y="116" width="8" height="100" fill="rgba(96,165,250,0.30)"/>
+  <!-- Lug-to-shoe weld marker (left) -->
+  <polygon points="116,206 110,218 122,218" fill="#EF4444" opacity="0.85"/>
 
-  <!-- Contact/bearing face indicator at the stop lug right face -->
-  <line x1="116" y1="110" x2="116" y2="218" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <!-- RIGHT stop lug — second plate trapping pipe between two lugs -->
+  <polygon points="264,114 304,114 312,108 272,108" fill="#3B82F6" stroke="#001F5C" stroke-width="0.8"/>
+  <polygon points="304,114 312,108 312,210 304,218" fill="#001F5C" stroke="#001F5C" stroke-width="0.6"/>
+  <rect x="264" y="114" width="40" height="104" fill="#1E3A8A" stroke="#001F5C" stroke-width="1.5"/>
+  <rect x="296" y="116" width="6" height="100" fill="rgba(96,165,250,0.30)"/>
+  <polygon points="264,206 258,218 270,218" fill="#EF4444" opacity="0.85"/>
 
-  <!-- Pipe — cy=106, r=64 -->
+  <!-- Bearing-face indicators (amber dashed lines on lug faces touching pipe) -->
+  <line x1="116" y1="118" x2="116" y2="218" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <line x1="264" y1="118" x2="264" y2="218" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="4,2"/>
+
+  <!-- Pipe — back face + front face + ID ring + highlight -->
+  <circle cx="184" cy="101" r="60" fill="url(#pg_back)" stroke="#475569" stroke-width="0.9" opacity="0.55"/>
   <circle cx="190" cy="106" r="64" fill="url(#pg)" stroke="#64748B" stroke-width="2.5"/>
-  <ellipse cx="172" cy="88" rx="20" ry="13" fill="rgba(255,255,255,0.4)"/>
-  <line x1="190" y1="91" x2="190" y2="121" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="175" y1="106" x2="205" y2="106" stroke="#8FA0BB" stroke-width="1" stroke-dasharray="3,3"/>
+  <circle cx="190" cy="106" r="56" fill="none" stroke="#64748B" stroke-width="0.8" opacity="0.45"/>
+  <ellipse cx="172" cy="88" rx="20" ry="13" fill="rgba(255,255,255,0.45)"/>
+  <line x1="190" y1="92" x2="190" y2="120" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
+  <line x1="176" y1="106" x2="204" y2="106" stroke="#8FA0BB" stroke-width="0.8" stroke-dasharray="3,3"/>
 
-  <!-- Axial force arrow (pipe trying to move left) -->
-  <line x1="34" y1="106" x2="72" y2="106" stroke="#EF4444" stroke-width="3" marker-end="url(#force_arr)"/>
-  <text x="18" y="99" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">AXIAL</text>
-  <text x="18" y="109" font-family="'Arial',sans-serif" font-size="8" fill="#EF4444" font-weight="700">FORCE</text>
-
-  <!-- Reaction arrow (structure resisting, points right = counter-force) -->
-  <line x1="116" y1="166" x2="74" y2="166" stroke="#22C55E" stroke-width="2" marker-end="url(#react_arr)"/>
-  <text x="16" y="180" font-family="'Arial',sans-serif" font-size="7.5" fill="#22C55E" font-weight="700">REACTION</text>
+  <!-- Bidirectional axial force arrows showing pipe trapped between lugs -->
+  <line x1="190" y1="56" x2="130" y2="56" stroke="#EF4444" stroke-width="2.5" marker-end="url(#force_arr)"/>
+  <line x1="190" y1="56" x2="250" y2="56" stroke="#EF4444" stroke-width="2.5" marker-end="url(#force_arr)"/>
+  <text x="190" y="46" font-family="'Arial',sans-serif" font-size="8.5" fill="#EF4444" font-weight="700" text-anchor="middle">AXIAL FORCE — TRAPPED BOTH WAYS</text>
 
   <!-- Labels -->
-  <text x="296" y="100" font-family="'Arial',sans-serif" font-size="8.5" fill="#475569" font-weight="700">PIPE</text>
-  <line x1="256" y1="96" x2="293" y2="98" stroke="#475569" stroke-width="0.8"/>
+  <text x="14" y="138" font-family="'Arial',sans-serif" font-size="8.5" fill="#1E3A8A" font-weight="700">STOP LUG</text>
+  <text x="14" y="148" font-family="'Arial',sans-serif" font-size="7" fill="#1E3A8A">(LEFT PLATE)</text>
+  <line x1="50" y1="138" x2="76" y2="140" stroke="#1E3A8A" stroke-width="0.8"/>
 
-  <text x="296" y="148" font-family="'Arial',sans-serif" font-size="8.5" fill="#003087" font-weight="700">SHOE SADDLE</text>
-  <line x1="264" y1="148" x2="293" y2="147" stroke="#003087" stroke-width="0.8"/>
+  <text x="320" y="138" font-family="'Arial',sans-serif" font-size="8.5" fill="#1E3A8A" font-weight="700">STOP LUG</text>
+  <text x="320" y="148" font-family="'Arial',sans-serif" font-size="7" fill="#1E3A8A">(RIGHT PLATE)</text>
+  <line x1="312" y1="140" x2="320" y2="140" stroke="#1E3A8A" stroke-width="0.8"/>
 
-  <text x="296" y="165" font-family="'Arial',sans-serif" font-size="8.5" fill="#1E3A8A" font-weight="700">STOP LUG</text>
-  <text x="296" y="175" font-family="'Arial',sans-serif" font-size="7" fill="#1E3A8A">LS01–LS03</text>
-  <line x1="116" y1="160" x2="293" y2="163" stroke="#1E3A8A" stroke-width="0.8"/>
+  <text x="190" y="194" font-family="'Arial',sans-serif" font-size="7.5" fill="#003087" font-weight="700" text-anchor="middle">SHOE SADDLE — LS01–LS03</text>
 
   <rect x="68" y="262" width="244" height="22" rx="4" fill="#003087"/>
   <text x="190" y="278" text-anchor="middle"

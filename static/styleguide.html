@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DATUM — Design System / Style Guide</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <!-- the REAL application stylesheet — this page consumes the live DATUM tokens -->
+  <link rel="stylesheet" href="/static/css/style.css">
+
+  <style>
+    /* ── style-guide presentation only (scoped to this page) ───────────────── */
+    body { background: var(--bg); color: var(--ink); font-family: var(--font-body);
+           margin: 0; line-height: 1.5; }
+    .sg-wrap { max-width: 1080px; margin: 0 auto; padding: 40px 28px 96px; }
+
+    .sg-top { display: flex; align-items: center; justify-content: space-between;
+              gap: 16px; padding-bottom: 22px; border-bottom: 1px solid var(--grid); }
+    .sg-lockup { display: flex; align-items: center; gap: 12px; }
+    .sg-lockup svg { width: 34px; height: 34px; color: var(--ink); }
+    .sg-jesa { font-family: var(--font-display); font-weight: 700; letter-spacing: 2px;
+               color: var(--authority); font-size: var(--fs-19); }
+    .sg-dot  { color: var(--ink-muted); font-size: var(--fs-19); }
+    .sg-name { font-family: var(--font-display); font-weight: 700; letter-spacing: 3px;
+               font-size: var(--fs-26); }
+    .sg-tag  { font-size: var(--fs-12); color: var(--ink-muted); font-family: var(--font-mono);
+               text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+    .sg-toggle { font-family: var(--font-mono); font-size: var(--fs-12); cursor: pointer;
+                 background: var(--panel); color: var(--ink); border: 1px solid var(--border);
+                 border-radius: var(--radius); padding: 8px 12px; }
+
+    h2.sg-h { font-family: var(--font-display); font-weight: 600; letter-spacing: 1.5px;
+              text-transform: uppercase; font-size: var(--fs-13); color: var(--ink-muted);
+              margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--grid); }
+
+    .sg-row  { display: flex; flex-wrap: wrap; gap: 14px; }
+    .sg-card { background: var(--panel); border: 1px solid var(--border);
+               border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--e1); }
+
+    /* colors */
+    .sw { width: 168px; }
+    .sw-chip { height: 56px; border-radius: var(--radius); border: 1px solid var(--grid); }
+    .sw-name { font-family: var(--font-mono); font-size: var(--fs-12); margin-top: 8px; }
+    .sw-hex  { font-family: var(--font-mono); font-size: var(--fs-11); color: var(--ink-muted); }
+    .sw-role { font-size: var(--fs-11); color: var(--ink-muted); margin-top: 2px; }
+
+    /* type */
+    .ty { display: flex; align-items: baseline; gap: 16px; padding: 8px 0;
+          border-bottom: 1px dashed var(--grid); }
+    .ty-meta { font-family: var(--font-mono); font-size: var(--fs-11); color: var(--ink-muted);
+               width: 150px; flex: none; }
+    .mono-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+    /* spacing */
+    .sp { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .sp-bar { height: 14px; background: var(--datum); border-radius: 2px; }
+    .sp-lbl { font-family: var(--font-mono); font-size: var(--fs-12); color: var(--ink-muted); }
+
+    /* elevation */
+    .el { width: 150px; height: 84px; background: var(--panel); border: 1px solid var(--border);
+          border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center;
+          font-family: var(--font-mono); font-size: var(--fs-12); color: var(--ink-muted); }
+
+    /* radius */
+    .rd { width: 92px; height: 64px; background: var(--datum-soft); border: 1px solid var(--datum);
+          display: flex; align-items: center; justify-content: center;
+          font-family: var(--font-mono); font-size: var(--fs-11); color: var(--datum); }
+
+    /* icons */
+    .ic { width: 24px; height: 24px; color: var(--ink); }
+    .ic-cell { width: 110px; text-align: center; }
+    .ic-cell .lbl { display:block; font-family: var(--font-mono); font-size: var(--fs-11);
+                    color: var(--ink-muted); margin-top: 6px; }
+    .ic-cell:hover .ic { color: var(--datum); }
+    .ic-active .ic { color: var(--datum); }
+    .ic-disabled .ic { color: var(--ink-muted); opacity: .4; }
+
+    /* motion demo */
+    .plot { stroke-dasharray: 240; stroke-dashoffset: 240; }
+    .plot.go { animation: plotIn var(--anim-med) var(--ease-datum) forwards; }
+    @keyframes plotIn { to { stroke-dashoffset: 0; } }
+    @media (prefers-reduced-motion: reduce) { .plot { stroke-dashoffset: 0; } .plot.go { animation: none; } }
+    .btn { font-family: var(--font-mono); font-size: var(--fs-12); cursor: pointer;
+           background: var(--datum); color: #fff; border: none;
+           border-radius: var(--radius); padding: 8px 14px; }
+
+    /* atmosphere */
+    .atmo { position: relative; height: 220px; border: 1px solid var(--border);
+            border-radius: var(--radius-lg); overflow: hidden; background: var(--bg); }
+    .atmo .rack { position: absolute; right: 12px; bottom: 6px; width: 320px; color: var(--ink); }
+
+    /* title-block strip (authority demo) */
+    .tb { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;
+          background: var(--sheet); box-shadow: var(--e2); max-width: 460px; }
+    .tb-strip { background: var(--authority); height: 4px; }
+    .tb-body { padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+    .tb-name { font-family: var(--font-display); font-weight: 700; letter-spacing: 1px; }
+    .tb-code { font-family: var(--font-mono); font-weight: 600; font-size: var(--fs-26);
+               color: var(--datum); }
+    .tb-foot { padding: 8px 16px; border-top: 1px solid var(--grid);
+               font-family: var(--font-mono); font-size: var(--fs-11); color: var(--ink-muted);
+               display: flex; align-items: center; gap: 8px; }
+    .tb-foot .seal { color: var(--authority); font-family: var(--font-display); font-weight: 700;
+                     letter-spacing: 1px; }
+  </style>
+</head>
+<body>
+
+<div class="sg-wrap">
+
+  <!-- ── HEADER / LOCKUP ──────────────────────────────────────────────── -->
+  <div class="sg-top">
+    <div class="sg-lockup">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5"
+           stroke-linecap="square" aria-label="DATUM mark">
+        <path d="M9 26 V9 H26"/><path d="M9 9 L21 21" stroke-width="2"/>
+        <circle cx="25" cy="25" r="2.6" fill="currentColor" stroke="none"/>
+        <path d="M33 39 H39 V33" stroke-width="2" opacity="0.55"/>
+      </svg>
+      <div>
+        <div><span class="sg-jesa">JESA</span> <span class="sg-dot">·</span> <span class="sg-name">DATUM</span></div>
+        <div class="sg-tag">Design System · Phase 1 · drafting authority + terminal velocity</div>
+      </div>
+    </div>
+    <button class="sg-toggle" id="themeToggle"><span id="themeLabel">◐ Dark</span></button>
+  </div>
+
+  <!-- ── COLORS ───────────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Color tokens (semantic)</h2>
+  <div class="sg-row">
+    <div class="sw"><div class="sw-chip" style="background:var(--bg)"></div><div class="sw-name">--bg</div><div class="sw-hex">#FBFAF7 / #0E1419</div><div class="sw-role">app base</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--panel)"></div><div class="sw-name">--panel</div><div class="sw-hex">#FFFFFF / #161E26</div><div class="sw-role">panels / cards</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--sheet)"></div><div class="sw-name">--sheet</div><div class="sw-hex">#FBFAF7 / #121A20</div><div class="sw-role">result sheet</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--ink)"></div><div class="sw-name">--ink</div><div class="sw-hex">#1A2433 / #E7EEF7</div><div class="sw-role">linework + text</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--ink-muted)"></div><div class="sw-name">--ink-muted</div><div class="sw-hex">#5A6573 / #8A97A8</div><div class="sw-role">secondary text</div></div>
+    <div class="sw"><div class="sw-chip datum-grid" style="background:var(--panel)"></div><div class="sw-name">--grid</div><div class="sw-hex">#E4EBE0 / #1C2730</div><div class="sw-role">blueprint grid</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--datum)"></div><div class="sw-name">--datum</div><div class="sw-hex">#0E7C86 / #3DD4D0</div><div class="sw-role">interactive / live</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--annotation)"></div><div class="sw-name">--annotation</div><div class="sw-hex">#C8821E / #F5A623</div><div class="sw-role">warnings / dims</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--pass)"></div><div class="sw-name">--pass</div><div class="sw-hex">#2E7D4F / #34D399</div><div class="sw-role">verdict pass</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--fail)"></div><div class="sw-name">--fail</div><div class="sw-hex">#B3261E / #F87171</div><div class="sw-role">verdict fail / N-A</div></div>
+    <div class="sw"><div class="sw-chip" style="background:var(--authority)"></div><div class="sw-name">--authority</div><div class="sw-hex">#1D3B7E / #2E55B5</div><div class="sw-role">JESA seal ONLY</div></div>
+  </div>
+
+  <!-- ── TYPOGRAPHY ───────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Typography</h2>
+  <div class="sg-card" style="width:100%">
+    <div class="ty"><span class="ty-meta">Saira · 38</span><span style="font-family:var(--font-display);font-weight:700;font-size:var(--fs-38)">Pipe Support Selector</span></div>
+    <div class="ty"><span class="ty-meta">Saira · 26</span><span style="font-family:var(--font-display);font-weight:600;font-size:var(--fs-26);letter-spacing:1px">SUPPORT · SH05</span></div>
+    <div class="ty"><span class="ty-meta">Saira · 19</span><span style="font-family:var(--font-display);font-weight:600;font-size:var(--fs-19)">Standards &amp; Traceability</span></div>
+    <div class="ty"><span class="ty-meta">Mono · 15 · tnum</span><span class="mono-num" style="font-size:var(--fs-15)">DN200 · NPS 8 · 4250 mm · 1234.56</span></div>
+    <div class="ty"><span class="ty-meta">Inter · 15</span><span style="font-size:var(--fs-15)">Body copy — every result is traceable to a clause, table, and drawing.</span></div>
+    <div class="ty"><span class="ty-meta">Inter · 13 / 12 / 11</span><span style="font-size:var(--fs-13)">Hints &amp; notes set in Inter at the smaller end of the scale.</span></div>
+  </div>
+
+  <!-- ── SPACING ──────────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Spacing · base 4px</h2>
+  <div class="sg-card" style="width:100%">
+    <div class="sp"><div class="sp-bar" style="width:4px"></div><span class="sp-lbl">4</span></div>
+    <div class="sp"><div class="sp-bar" style="width:8px"></div><span class="sp-lbl">8</span></div>
+    <div class="sp"><div class="sp-bar" style="width:12px"></div><span class="sp-lbl">12</span></div>
+    <div class="sp"><div class="sp-bar" style="width:16px"></div><span class="sp-lbl">16</span></div>
+    <div class="sp"><div class="sp-bar" style="width:24px"></div><span class="sp-lbl">24</span></div>
+    <div class="sp"><div class="sp-bar" style="width:32px"></div><span class="sp-lbl">32</span></div>
+    <div class="sp"><div class="sp-bar" style="width:48px"></div><span class="sp-lbl">48</span></div>
+    <div class="sp"><div class="sp-bar" style="width:64px"></div><span class="sp-lbl">64</span></div>
+  </div>
+
+  <!-- ── RADIUS + ELEVATION ───────────────────────────────────────────── -->
+  <h2 class="sg-h">Radius &amp; elevation</h2>
+  <div class="sg-row" style="align-items:flex-end">
+    <div class="rd" style="border-radius:var(--radius-sm)">sm 3</div>
+    <div class="rd" style="border-radius:var(--radius)">md 5</div>
+    <div class="rd" style="border-radius:var(--radius-lg)">lg 8</div>
+    <div style="width:24px"></div>
+    <div class="el" style="box-shadow:var(--e1)">E1 panel</div>
+    <div class="el" style="box-shadow:var(--e2)">E2 sheet</div>
+    <div class="el" style="box-shadow:var(--e3)">E3 modal</div>
+  </div>
+
+  <!-- ── ICONS ────────────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Icon family · 20×20 · stroke 1.75 · drafting-legend</h2>
+  <div class="sg-row">
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-workspace"></use></svg><span class="lbl">workspace</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-selection"></use></svg><span class="lbl">selection</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-verify"></use></svg><span class="lbl">verify</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-arrange"></use></svg><span class="lbl">arrange</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-reference"></use></svg><span class="lbl">reference</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-drawing"></use></svg><span class="lbl">drawing</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-command"></use></svg><span class="lbl">command</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-run"></use></svg><span class="lbl">run</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-carry"></use></svg><span class="lbl">carry</span></div>
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-dxf"></use></svg><span class="lbl">dxf</span></div>
+  </div>
+  <div class="sg-row" style="margin-top:14px">
+    <div class="ic-cell"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-selection"></use></svg><span class="lbl">default</span></div>
+    <div class="ic-cell ic-active"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-selection"></use></svg><span class="lbl">active</span></div>
+    <div class="ic-cell ic-disabled"><svg class="ic"><use href="/static/images/icons/datum-icons.svg#ic-selection"></use></svg><span class="lbl">disabled</span></div>
+  </div>
+
+  <!-- ── MOTION ───────────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Motion · plot-in (220ms)</h2>
+  <div class="sg-card" style="width:100%;display:flex;align-items:center;gap:24px">
+    <svg width="220" height="80" viewBox="0 0 220 80" fill="none" stroke="var(--datum)" stroke-width="2">
+      <path id="plotPath" class="plot" d="M10 60 H210 M30 60 V20 M190 60 V20 M30 20 H190"/>
+    </svg>
+    <button class="btn" id="plotBtn">▶ Replay plot-in</button>
+    <span class="sp-lbl">linework draws in; everything else is instant</span>
+  </div>
+
+  <!-- ── ATMOSPHERE ───────────────────────────────────────────────────── -->
+  <h2 class="sg-h">Atmosphere · blueprint grid + isometric pipe-rack linework</h2>
+  <div class="atmo datum-grid">
+    <svg class="rack" viewBox="0 0 360 220" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path opacity=".45" d="M14 196 L250 196 L346 150"/>
+      <path d="M70 188 V96 M150 166 V74 M70 96 L150 74"/>
+      <path opacity=".45" d="M178 168 V76 M258 146 V54 M178 76 L258 54"/>
+      <path d="M70 96 L178 76 M150 74 L258 54"/>
+      <ellipse stroke="var(--datum)" cx="92" cy="84" rx="11" ry="6" transform="rotate(-10 92 84)"/>
+      <path stroke="var(--datum)" d="M92 84 L200 64"/>
+      <ellipse stroke="var(--datum)" cx="200" cy="64" rx="11" ry="6" transform="rotate(-10 200 64)"/>
+      <ellipse cx="118" cy="89" rx="8" ry="4.4" transform="rotate(-10 118 89)"/>
+      <path d="M118 89 L226 69"/>
+      <ellipse cx="226" cy="69" rx="8" ry="4.4" transform="rotate(-10 226 69)"/>
+    </svg>
+  </div>
+
+  <!-- ── TITLE BLOCK / AUTHORITY ──────────────────────────────────────── -->
+  <h2 class="sg-h">Result-sheet title block · JESA endorsement</h2>
+  <div class="tb">
+    <div class="tb-strip"></div>
+    <div class="tb-body">
+      <div><div class="tb-name">PIPE SHOE</div><div class="sp-lbl">REST · UNINS · CS · no-PWHT</div></div>
+      <div class="tb-code">SH05</div>
+    </div>
+    <div class="tb-foot"><span class="seal">JESA</span> · per Table 15 · Dwg JS-PE-DPS-0331</div>
+  </div>
+  <p class="sg-tag" style="margin-top:12px">--authority (JESA blue) appears only on the seal strip &amp; seal text — never as a button or link.</p>
+
+</div>
+
+<script>
+  // theme toggle — shares the app's localStorage key so the choice is consistent
+  (function () {
+    var btn = document.getElementById('themeToggle');
+    var lbl = document.getElementById('themeLabel');
+    function apply(t) {
+      if (t === 'dark') { document.documentElement.setAttribute('data-theme','dark'); lbl.textContent = '☀ Light'; }
+      else { document.documentElement.removeAttribute('data-theme'); lbl.textContent = '◐ Dark'; }
+    }
+    var saved = localStorage.getItem('pss-theme') === 'dark' ? 'dark' : 'light';
+    apply(saved);
+    btn.addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('pss-theme', next); apply(next);
+    });
+  })();
+  // plot-in replay
+  (function () {
+    var path = document.getElementById('plotPath');
+    var btn = document.getElementById('plotBtn');
+    function go() { path.classList.remove('go'); void path.getBBox(); path.classList.add('go'); }
+    go(); btn.addEventListener('click', go);
+  })();
+</script>
+
+</body>
+</html>

@@ -8,6 +8,12 @@ from drawing_index import get_drawings, label_drawings
 from note_refinement import apply_refinements
 
 
+WL_WARNING = (
+    "Use only when specified on stress isometrics or approved by stress engineer. "
+    "Local stress checks may be required."
+)
+
+
 # =============================================================================
 # STEP 1 — NPS to size range key
 # Table 15 (rest) and Table 16 (guide/line_stop/hold_down) use different ranges.
@@ -132,6 +138,60 @@ def normalize_function(raw_function: str) -> str:
         )
 
 
+def normalize_pipe_orientation(raw_orientation: str | None) -> str:
+    val = (raw_orientation or "horizontal").strip().lower()
+    if val in ("horizontal", "h"):
+        return "horizontal"
+    if val in ("vertical", "v"):
+        return "vertical"
+    raise ValueError(
+        f"Unknown pipe orientation: '{raw_orientation}'.\n"
+        f"Accepted values: horizontal or vertical."
+    )
+
+
+def normalize_vertical_restraint(raw_restraint: str | None) -> str:
+    val = (raw_restraint or "").strip().lower().replace(" ", "_").replace("-", "_")
+    if val in ("sliding", "shear", "slide", "sliding_shear"):
+        return "sliding"
+    if val in ("fixed", "fix"):
+        return "fixed"
+    raise ValueError(
+        f"Unknown vertical restraint type: '{raw_restraint}'.\n"
+        f"Accepted values: sliding or fixed."
+    )
+
+
+def normalize_frp_vertical_support(raw_support: str | None, function_key: str) -> str:
+    val = (raw_support or "").strip().lower().replace(" ", "_").replace("-", "_").replace("+", "_")
+    val = "_".join(part for part in val.split("_") if part)
+    if val in ("rest", "riser_clamp_rest", "rc71"):
+        return "rest"
+    if val in (
+        "rest_guide_hold_down",
+        "rest_guide_holddown",
+        "rest_guide_hold",
+        "riser_clamp_rest_guide_hold_down",
+        "rc72",
+    ):
+        return "rest_guide_hold_down"
+    if val in ("all_around_guide", "guide", "riser_clamp_all_around_guide", "rc73"):
+        return "all_around_guide"
+
+    if raw_support is None:
+        if function_key == "rest":
+            return "rest"
+        if function_key == "guide":
+            return "all_around_guide"
+        if function_key == "hold_down":
+            return "rest_guide_hold_down"
+
+    raise ValueError(
+        f"Unknown FRP vertical support type: '{raw_support}'.\n"
+        f"Accepted values: rest, rest_guide_hold_down, all_around_guide."
+    )
+
+
 # =============================================================================
 # STEP 5 — Result data class
 # =============================================================================
@@ -209,7 +269,150 @@ class SelectionResult:
 
 
 # =============================================================================
-# STEP 6 — Main selection function
+# STEP 6 — Flange support routing
+# Applies only when function=REST and is_flange=True.
+# =============================================================================
+
+# Flange Frame: pressure class → (support code, min_nps, max_nps)
+_FLANGE_FRAME = {
+    150:  ("FF01", 1.0,  24.0),
+    300:  ("FF02", 1.0,  24.0),
+    600:  ("FF03", 2.0,  16.0),
+    900:  ("FF04", 2.0,  16.0),
+    1500: ("FF05", 2.0,  16.0),
+    2500: ("FF06", 2.0,  12.0),
+}
+
+
+def _select_flange_support(
+    nps, material_key, flange_class, size_range, inputs, refinements
+) -> SelectionResult:
+    # FRP (pipe or valve flange) → FF71 (1"–18")
+    if material_key == "frp":
+        if 1.0 <= nps <= 18.0:
+            return _build_result("FLANGED VALVE HOLDER (FF71)", [], size_range, inputs, refinements)
+        return SelectionResult(
+            support_code=None, drawings=[], notes=[],
+            size_range=size_range, inputs=inputs,
+        )
+
+    # Metallic materials → FF01–FF06 by pressure class
+    try:
+        cls = int(flange_class)
+    except (TypeError, ValueError):
+        raise ValueError(
+            f"Pressure class is required for flange support. "
+            f"Expected 150, 300, 600, 900, 1500, or 2500. Got: {flange_class!r}"
+        )
+
+    if cls not in _FLANGE_FRAME:
+        raise ValueError(
+            f"Unknown flange pressure class: {cls}. "
+            f"Must be one of 150, 300, 600, 900, 1500, 2500."
+        )
+
+    code, min_nps, max_nps = _FLANGE_FRAME[cls]
+    if not (min_nps <= nps <= max_nps):
+        return SelectionResult(
+            support_code=None, drawings=[], notes=[],
+            size_range=size_range, inputs=inputs,
+        )
+
+    return _build_result(f"FLANGE FRAME ({code})", [], size_range, inputs, refinements)
+
+
+def _select_vertical_lug_support(
+    nps, material_key, insulation_key, vertical_restraint, size_range, inputs
+) -> SelectionResult:
+    if material_key == "frp":
+        return SelectionResult(
+            support_code=None,
+            drawings=[],
+            notes=[],
+            size_range=size_range,
+            inputs=inputs,
+            refinement_warnings=[
+                "FRP piping is not applicable for WL03-WL06 vertical pipe lug supports."
+            ],
+        )
+
+    if not (1.0 <= nps <= 24.0):
+        return SelectionResult(
+            support_code=None,
+            drawings=[],
+            notes=[],
+            size_range=size_range,
+            inputs=inputs,
+            refinement_warnings=[
+                "WL03-WL06 vertical pipe lug supports are applicable from NPS 1\" to NPS 24\" only."
+            ],
+        )
+
+    restraint_key = normalize_vertical_restraint(vertical_restraint)
+    lookup = {
+        ("uninsulated", "sliding"): "SHEAR LUG - SLIDING FOR VERTICAL BARE PIPE (WL03)",
+        ("uninsulated", "fixed"): "FIXED LUG - FOR VERTICAL BARE PIPE (WL04)",
+        ("hot_insulated", "sliding"): "SHEAR LUG - SLIDING FOR VERTICAL INSULATED PIPE (WL05)",
+        ("hot_insulated", "fixed"): "FIXED LUG - FOR VERTICAL INSULATED PIPE (WL06)",
+    }
+    support_code = lookup[(insulation_key, restraint_key)]
+
+    return SelectionResult(
+        support_code=support_code,
+        drawings=get_drawings(support_code, nps=nps),
+        notes=[],
+        size_range=size_range,
+        inputs=inputs,
+        refinement_warnings=[WL_WARNING],
+    )
+
+
+def _select_frp_vertical_support(
+    nps, function_key, frp_vertical_support, size_range, inputs
+) -> SelectionResult:
+    if not (0.75 <= nps <= 80.0):
+        return SelectionResult(
+            support_code=None,
+            drawings=[],
+            notes=[],
+            size_range=size_range,
+            inputs=inputs,
+            refinement_warnings=[
+                "RC71-RC73 FRP riser clamp supports are applicable from NPS 3/4\" to NPS 80\" only."
+            ],
+        )
+
+    if 4.0 < nps < 6.0 or 10.0 < nps < 12.0:
+        return SelectionResult(
+            support_code=None,
+            drawings=[],
+            notes=[],
+            size_range=size_range,
+            inputs=inputs,
+            refinement_warnings=[
+                "Selected NPS is not covered by the RC71-RC73 drawing size bands."
+            ],
+        )
+
+    support_key = normalize_frp_vertical_support(frp_vertical_support, function_key)
+    lookup = {
+        "rest": "PIPE SUPPORT RISER CLAMP REST FOR FRP PIPING (RC71)",
+        "rest_guide_hold_down": "PIPE SUPPORT RISER CLAMP REST + GUIDE + HOLD DOWN FOR FRP PIPING (RC72)",
+        "all_around_guide": "PIPE SUPPORT RISER CLAMP ALL AROUND GUIDE FOR FRP PIPING (RC73)",
+    }
+    support_code = lookup[support_key]
+
+    return SelectionResult(
+        support_code=support_code,
+        drawings=get_drawings(support_code, nps=nps),
+        notes=[],
+        size_range=size_range,
+        inputs=inputs,
+    )
+
+
+# =============================================================================
+# STEP 7 — Main selection function
 # =============================================================================
 
 def select_support(
@@ -219,6 +422,11 @@ def select_support(
     insulation: str,
     support_function: str,
     refinements: dict = None,
+    is_flange: bool = False,
+    flange_class=None,
+    pipe_orientation: str = "horizontal",
+    vertical_restraint: str = None,
+    frp_vertical_support: str = None,
 ) -> SelectionResult:
     """
     Select the appropriate piping support based on pipe and project conditions.
@@ -230,6 +438,9 @@ def select_support(
         insulation       : "uninsulated" or "hot_insulated"
         support_function : "rest", "guide", "line_stop", or "hold_down"
         refinements      : optional answers to active engineering-note questions
+        is_flange        : True when the support is located at a flange (REST only)
+        flange_class     : ASME pressure class int (150/300/600/900/1500/2500);
+                           required for metallic materials; ignored for FRP (→ FF71)
 
     Returns:
         SelectionResult with the selected support, drawings, and notes.
@@ -238,15 +449,47 @@ def select_support(
     function_key   = normalize_function(support_function)
     material_key   = normalize_material(material)
     insulation_key = normalize_insulation(insulation)
-    size_range     = get_size_range(nps, function_key)
+    orientation_key = normalize_pipe_orientation(pipe_orientation)
+    size_range     = "vertical" if orientation_key == "vertical" else get_size_range(nps, function_key)
 
     inputs = {
-        "nps":        nps,
-        "material":   material_key,
-        "pwht":       pwht,
-        "insulation": insulation_key,
-        "function":   function_key,
+        "nps":          nps,
+        "material":     material_key,
+        "pwht":         pwht,
+        "insulation":   insulation_key,
+        "function":     function_key,
+        "is_flange":    is_flange,
+        "flange_class": flange_class,
+        "pipe_orientation": orientation_key,
+        "vertical_restraint": vertical_restraint,
+        "frp_vertical_support": frp_vertical_support,
     }
+
+    # -----------------------------------------------------------------------
+    # Vertical pipe lug branch - WL03 to WL06 only.
+    # This dedicated path bypasses the normal horizontal support tables.
+    # -----------------------------------------------------------------------
+    if orientation_key == "vertical":
+        if material_key == "frp":
+            return _select_frp_vertical_support(
+                nps, function_key, frp_vertical_support, size_range, inputs
+            )
+        return _select_vertical_lug_support(
+            nps, material_key, insulation_key, vertical_restraint, size_range, inputs
+        )
+
+    # -----------------------------------------------------------------------
+    # Flange REST branch — short-circuits standard rules and FRP saddle path.
+    # Only active when function=REST and the engineer flags a flange location.
+    # Non-REST functions (guide / line_stop / hold_down) ignore is_flange.
+    # FRP → FF71 regardless of component type (pipe or valve flange).
+    # Metallic → FF01–FF06 selected by ASME pressure class.
+    # -----------------------------------------------------------------------
+    if function_key == "rest" and is_flange:
+        return _select_flange_support(
+            nps, material_key, flange_class,
+            size_range, inputs, refinements,
+        )
 
     # -----------------------------------------------------------------------
     # FRP special case — handled entirely here for all support functions.

@@ -8,116 +8,21 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/static/css/style.css">
 
-  <!-- Restore saved theme before render to prevent flash -->
-  <script>
-    (function () {
-      var t = localStorage.getItem('pss-theme');
-      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    })();
-  </script>
+  {% include "_theme_toggle_script.html" %}
 </head>
 <body>
 
-  <!-- ══════════════════════════ TOP BAR ══════════════════════════ -->
-  <header class="navbar">
-    <div class="navbar-inner">
-      <div class="brand">
-        <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
-        <span class="logo-label">JESA</span>
-        <div class="nav-divider"></div>
-        <div class="tool-title">
-          <span class="title-main">Pipe Support Selector</span>
-          <span class="title-sub">Engineering Reference Tool · JESA Standard</span>
-        </div>
-      </div>
-      <div class="navbar-right">
-        <div class="status-dot" title="Application ready"></div>
-        <span class="navbar-badge">Engineering Tool</span>
-        <a class="nav-tool-link" href="/span" title="Support Span Calculator">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-            <path d="M2 10h16M2 5h16M2 15h16" stroke-linecap="round"/>
-            <rect x="7" y="7" width="6" height="6" rx="1" fill="currentColor" stroke="none" opacity=".25"/>
-          </svg>
-          SPAN CALC
-        </a>
-        <a class="nav-tool-link" href="/rack-calculator" title="Rack Width Calculator">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" width="14" height="14">
-            <rect x="2" y="8" width="16" height="4" rx="1"/>
-            <line x1="5" y1="4" x2="5" y2="8" stroke-linecap="round"/>
-            <line x1="10" y1="4" x2="10" y2="8" stroke-linecap="round"/>
-            <line x1="15" y1="4" x2="15" y2="8" stroke-linecap="round"/>
-          </svg>
-          RACK CALC
-        </a>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle dark/light mode">
-          <span id="themeIcon">🌙</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  {% include "_shell_open.html" %}
 
   <!-- ══════════════════════════ APP SHELL ══════════════════════════ -->
   <div class="app-shell">
 
     <!-- ─── STEP SIDEBAR ─── -->
-    <aside class="step-sidebar">
-      <div class="sidebar-section-label">Selection Flow</div>
 
-      <div class="stepper">
-
-        <!-- Step 01 -->
-        <div class="si-item si-active" id="si-1">
-          <div class="si-spine">
-            <div class="si-dot"><span>01</span></div>
-            <div class="si-line"></div>
-          </div>
-          <div class="si-content">
-            <div class="si-title">Pipe Size</div>
-            <div class="si-desc">NPS · Material Class</div>
-          </div>
-        </div>
-
-        <!-- Step 02 -->
-        <div class="si-item" id="si-2">
-          <div class="si-spine">
-            <div class="si-dot"><span>02</span></div>
-            <div class="si-line"></div>
-          </div>
-          <div class="si-content">
-            <div class="si-title">Conditions</div>
-            <div class="si-desc">PWHT · Insulation · Function</div>
-          </div>
-        </div>
-
-        <!-- Step 03 -->
-        <div class="si-item" id="si-3">
-          <div class="si-spine">
-            <div class="si-dot"><span>03</span></div>
-          </div>
-          <div class="si-content">
-            <div class="si-title">Result</div>
-            <div class="si-desc">Support Type · Drawings</div>
-          </div>
-        </div>
-
-      </div><!-- /.stepper -->
-
-      <div class="sidebar-meta">
-        <a class="doc-ref-banner"
-           href="/standard-pdf#page=3"
-           target="_blank" rel="noopener"
-           role="note" title="JESA Piping Support Standard — click to open PDF">
-          <div class="doc-ref-body">
-            <span class="doc-ref-title">JESA Piping Support Standard</span>
-          </div>
-          <span class="doc-ref-arrow">VIEW →</span>
-        </a>
-      </div>
-    </aside><!-- /.step-sidebar -->
 
     <!-- ─── MAIN LAYOUT ─── -->
     <div class="main-layout">
@@ -272,15 +177,60 @@
           </div>
         </div>
 
-        <!-- ── FUNCTION ── -->
+        <!-- PIPE ORIENTATION -->
         <div class="form-section">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M7 1h2v14H7V1zM2 7h12v2H2V7z"/>
+            </svg>
+            Pipe Orientation
+          </label>
+          <div class="toggle-row" id="orientationGroup">
+            <button class="toggle-btn active" data-value="horizontal">Horizontal</button>
+            <button class="toggle-btn" data-value="vertical">Vertical</button>
+          </div>
+        </div>
+
+        <!-- VERTICAL SUPPORT DETAILS -->
+        <div class="form-section" id="verticalDetails" style="display:none">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1l4 4H9v6h3l-4 4-4-4h3V5H4l4-4z"/>
+            </svg>
+            Vertical Lug Restraint
+          </label>
+          <div class="toggle-row" id="verticalRestraintGroup">
+            <button class="toggle-btn" data-value="sliding">Sliding / Shear</button>
+            <button class="toggle-btn" data-value="fixed">Fixed</button>
+          </div>
+          <p class="field-hint">WL03-WL06 use the insulation condition above as Bare / Insulated.</p>
+        </div>
+
+        <!-- FRP VERTICAL RISER CLAMP DETAILS -->
+        <div class="form-section" id="frpVerticalDetails" style="display:none">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M8 1a5 5 0 00-5 5v4a5 5 0 0010 0V6a5 5 0 00-5-5zm0 2a3 3 0 013 3v4a3 3 0 01-6 0V6a3 3 0 013-3z"/>
+            </svg>
+            FRP Riser Clamp Type
+          </label>
+          <div class="toggle-row" id="frpVerticalSupportGroup">
+            <button class="toggle-btn" data-value="rest">Rest</button>
+            <button class="toggle-btn" data-value="rest_guide_hold_down">Rest + Guide + Hold Down</button>
+            <button class="toggle-btn" data-value="all_around_guide">All Around Guide</button>
+          </div>
+          <p class="field-hint">FRP vertical riser clamps use RC71, RC72, or RC73 by selected support type and NPS range.</p>
+        </div>
+
+        <!-- ── FUNCTION ── -->
+        <div class="form-section" id="functionSection">
           <label class="section-label">
             <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
               <path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/>
             </svg>
             Support Function
           </label>
-          <div class="function-grid">
+          <div class="function-grid" id="functionGrid">
 
             <button class="fn-btn" data-value="rest" title="Pipe rests on support, free to slide axially and laterally">
               <div class="fn-icon">
@@ -342,6 +292,49 @@
           </div>
         </div>
 
+        <!-- ── FLANGE SUPPORT (REST only) ── -->
+        <div class="form-section" id="flangeSection" style="display:none">
+          <label class="section-label">
+            <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
+              <path d="M2 2h12v2H2V2zm0 4h12v2H2V6zm0 4h12v2H2v-2zm0 4h12v2H2v-2z"/>
+            </svg>
+            Support at a Flange?
+            <span class="optional-badge">REST only</span>
+          </label>
+          <div class="toggle-row" id="flangeToggleGroup">
+            <button class="toggle-btn active" data-value="false">No — standard support</button>
+            <button class="toggle-btn" data-value="true">Yes — at a flange</button>
+          </div>
+
+          <!-- Flange detail sub-section (shown when Yes is selected) -->
+          <div id="flangeDetails" style="display:none; margin-top:0.9rem">
+
+            <!-- FRP info (shown when material = FRP — no pressure class needed) -->
+            <div id="frpFlangeInfo" style="display:none">
+              <p class="field-hint" style="color:var(--accent-secondary); font-style:italic">
+                FRP flanges use FF71 — no pressure class required. Submit to proceed.
+              </p>
+            </div>
+
+            <!-- Pressure class (metallic materials only) -->
+            <div id="flangeClassSection" style="margin-top:0.75rem">
+              <label class="section-label" style="font-size:0.78rem; margin-bottom:0.45rem">
+                ASME Flange Pressure Class
+              </label>
+              <div class="toggle-row" id="flangeClassGroup" style="flex-wrap:wrap; gap:0.35rem">
+                <button class="toggle-btn" data-value="150">CL 150</button>
+                <button class="toggle-btn" data-value="300">CL 300</button>
+                <button class="toggle-btn" data-value="600">CL 600</button>
+                <button class="toggle-btn" data-value="900">CL 900</button>
+                <button class="toggle-btn" data-value="1500">CL 1500</button>
+                <button class="toggle-btn" data-value="2500">CL 2500</button>
+              </div>
+              <p class="field-hint">FF01–FF06 are selected by pressure class. Applicable to metallic piping on horizontal lines.</p>
+            </div>
+
+          </div>
+        </div>
+
         <!-- ── SUBMIT ── -->
         <button class="submit-btn" id="submitBtn" onclick="runSelection()">
           <svg class="submit-spinner" id="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="display:none">
@@ -352,13 +345,6 @@
           </svg>
           <span id="submitLabel">GET SUPPORT TYPE</span>
         </button>
-
-        <a class="submit-btn" href="/rack-calculator" style="text-decoration:none;">
-          <svg class="submit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <path d="M4 17h16M6 13h12M8 9h8M10 5h4"/>
-          </svg>
-          <span>OPEN RACK CALCULATOR</span>
-        </a>
 
       </aside><!-- /.form-panel -->
 
@@ -423,6 +409,12 @@
         <!-- RESULT CONTENT -->
         <div class="result-content" id="resultContent" style="display:none">
 
+          <!-- Result-sheet title block -->
+          <div class="result-titleblock">
+            <span class="result-titleblock-label">Support Selection · Result</span>
+            <span class="result-titleblock-ref">JESA STD · REV A</span>
+          </div>
+
           <!-- Illustration zone — blueprint feel -->
           <div class="illus-zone">
             <div class="illus-corner tl"></div>
@@ -453,6 +445,16 @@
               <div class="chip-row" id="drawingChips"></div>
             </div>
 
+            <div class="info-card" id="relatedDrawingsCard" style="display:none">
+              <div class="info-card-header">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 011.414-1.414 2 2 0 002.828 0l3-3a2 2 0 00-2.828-2.828l-1.5 1.5a1 1 0 11-1.414-1.414l1.5-1.5zM7.414 15.414a2 2 0 01-2.828-2.828l3-3a2 2 0 012.828 0 1 1 0 01-1.414 1.414 2 2 0 00-2.828 0l-3 3a2 2 0 002.828 2.828l1.5-1.5a1 1 0 011.414 1.414l-1.5 1.5z" clip-rule="evenodd"/>
+                </svg>
+                Referenced Drawings
+              </div>
+              <div class="chip-row" id="relatedDrawingChips"></div>
+            </div>
+
             <!-- Engineering notes -->
             <div class="info-card" id="notesCard" style="display:none">
               <div class="info-card-header">
@@ -463,8 +465,17 @@
               </div>
               <div id="notesList"></div>
             </div>
+          </div><!-- /.details-zone -->
+
+          <!-- Traceability footer + cross-tool handoff -->
+          <div class="result-traceability">
+            <div class="result-trace-note">Traceable to the JESA Piping Support Standard — Rev A · QW2507-00-PE-STD-00001. Confirm against the current controlled revision before issue.</div>
+            <a class="result-next" href="/span">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              Next · verify maximum span in the Span Calculator
+            </a>
           </div>
-        </div>
+        </div><!-- /.result-content -->
 
         <!-- NOT APPLICABLE STATE -->
         <div class="na-state" id="naState" style="display:none">
@@ -492,18 +503,47 @@
 
   </div><!-- /.app-shell -->
 
-  <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <span class="footer-title">Pipe Support Selector — Engineering Tool</span>
-        <span class="footer-dept">Piping Department · JESA</span>
-      </div>
-      <span class="footer-year" id="footerYear"></span>
-    </div>
-  </footer>
+  {% include "_shell_close.html" %}
 
   <script src="/static/js/app.js"></script>
+
+  <!-- Exact FF support-code labels for flange illustrations (visual only) -->
+  <script>
+  (function () {
+    "use strict";
+
+    if (typeof window.showResult !== "function") return;
+    var originalShowResult = window.showResult;
+
+    window.showResult = function (data) {
+      originalShowResult(data);
+
+      var imageKey = data && data.image_key;
+      if (imageKey !== "flange_frame" && imageKey !== "frp_flange_holder") return;
+
+      var supportCode = String((data && data.support_code) || "").toUpperCase();
+      var match = supportCode.match(/\bFF(?:0[1-6]|71)\b/);
+      if (!match) return;
+
+      var img = document.getElementById("supportImg");
+      if (!img) return;
+
+      var code = match[0];
+      img.src = "/api/support-illustration/" + encodeURIComponent(imageKey) +
+                ".svg?code=" + encodeURIComponent(code);
+      img.alt = (imageKey === "frp_flange_holder")
+        ? "FRP Flanged Valve Holder (" + code + ") - Side / End Elevation"
+        : "Flange Frame Support (" + code + ") - Side / End Elevation";
+
+      var meta = document.getElementById("illusMeta");
+      if (meta) {
+        meta.textContent = (imageKey === "frp_flange_holder")
+          ? "FRP Flanged Valve Holder (" + code + ") - Side / End Elevation"
+          : "Flange Frame Support (" + code + ") - Side / End Elevation";
+      }
+    };
+  })();
+  </script>
 
   <!-- Step indicator + AUTO badge wiring (visual only) -->
   <script>
@@ -514,7 +554,13 @@
     function updateStepper() {
       var npsSelected  = !!document.querySelector('.nps-btn.selected');
       var matSelected  = !!(document.getElementById('materialSelect') || {}).value;
-      var fnSelected   = !!document.querySelector('.fn-btn.selected');
+      var verticalMode = !!document.querySelector('#orientationGroup .toggle-btn[data-value="vertical"].active');
+      var frpSelected  = ((document.getElementById('materialSelect') || {}).value || '').toUpperCase() === 'FRP';
+      var fnSelected   = verticalMode
+        ? (frpSelected
+            ? !!document.querySelector('#frpVerticalSupportGroup .toggle-btn.active')
+            : !!document.querySelector('#verticalRestraintGroup .toggle-btn.active'))
+        : !!document.querySelector('.fn-btn.selected');
       var resultVisible = (document.getElementById('resultContent') || {}).style &&
                           document.getElementById('resultContent').style.display !== 'none';
       var naVisible     = (document.getElementById('naState') || {}).style &&

@@ -8,41 +8,15 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="/static/css/style.css">
 
-  <script>
-    (function () {
-      var t = localStorage.getItem('pss-theme');
-      if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
-    })();
-  </script>
+  {% include "_theme_toggle_script.html" %}
 </head>
 <body>
 
-  <header class="navbar">
-    <div class="navbar-inner">
-      <div class="brand">
-        <img src="{{ url_for('static', filename='favicon.svg') }}" alt="PSS" class="logo logo-app">
-        <span class="logo-label">JESA</span>
-        <div class="nav-divider"></div>
-        <div class="tool-title">
-          <span class="title-main">Span Reference</span>
-          <span class="title-sub">KS-PE-SPC-0073 Rev 0 · Assumptions, Formulae &amp; Tables</span>
-        </div>
-      </div>
-      <div class="navbar-right">
-        <div class="status-dot" title="Application ready"></div>
-        <a class="nav-tool-link" href="/">SUPPORT SEL</a>
-        <a class="nav-tool-link" href="/span">SPAN CALC</a>
-        <a class="nav-tool-link active" href="/reference">REFERENCE</a>
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
-          <span id="themeIcon">🌙</span>
-        </button>
-      </div>
-    </div>
-  </header>
+  {% include "_shell_open.html" %}
 
   <div class="ref-shell">
 
@@ -54,16 +28,42 @@
     </a>
 
     <div class="ref-header">
-      <h1>Span Calculation Reference</h1>
+      <h1>Engineering Reference Library</h1>
       <div class="ref-docref">
-        <strong>Document:</strong> KS-PE-SPC-0073 Rev 0 — Onshore Support Specification
-        &nbsp;·&nbsp; <strong>Date:</strong> 01 December 2019
-        &nbsp;·&nbsp; <strong>Section:</strong> Appendix A, Maximum Recommended Support Spacing
-        &nbsp;·&nbsp; <strong>Authority:</strong> Worley / JESA
+        Governing documents, span data, material mappings, drawing references, assumptions, and formulae.
       </div>
     </div>
 
     <!-- ── ASSUMPTIONS ─────────────────────────────────────────── -->
+    <div class="ref-library-grid" aria-label="Reference library">
+      <a class="ref-library-card ref-library-card--primary" href="/standard-pdf#page=3" target="_blank" rel="noopener">
+        <span class="ref-library-kicker">Governing Standard</span>
+        <strong>JESA Piping Support Standard</strong>
+        <span>QW2507-00-PE-STD-00001 Rev A - support selection tables, drawings, and notes.</span>
+        <em>Open full standard</em>
+      </a>
+      <a class="ref-library-card" href="#span-tables">
+        <span class="ref-library-kicker">Span Reference Data</span>
+        <strong>KS-PE-SPC-0073</strong>
+        <span>Tables 13 and 14 span values for the Span Calculator.</span>
+      </a>
+      <a class="ref-library-card" href="#material-reference">
+        <span class="ref-library-kicker">Material / MPMS</span>
+        <strong>Material Class Reference</strong>
+        <span>Supported span material families and table routing.</span>
+      </a>
+      <a class="ref-library-card" href="#drawing-refs">
+        <span class="ref-library-kicker">Drawing References</span>
+        <strong>NPS-Filtered Drawing Access</strong>
+        <span>Selector result drawings open from the result sheet with size highlighting.</span>
+      </a>
+      <a class="ref-library-card" href="#governing-formulae">
+        <span class="ref-library-kicker">Assumptions & Formulae</span>
+        <strong>Calculation Basis</strong>
+        <span>Span assumptions, limits, unit conversions, and governing equations.</span>
+      </a>
+    </div>
+
     <div class="ref-section">
       <h2>Assumptions</h2>
       <ul class="ref-list">
@@ -120,6 +120,7 @@
 
     <!-- ── GOVERNING FORMULAE ──────────────────────────────────── -->
     <div class="ref-section">
+      <span id="governing-formulae" class="ref-anchor"></span>
       <h2>Governing Formulae</h2>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">
         From <em>Pipe Stress Engineering</em>, L.C. Peng — Chapter: Strength of Materials Basics.
@@ -201,7 +202,7 @@
     </div>
 
     <!-- ── TABLE 13 SUMMARY ────────────────────────────────────── -->
-    <div class="ref-section">
+    <div class="ref-section" id="span-tables">
       <h2>Table 13 — CS / LT / SS Spans (SCH 40) <span class="ref-badge">ft · imperial</span></h2>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
         Abridged SCH 40 values. Full table (SCH 40, SCH 80, 10S) is in the calculator.
@@ -298,6 +299,7 @@
 
     <!-- ── MATERIAL CODES ──────────────────────────────────────── -->
     <div class="ref-section">
+      <span id="material-reference" class="ref-anchor"></span>
       <h2>Material Code Reference</h2>
       <table class="ref-var-table">
         <thead>
@@ -319,21 +321,35 @@
       </table>
     </div>
 
+    <div class="ref-section" id="drawing-refs">
+      <h2>Drawing References</h2>
+      <p class="ref-note" style="font-style:normal;margin-top:0">
+        Support Selector results expose the applicable JESA drawing references as clickable drawing chips.
+        Drawing access is filtered by selected NPS where the standard provides size-specific sheets, and
+        the PDF viewer highlights the relevant row or column when available.
+      </p>
+      <div class="ref-conv-strip">
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">JS-PE-DPS-0321...0389</span>
+          <span class="ref-conv-lbl">Standard supports</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">JS-PE-DPS-0417...0422</span>
+          <span class="ref-conv-lbl">Flange supports</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">JS-PE-DPS-0701...0705</span>
+          <span class="ref-conv-lbl">FRP supports</span>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /.ref-shell -->
 
-  <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <span class="footer-title">Span Reference — KS-PE-SPC-0073 Rev 0</span>
-        <span class="footer-dept">Piping Department · JESA</span>
-      </div>
-      <span class="footer-year" id="footerYear"></span>
-    </div>
-  </footer>
+  {% include "_shell_close.html" %}
 
   <script>
   (function () {
-    document.getElementById('footerYear').textContent = '© ' + new Date().getFullYear();
     var btn  = document.getElementById('themeToggle');
     var icon = document.getElementById('themeIcon');
     function applyTheme(t) {

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none"
+     stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter"
+     role="img" aria-label="DATUM mark">
+  <!-- the datum corner: title-block L-bracket crop mark -->
+  <path d="M9 26 V9 H26"/>
+  <!-- centerline tick crossing the corner (origin / datum) -->
+  <path d="M9 9 L21 21" stroke-width="2"/>
+  <circle cx="25" cy="25" r="2.6" fill="currentColor" stroke="none"/>
+  <!-- lower / right crop marks (sheet edge hint) -->
+  <path d="M33 39 H39 V33" stroke-width="2" opacity="0.55"/>
+</svg>

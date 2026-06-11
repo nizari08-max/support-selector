@@ -190,15 +190,28 @@ def calculate_rack(pipes,
             f"At maximum capacity ({MAX_PIPES_PER_TIER} pipes per tier)."
         )
 
+    # Derived dimensioning anchors (do not affect rack_width / inner_total math).
+    # The formula's reference origin (x=0) is the LEFT COLUMN CENTERLINE:
+    # edge_offset already bakes in "column CL -> column edge" (+column/2) plus
+    # clearance to pipe 1's centerline, and rack_width's trailing "+column/2"
+    # brings the right edge back out to the RIGHT COLUMN CENTERLINE. So:
+    #   first_gap      = column CL -> pipe 1 CL = edge_offset
+    #   occupied_width = column CL -> end of occupied zone (before expansion) = inner_total
+    #   rack_width     = column CL -> column CL (left to right), unchanged
+    first_gap = int(round(edge_offset))
+    occupied_width = int(round(inner_total))
+
     return {
-        'edge_offset':   edge_offset,
-        'spacings':      spacings,
-        'pipe_run':      pipe_run,
-        'pipe_buffer':   pipe_buffer,
-        'inner_total':   inner_total,
-        'expansion':     int(expansion),
-        'rack_width':    rack_width,
-        'steel_column':  steel_column_mm,
-        'expansion_pct': expansion_pct,
-        'warnings':      warnings,
+        'edge_offset':     edge_offset,
+        'spacings':        spacings,
+        'pipe_run':        pipe_run,
+        'pipe_buffer':     pipe_buffer,
+        'inner_total':     inner_total,
+        'expansion':       int(expansion),
+        'rack_width':      rack_width,
+        'steel_column':    steel_column_mm,
+        'expansion_pct':   expansion_pct,
+        'first_gap':       first_gap,
+        'occupied_width':  occupied_width,
+        'warnings':        warnings,
     }
