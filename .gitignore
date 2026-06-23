@@ -8,3 +8,11 @@ __pycache__/
 venv/
 .claude/
 piping_support_tool/
+
+# Local artifacts / scratch previews / test output (not source)
+shoe-refinement-preview.*
+test-results/
+manager-review-artifacts/
+phase25-screenshots/
+phase25-refinement-screenshots/
+phase3-positioning-screenshots/

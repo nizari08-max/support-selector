@@ -81,16 +81,17 @@ Full rationale is in `DESIGN_DECISIONS.md`; quick onboarding is in `PROJECT_SNAP
 - **Capability domains.** The rail is grouped by domain: **Workspace · Selection · Verification ·
   Arrangement · Reference**. New modules slot into one of these domains rather than spawning a new
   top-level nav paradigm.
-- **Module relationships / workflow philosophy.** The four tools are one workflow:
-  **Select → Verify → Arrange · Reference**. Communicate them as connected stages (numbered spine +
-  tool-card indices), not as four independent apps.
-- **Workspace Home (`/`).** An operational launcher (hero atmosphere → Continue band → The Board →
-  Standards register), not a marketing landing page.
+- **Module relationships / tool-hub philosophy.** The four live tools are independent modules under
+  one governed platform: Support selection, Span verification, Rack arrangement, and Engineering
+  references. Communicate shared standards and visual consistency without implying automatic
+  cross-tool data carryover.
+- **Workspace Home (`/`).** An operational launcher (hero atmosphere → tool choice band →
+  available engineering tools → Standards register), not a marketing landing page.
 - **`⌘K` command palette.** Lives in `_command_palette.html` with self-contained inline JS — **never
   in `app.js`**. New commands are added here.
-- **Future cross-tool state (Phase 3, gated).** A shared **Line object** (NPS/material/class) will
-  thread tools via additive inline scripts + `sessionStorage['datum-line']` — **no `app.js` edits**.
-  The Continue band already reads this key as a seed.
+- **Future cross-tool state (Phase 3, gated and paused).** Do not implement or imply the shared
+  **Line object** / cross-tool workflow until explicitly approved. Existing live tools remain
+  technically independent.
 
 ## Approved Design Decisions (settled — do not relitigate)
 
@@ -109,8 +110,9 @@ Full rationale is in `DESIGN_DECISIONS.md`; quick onboarding is in `PROJECT_SNAP
 - **Tool-card philosophy.** Each card is a drafting "sheet": mono index, "Live"/"Soon" status,
   drafting-glyph icon, and a title-block footer carrying a real engineering reference tag. One
   coherent interactive accent (`--datum`) per card — do not reintroduce competing hues.
-- **Workflow communication strategy.** "One workflow. Not four separate tools." Reinforce via the
-  numbered spine + matching tool-card indices. Strengthen the communication; do not redesign it.
+- **Tool-hub communication strategy.** Present the product as professional piping engineering tools
+  in one place. Each tool stands alone while sharing the same standards basis, visual language, and
+  reference environment.
 - **Visual language.** Engineering/drafting aesthetic: result "sheets," title blocks, blueprint
   grid, Saira Semi Condensed display + JetBrains Mono data + Inter body. Dual theme mandatory.
   Reference points: Bentley/AVEVA/Hexagon (authority), Linear (velocity), Stripe/Notion (typography).
@@ -128,7 +130,8 @@ These are **hard constraints**. Violating them is a regression even if the resul
 3. **Flask routes & architecture.** Do not add/rename/remove routes or move source files out of the
    repo root (Railway requires root-level source; `app.py` imports `from selector import …`).
 4. **Approved navigation model & platform direction.** Do not redesign the shell, rail, capability
-   domains, Workspace Home structure, or the "one governed workflow" framing.
+   domains, or Workspace Home structure. Do not reintroduce active connected-workflow or Line-object
+   language until Phase 3 is explicitly approved.
 5. **The token layer.** No hardcoded hex in CSS rules outside `:root`/`[data-theme="dark"]` (neutral
    `rgba(255,255,255,…)`/`rgba(0,0,0,…)` overlays on dark bands are the one accepted exception).
    Both light and dark themes must stay correct.

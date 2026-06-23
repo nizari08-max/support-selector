@@ -24,8 +24,8 @@ workspace that contains multiple engineering modules (Support Selector, Span Cal
 Calculator + DXF, Reference Tables) behind a shared application shell (top bar + left capability
 rail + `⌘K` command palette). It presents as a professional engineering instrument: every result is
 a stamped, traceable "sheet," every recommendation resolves to a governing clause/table/drawing, and
-the tools are framed as **one workflow** (Select → Verify → Arrange · Reference), not four
-disconnected utilities.
+the tools are framed as a governed collection of independent engineering modules, not an active
+connected line workflow.
 
 **How it evolved.** It began as a single-purpose **Pipe Support Selector** (five inputs → one
 support type). Span and Rack calculators, DXF export, and a Reference library were added over time.
@@ -36,10 +36,10 @@ meaning to end users — leaving the product to present purely as a **JESA-endor
 platform**. (DATUM survives only as internal, non-user-visible code names — see
 `DESIGN_DECISIONS.md`.)
 
-**Long-term direction.** Thread a shared **Line object** (NPS / material / class) across all tools
-so a user can carry one pipe line from selection → span check → rack arrangement → export without
-re-entering data (this is the gated Phase 3). Then scale the engineering coverage: more support
-families (vessel clips, spring hangers), an in-context drawing viewer, and richer Reference content.
+**Long-term direction.** The shared **Line object** / cross-tool workflow is paused and remains
+gated. The current product direction is a professional collection of independent piping engineering
+tools under one governed platform. Future scaling may add more support families (vessel clips,
+spring hangers), an in-context drawing viewer, and richer Reference content.
 The platform stays an *instrument, not a brochure* — credibility comes from standards traceability,
 not marketing.
 
@@ -49,7 +49,7 @@ not marketing.
 
 | Module | Route | Purpose |
 |---|---|---|
-| **Workspace Home** | `/` | Operational launcher: workflow spine, the four tool cards ("The Board"), Continue band, and a Standards & Traceability register. |
+| **Workspace Home** | `/` | Operational launcher: tool choice band, available engineering tools, and a Standards & Traceability register. |
 | **Support Selector** | `/support-selector` | Core engine. Five inputs (NPS, material, PWHT, insulation, function) + flange/vertical sub-flows → correct support type, drawing refs, and engineering notes per Tables 15 & 16. |
 | **Span Calculator** | `/span` | Computes maximum allowable support span for a line (per KS-PE-SPC-0073) and returns a pass/used-span result. |
 | **Rack Calculator** | `/rack-calculator` | Pipe rack width/spacing math → true-scale arrangement schematic (SVG) with centered spare bay, dimensions, and a pipe schedule. |
@@ -64,9 +64,9 @@ These are **settled** product decisions. Do not relitigate them (see `DESIGN_DEC
 
 - **Engineering-first platform.** This is a professional engineering instrument for stress/piping
   engineers — not a consumer SaaS app, not a marketing site. Authority and precision over polish.
-- **Workflow-driven experience.** The four tools are communicated as **one workflow**
-  (Select → Verify → Arrange · Reference), not four separate products. Numbered spine + tool-card
-  indices reinforce this. "One workflow. Not four separate tools."
+- **Tool-hub experience.** The four live tools are communicated as independent engineering modules
+  in one governed platform. They share standards, visual language, and reference context without
+  implying automatic data carryover.
 - **Governed engineering decisions.** Every recommendation resolves to a governing clause, table,
   and drawing. Results are framed as review-ready/stamped, never improvised.
 - **Standards & traceability are the credibility layer.** The governing document codes
@@ -458,16 +458,15 @@ redesign followed the approved plan in `C:\Users\hp\.claude\plans\ticklish-rolli
 **Workspace Home (`/`, `landing.html`).** An operational home, not a marketing page:
 - **Hero** — desaturated plant photo (`static/images/brand/hero-plant.png`, wired via `--hero-photo`)
   behind layered navy scrims + a faint blueprint grid; the photo is *atmosphere only*. Minimal,
-  confident copy: a JESA-sealed kicker, headline "Select supports. Verify spans. Arrange racks.",
-  sub-line "Engineering decisions you can stand behind.", and a single one-line lede about one
-  governed, traceable workflow. No document codes in the hero (they live in the Standards register);
+  confident copy: a JESA-sealed kicker, headline "Piping engineering tools, organized for daily
+  design work.", sub-line "Professional tools in one governed platform.", and a one-line lede about
+  selecting supports, verifying spans, arranging racks, and accessing references. No document codes in the hero (they live in the Standards register);
   the old rack illustration was removed for a unified atmosphere.
-- **Continue band** — "Start your workflow" entry card with an inviting `--datum` CTA ("Start a
-  line ⏎"); hydrates from `sessionStorage['datum-line']` (the Phase-3 seed).
-- **Workflow spine** — a connected, **numbered** chip strip (01 Select → 02 Verify → 03 Arrange,
-  then 04 Reference as a dashed "aside"), tying the workflow to the matching tool-card indices.
-- **The Board** — the four tool cards (+ placeholders) as sheet-cards, each with a top-left mono
-  index, a "Live" status, a drafting-glyph icon, and a title-block-style footer carrying an
+- **Tool choice band** — "Choose a tool" entry card with a neutral `--datum` CTA ("Open a tool ⏎").
+- **Tool category rail** — independent chips for Support selection, Span verification, Rack
+  arrangement, and References. No arrows or mandatory progression.
+- **Available Engineering Tools** — the four tool cards (+ placeholders) as sheet-cards, each with
+  status, drafting-glyph icon, purpose, explicit output, and a title-block-style footer carrying an
   engineering reference tag (Tables 15 & 16 · KS-PE-SPC-0073 · DXF export · Span data & codes).
 - **Standards & Traceability register** — `sheet--authority` panel with a navy "GOVERNED" seal and
   name↔mono-code rows (QW2507… / Tables 15 & 16 / Index / KS-PE-SPC-0073). Reads as "this platform
@@ -489,15 +488,14 @@ redesign followed the approved plan in `C:\Users\hp\.claude\plans\ticklish-rolli
   `currentColor`; one coherent drafting-glyph family, referenced via external `<use>`.
 
 **Phase 2.5 — Professional Polish Pass (complete, markup/CSS only).** A "0.9 → 1.0" finish pass on
-the Workspace Home: trimmed hero copy; "Start your workflow" entry card with an inviting CTA;
-numbered/connected workflow spine; tool-card footer reference tags + relocated index (fixed an
-index/status overlap defect) + a single coherent `--datum` interaction language + `:focus-visible`
-rings; Standards governance register with the authority seal; more readable (still discreet) footer
-credit; spacing/density tightening; icon left-alignment at 40px. 502 tests green; all 5 routes 200.
+the Workspace Home: trimmed hero copy; neutral "Choose a tool" entry card; independent tool category
+chips; tool-card footer reference tags + relocated index (fixed an index/status overlap defect) + a
+single coherent `--datum` interaction language + `:focus-visible` rings; Standards governance
+register with the authority seal; more readable (still discreet) footer credit; spacing/density
+tightening; icon left-alignment at 40px. 502 tests green; all 5 routes 200.
 
-**Remaining redesign work:** Phase 3 (gated) — the shared **Line object** + cross-tool handoff +
-unified Result Sheet (additive inline scripts/`sessionStorage` only; **no `app.js` edits**), which
-lights up the Continue band. Then propagate the polish/focus language to the four tool pages. Full
+**Remaining redesign work:** Phase 3 remains gated and paused. Do not implement the shared **Line
+object**, cross-tool handoff, or unified connected workflow until explicitly approved. Full
 strategy in the approved plan.
 
 ---

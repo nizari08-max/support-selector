@@ -28,19 +28,20 @@ trust more than a big logo. Reference firms (Bentley/AVEVA) earn authority throu
 must be confirmed before any external production deploy.
 **Status:** Final (asset/legal confirmation outstanding).
 
-### D3 — Platform is workflow-driven, not four separate tools
-**Decision:** Frame the four modules as **one governed workflow** — Select → Verify → Arrange ·
-Reference — reinforced by a numbered spine and matching tool-card indices. "One workflow. Not four
-separate tools."
-**Why:** A piping engineer's real task spans selection, span verification, and rack arrangement on
-the *same line*; presenting four disconnected utilities hid the actual value (a threaded workflow).
-**Status:** Final. (The shared Line object that makes the thread literal is the gated Phase 3.)
+### D3 — Platform is a governed tool hub
+**Decision:** Frame the four live modules as independent piping engineering tools in one governed
+platform: Support selection, Span verification, Rack arrangement, and Engineering references.
+Do not imply a mandatory sequence or automatic data carryover between tools.
+**Why:** The current tools share standards, visual language, and reference context, but they remain
+technically independent. The interface must be honest about that state until connected handoff work
+is explicitly approved.
+**Status:** Updated direction. The shared Line object / cross-tool workflow remains gated and paused.
 
 ### D4 — Workspace Home replaced the traditional landing page
-**Decision:** Make `/` an **operational Workspace Home** (hero atmosphere → Continue band → workflow
-spine → The Board → Standards register), not a marketing landing page.
-**Why:** Users return to *do work*, not to read a pitch. Resuming a line and entering a tool are the
-primary actions; credibility (standards) supports them. An instrument, not a brochure.
+**Decision:** Make `/` an **operational Workspace Home** (hero atmosphere → tool choice band → tool
+board → Standards register), not a marketing landing page.
+**Why:** Users return to *do work*, not to read a pitch. Choosing an engineering tool is the primary
+action; credibility (standards) supports it. An instrument, not a brochure.
 **Status:** Final.
 
 ### D5 — Rack Calculator / DXF as an independent module
@@ -103,10 +104,10 @@ JS in `_command_palette.html`. Result markup is added *statically* inside `#resu
 is the boundary that has kept the suite green through the entire redesign.
 **Status:** Final (hard constraint).
 
-### D12 — Phase 3 (Line object) is gated behind explicit approval
-**Decision:** The shared Line object + cross-tool handoff + unified Result Sheet is fully specified
-but **not** to be implemented until the user explicitly says "build." When built, it uses additive
-inline scripts + `sessionStorage['datum-line']` only — no `app.js` edits.
-**Why:** It is the one piece with a real architectural unknown (cross-tool persistence without
-`app.js`); the user wants to approve the approach before implementation.
-**Status:** Open/gated — do not start without go-ahead.
+### D12 — Phase 3 (Line object) is paused and gated
+**Decision:** The shared Line object + cross-tool handoff + unified Result Sheet is **not** part of
+the current direction. Do not implement it, and do not imply active data carryover in the UI, until
+the user explicitly re-approves Phase 3.
+**Why:** The live modules are technically independent today. The interface should present a unified
+tool hub, not a connected workflow that the product does not yet perform.
+**Status:** Paused/gated — do not start without explicit go-ahead.

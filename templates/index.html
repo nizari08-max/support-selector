@@ -298,12 +298,17 @@
             <svg class="label-icon" viewBox="0 0 16 16" fill="currentColor">
               <path d="M2 2h12v2H2V2zm0 4h12v2H2V6zm0 4h12v2H2v-2zm0 4h12v2H2v-2z"/>
             </svg>
-            Support at a Flange?
+            Support Location
             <span class="optional-badge">REST only</span>
           </label>
+          <p class="field-hint" style="margin-top:-0.2rem; margin-bottom:0.6rem">
+            Where on the line does the support sit? Choose <strong>Support on Pipe</strong> for a
+            support on the straight pipe body, or <strong>Support at Flange</strong> when the support
+            is located at a flanged connection (valve, fitting, or flanged joint).
+          </p>
           <div class="toggle-row" id="flangeToggleGroup">
-            <button class="toggle-btn active" data-value="false">No — standard support</button>
-            <button class="toggle-btn" data-value="true">Yes — at a flange</button>
+            <button class="toggle-btn active" data-value="false">Support on Pipe</button>
+            <button class="toggle-btn" data-value="true">Support at Flange</button>
           </div>
 
           <!-- Flange detail sub-section (shown when Yes is selected) -->
@@ -469,7 +474,9 @@
 
           <!-- Traceability footer + cross-tool handoff -->
           <div class="result-traceability">
-            <div class="result-trace-note">Traceable to the JESA Piping Support Standard — Rev A · QW2507-00-PE-STD-00001. Confirm against the current controlled revision before issue.</div>
+            <div class="result-trace-note">Traceable to the JESA Piping Support Standard — Rev A · QW2507-00-PE-STD-00001. Confirm against the current controlled revision before issue.
+              <a href="/reference#support-selection" style="color:inherit;text-decoration:underline;margin-left:4px">View support reference →</a>
+            </div>
             <a class="result-next" href="/span">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               Next · verify maximum span in the Span Calculator

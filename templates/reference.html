@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JESA — Span Reference</title>
+  <title>JESA — Engineering Reference Center</title>
   <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,52 +20,124 @@
 
   <div class="ref-shell">
 
-    <a href="/span" class="ref-back">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
-        <path d="M10 3L5 8l5 5"/>
-      </svg>
-      Back to Span Calculator
-    </a>
-
     <div class="ref-header">
-      <h1>Engineering Reference Library</h1>
+      <h1>Engineering Reference Center</h1>
       <div class="ref-docref">
-        Governing documents, span data, material mappings, drawing references, assumptions, and formulae.
+        The shared knowledge base for the platform — governing standards, selection criteria,
+        formulae, span data, rack/arrangement basis, and material mappings cited by every tool.
       </div>
     </div>
 
-    <!-- ── ASSUMPTIONS ─────────────────────────────────────────── -->
-    <div class="ref-library-grid" aria-label="Reference library">
-      <a class="ref-library-card ref-library-card--primary" href="/standard-pdf#page=3" target="_blank" rel="noopener">
-        <span class="ref-library-kicker">Governing Standard</span>
-        <strong>JESA Piping Support Standard</strong>
-        <span>QW2507-00-PE-STD-00001 Rev A - support selection tables, drawings, and notes.</span>
-        <em>Open full standard</em>
+    <!-- ── HUB ─────────────────────────────────────────────────── -->
+    <div class="ref-library-grid" aria-label="Reference categories">
+      <a class="ref-library-card ref-library-card--primary" href="#governing-standards">
+        <span class="ref-library-kicker">Authority</span>
+        <strong>Governing Standards</strong>
+        <span>JESA Piping Support Standard and the span specification that every tool resolves to.</span>
+        <em>View standards</em>
       </a>
-      <a class="ref-library-card" href="#span-tables">
-        <span class="ref-library-kicker">Span Reference Data</span>
-        <strong>KS-PE-SPC-0073</strong>
-        <span>Tables 13 and 14 span values for the Span Calculator.</span>
+      <a class="ref-library-card" href="#support-selection">
+        <span class="ref-library-kicker">Support Selector</span>
+        <strong>Support Selection Reference</strong>
+        <span>Support families, code prefixes, and drawing ranges from Tables 15 &amp; 16.</span>
+        <em>View reference</em>
       </a>
-      <a class="ref-library-card" href="#material-reference">
+      <a class="ref-library-card" href="#span-engineering">
+        <span class="ref-library-kicker">Span Calculator</span>
+        <strong>Span Engineering Reference</strong>
+        <span>Assumptions, governing formulae, unit conversions, and span tables 13 &amp; 14.</span>
+        <em>View reference</em>
+      </a>
+      <a class="ref-library-card" href="#rack-arrangement">
+        <span class="ref-library-kicker">Rack Calculator</span>
+        <strong>Rack &amp; Arrangement Reference</strong>
+        <span>Spacing basis, structural column profiles, and DXF drawing conventions.</span>
+        <em>View reference</em>
+      </a>
+      <a class="ref-library-card" href="#material-class-data">
         <span class="ref-library-kicker">Material / MPMS</span>
-        <strong>Material Class Reference</strong>
-        <span>Supported span material families and table routing.</span>
+        <strong>Material &amp; Class Data</strong>
+        <span>Material code families, span-table routing, and MPMS piping class mapping.</span>
+        <em>View reference</em>
       </a>
-      <a class="ref-library-card" href="#drawing-refs">
-        <span class="ref-library-kicker">Drawing References</span>
-        <strong>NPS-Filtered Drawing Access</strong>
-        <span>Selector result drawings open from the result sheet with size highlighting.</span>
-      </a>
-      <a class="ref-library-card" href="#governing-formulae">
-        <span class="ref-library-kicker">Assumptions & Formulae</span>
-        <strong>Calculation Basis</strong>
-        <span>Span assumptions, limits, unit conversions, and governing equations.</span>
+      <a class="ref-library-card" href="#future-references">
+        <span class="ref-library-kicker">Roadmap</span>
+        <strong>Future References</strong>
+        <span>Planned reference content for upcoming platform modules.</span>
+        <em>View roadmap</em>
       </a>
     </div>
 
+    <!-- ── GOVERNING STANDARDS ─────────────────────────────────── -->
     <div class="ref-section">
-      <h2>Assumptions</h2>
+      <span id="governing-standards" class="ref-anchor"></span>
+      <h2>Governing Standards <span class="ref-badge">All tools</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Every recommendation produced by this platform resolves to one of the documents below.
+        Confirm against the current controlled revision before issue.
+      </p>
+      <div class="ref-conv-strip">
+        <a class="ref-conv-item" href="/standard-pdf#page=3" target="_blank" rel="noopener" style="text-decoration:none;color:inherit">
+          <span class="ref-conv-eq">QW2507-00-PE-STD-00001 Rev A</span>
+          <span class="ref-conv-lbl">JESA Piping Support Standard — Tables 15 &amp; 16, drawings 0321&ndash;0705</span>
+        </a>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">KS-PE-SPC-0073</span>
+          <span class="ref-conv-lbl">Support Span Specification — Tables 13 &amp; 14</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">ASME B36.10M / B16.5 / B16.47</span>
+          <span class="ref-conv-lbl">Pipe and flange dimension basis — Rack Calculator</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SUPPORT SELECTION REFERENCE ─────────────────────────── -->
+    <div class="ref-section">
+      <span id="support-selection" class="ref-anchor"></span>
+      <h2>Support Selection Reference <span class="ref-badge">Support Selector</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        The Support Selector resolves NPS, material, PWHT, insulation, and function to a support
+        code via Tables 15 &amp; 16 of the governing standard, then maps that code to drawing
+        references. The families below cover the support types currently selectable.
+      </p>
+      <table class="ref-var-table">
+        <thead>
+          <tr><th>Code family</th><th>Description</th><th>Drawing refs</th><th>NPS range</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>BP02</td><td>Bearing Plate</td><td>0321</td><td>½″–48″</td></tr>
+          <tr><td>WA01–03</td><td>Wear Pad Assemblies</td><td>0322–0324</td><td>1½″–48″</td></tr>
+          <tr><td>SH01–05</td><td>Pipe Shoes</td><td>0327–0331</td><td>1½″–48″</td></tr>
+          <tr><td>SC01–08</td><td>Shoe Clamps / Saddle Supports</td><td>0342–0349</td><td>1½″–24″</td></tr>
+          <tr><td>GL01–02</td><td>Guide Supports</td><td>0357–0358</td><td>½″–48″</td></tr>
+          <tr><td>LS01–03</td><td>Line Stop Supports</td><td>0359–0361</td><td>½″–48″</td></tr>
+          <tr><td>GH01–02</td><td>Hold Down / Guide-Hold</td><td>0362–0363</td><td>½″–48″</td></tr>
+          <tr><td>PR01–02</td><td>Isolation Pads</td><td>0380–0381</td><td>¾″–48″</td></tr>
+          <tr><td>CF01–03</td><td>FRP Clamp Shoes</td><td>0369–0371</td><td>2″–24″</td></tr>
+          <tr><td>SC71–74</td><td>FRP Saddle Supports</td><td>0701–0704</td><td>¾″–68″</td></tr>
+          <tr><td>FF01–FF06</td><td>Metallic Flange Frame Supports (by ASME class CL150–CL2500)</td><td>0417–0422</td><td>1″–24″ (class-dependent)</td></tr>
+          <tr><td>FF71</td><td>FRP Flanged Valve Holder</td><td>0705</td><td>1″–18″</td></tr>
+          <tr><td>WL03–WL06</td><td>Vertical Pipe Lug Supports (shear / fixed, bare / insulated)</td><td>0386–0389</td><td>1″–24″</td></tr>
+        </tbody>
+      </table>
+      <p class="ref-note">
+        Flange-frame supports (FF01–FF06) apply only to REST-function pipe flanges and are selected by
+        ASME pressure class; FRP flanges always resolve to FF71 regardless of class. Vertical pipe lug
+        supports (WL03–WL06) apply to true vertical pipe runs and require stress-engineer review per
+        the warning shown with each result.
+      </p>
+    </div>
+
+    <!-- ── SPAN ENGINEERING REFERENCE ──────────────────────────── -->
+    <div class="ref-section" id="span-engineering">
+      <h2>Span Engineering Reference <span class="ref-badge">Span Calculator</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Assumptions, governing formulae, unit conversions, and the abridged span tables used by the
+        Support Span Calculator (KS-PE-SPC-0073).
+      </p>
+
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:18px 0 10px;">Assumptions</h3>
       <ul class="ref-list">
         <li>
           <span class="ref-bullet"></span>
@@ -116,12 +188,9 @@
           only with written approval from the piping stress engineer.</span>
         </li>
       </ul>
-    </div>
 
-    <!-- ── GOVERNING FORMULAE ──────────────────────────────────── -->
-    <div class="ref-section">
-      <span id="governing-formulae" class="ref-anchor"></span>
-      <h2>Governing Formulae</h2>
+      <!-- ── GOVERNING FORMULAE ──────────────────────────────────── -->
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">Governing Formulae</h3>
       <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">
         From <em>Pipe Stress Engineering</em>, L.C. Peng — Chapter: Strength of Materials Basics.
         The span is taken as the <strong>lesser</strong> value from both equations.
@@ -168,11 +237,9 @@
           <tr><td>Z</td><td>Section modulus</td><td>in³</td><td>mm³</td></tr>
         </tbody>
       </table>
-    </div>
 
-    <!-- ── UNIT CONVERSIONS ────────────────────────────────────── -->
-    <div class="ref-section">
-      <h2>Unit Conversions (Display Layer)</h2>
+      <!-- ── UNIT CONVERSIONS ────────────────────────────────────── -->
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">Unit Conversions (Display Layer)</h3>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
         Table values are stored in imperial units (feet, lb/ft). The calculator converts to metric
         for display only — the underlying data is not altered.
@@ -199,11 +266,11 @@
           <span class="ref-conv-lbl">Temperature band T3</span>
         </div>
       </div>
-    </div>
 
-    <!-- ── TABLE 13 SUMMARY ────────────────────────────────────── -->
-    <div class="ref-section" id="span-tables">
-      <h2>Table 13 — CS / LT / SS Spans (SCH 40) <span class="ref-badge">ft · imperial</span></h2>
+      <!-- ── TABLE 13 SUMMARY ────────────────────────────────────── -->
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">
+        Table 13 — CS / LT / SS Spans (SCH 40) <span class="ref-badge">ft · imperial</span>
+      </h3>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
         Abridged SCH 40 values. Full table (SCH 40, SCH 80, 10S) is in the calculator.
         LT values identical to CS. All spans in <strong>feet</strong>.
@@ -249,11 +316,11 @@
         </table>
       </div>
       <p class="ref-note">Full SCH 80 and 10S values are available in the Span Calculator. Source: KS-PE-SPC-0073 Table 13.</p>
-    </div>
 
-    <!-- ── TABLE 14 SUMMARY ────────────────────────────────────── -->
-    <div class="ref-section">
-      <h2>Table 14 — DS / SD / AS / AL / AY / TI / CN / FRP Spans <span class="ref-badge">ft · imperial</span></h2>
+      <!-- ── TABLE 14 SUMMARY ────────────────────────────────────── -->
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">
+        Table 14 — DS / SD / AS / AL / AY / TI / CN / FRP Spans <span class="ref-badge">ft · imperial</span>
+      </h3>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
         Single span value applies to both vapour and liquid service. No temperature-band distinction.
         FRP spans capped at 20 ft (6.1 m). All values in <strong>feet</strong>.
@@ -297,10 +364,70 @@
       </p>
     </div>
 
-    <!-- ── MATERIAL CODES ──────────────────────────────────────── -->
+    <!-- ── RACK & ARRANGEMENT REFERENCE ────────────────────────── -->
     <div class="ref-section">
-      <span id="material-reference" class="ref-anchor"></span>
-      <h2>Material Code Reference</h2>
+      <span id="rack-arrangement" class="ref-anchor"></span>
+      <h2>Rack &amp; Arrangement Reference <span class="ref-badge">Rack Calculator</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        The Pipe Spacing &amp; Rack Width Calculator computes pipe centerline spacing and overall
+        rack width from pipe OD, insulation, flange class, and clearance requirements (ASME
+        B36.10M / B16.5 / B16.47), then renders a true-scale arrangement schematic and a
+        designer-ready DXF export.
+      </p>
+      <div class="ref-conv-strip">
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">Max 16 pipes per tier</span>
+          <span class="ref-conv-lbl">Rack Calculator input limit</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">Flange OD envelopes — dashed</span>
+          <span class="ref-conv-lbl">Clearance/maintenance only, not simultaneous flange positions</span>
+        </div>
+        <div class="ref-conv-item">
+          <span class="ref-conv-eq">$INSUNITS = 4 (mm)</span>
+          <span class="ref-conv-lbl">DXF export modelspace units</span>
+        </div>
+      </div>
+
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">Structural Column Profiles</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Rack column width is taken from the flange width (<strong>b</strong>) of the selected Eurocode
+        steel profile (EN 10365:2017), available in the IPE, HEA, HEB, and HEM families.
+      </p>
+      <table class="ref-var-table">
+        <thead>
+          <tr><th>Family</th><th>Sizes available</th><th>Used for</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>IPE</td><td>80–600</td><td>Lighter rack columns / beams</td></tr>
+          <tr><td>HEA</td><td>100–600</td><td>Standard rack columns</td></tr>
+          <tr><td>HEB</td><td>100–600</td><td>Heavier-duty rack columns</td></tr>
+          <tr><td>HEM</td><td>100–600</td><td>Maximum-duty rack columns</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-family:var(--font-ui);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text-secondary);margin:22px 0 10px;">DXF Drawing Conventions</h3>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">
+        The DXF export uses dedicated CAD layers for each drawing element, in true millimetre
+        modelspace:
+      </p>
+      <ul class="ref-list">
+        <li><span class="ref-bullet"></span><span>Rack columns, beams, and centerlines on their own layers</span></li>
+        <li><span class="ref-bullet"></span><span>Pipe OD, insulation OD, and dashed flange clearance envelopes</span></li>
+        <li><span class="ref-bullet"></span><span>Future spare zone, shown centered and hatched between the flanking pipes</span></li>
+        <li><span class="ref-bullet"></span><span>Dimensions, P-tags, pipe schedule, notes, drawing information, and legend zones</span></li>
+      </ul>
+    </div>
+
+    <!-- ── MATERIAL & CLASS DATA ───────────────────────────────── -->
+    <div class="ref-section">
+      <span id="material-class-data" class="ref-anchor"></span>
+      <h2>Material &amp; Class Data <span class="ref-badge">Support Selector · Span Calculator</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Entering an MPMS piping class (e.g. <strong>BB3</strong>) auto-resolves the material and
+        pressure rating for both the Support Selector and the Span Calculator from a single mapping
+        source. The table below shows how material codes route to the span tables above.
+      </p>
       <table class="ref-var-table">
         <thead>
           <tr><th>Code</th><th>Material</th><th>Table</th><th>Notes</th></tr>
@@ -321,25 +448,21 @@
       </table>
     </div>
 
-    <div class="ref-section" id="drawing-refs">
-      <h2>Drawing References</h2>
-      <p class="ref-note" style="font-style:normal;margin-top:0">
-        Support Selector results expose the applicable JESA drawing references as clickable drawing chips.
-        Drawing access is filtered by selected NPS where the standard provides size-specific sheets, and
-        the PDF viewer highlights the relevant row or column when available.
+    <!-- ── FUTURE REFERENCES ───────────────────────────────────── -->
+    <div class="ref-section">
+      <span id="future-references" class="ref-anchor"></span>
+      <h2>Future References <span class="ref-badge">Roadmap</span></h2>
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:14px;">
+        Reference content planned alongside upcoming platform modules. These are not yet available.
       </p>
       <div class="ref-conv-strip">
         <div class="ref-conv-item">
-          <span class="ref-conv-eq">JS-PE-DPS-0321...0389</span>
-          <span class="ref-conv-lbl">Standard supports</span>
+          <span class="ref-conv-eq"><span class="wh-rm-tag">Soon</span> Critical Line List</span>
+          <span class="ref-conv-lbl">Reference data for identifying piping systems needing enhanced review</span>
         </div>
         <div class="ref-conv-item">
-          <span class="ref-conv-eq">JS-PE-DPS-0417...0422</span>
-          <span class="ref-conv-lbl">Flange supports</span>
-        </div>
-        <div class="ref-conv-item">
-          <span class="ref-conv-eq">JS-PE-DPS-0701...0705</span>
-          <span class="ref-conv-lbl">FRP supports</span>
+          <span class="ref-conv-eq"><span class="wh-rm-tag">Soon</span> Report Viewer</span>
+          <span class="ref-conv-lbl">Reference index for centralized engineering reports and calculation outputs</span>
         </div>
       </div>
     </div>

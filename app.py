@@ -47,6 +47,31 @@ def _normalize_rating(raw):
         return s
 
 
+def _build_pipe(dn, rating, ins, has_flanges, support_conditions, idx):
+    """Assemble one rack pipe dict from parallel form lists.
+
+    ``has_flange`` and ``support_condition`` are read positionally and fall
+    back to safe, backward-compatible defaults when a row is missing the
+    field (older clients / partial posts):
+      * has_flange -> True   (flange included in spacing = current behaviour
+                              and the conservative, wider envelope)
+      * support_condition -> 'direct_rest' (pipe shown resting on the beam)
+    """
+    has_flange = True
+    if idx < len(has_flanges):
+        has_flange = str(has_flanges[idx]).strip().lower() not in ('no', 'false', '0', '')
+    support_condition = 'direct_rest'
+    if idx < len(support_conditions) and str(support_conditions[idx]).strip() == 'pipe_shoe':
+        support_condition = 'pipe_shoe'
+    return {
+        'dn': int(dn),
+        'rating': _normalize_rating(rating),
+        'insulation': int(ins),
+        'has_flange': has_flange,
+        'support_condition': support_condition,
+    }
+
+
 # ---------------------------------------------------------------------------
 # Map a support-code string → illustration filename (without .svg)
 # Priority order is important: GH before SH, LS before S, etc.
@@ -366,6 +391,8 @@ def rack_calculate():
     dns = request.form.getlist('dn')
     ratings = request.form.getlist('rating')
     insulations = request.form.getlist('insulation')
+    has_flanges = request.form.getlist('has_flange')
+    support_conditions = request.form.getlist('support_condition')
 
     try:
         expansion_pct = int(request.form.get('expansion_pct', 20))
@@ -400,9 +427,9 @@ def rack_calculate():
     }
 
     pipes = []
-    for dn, rating, ins in zip(dns, ratings, insulations):
+    for i, (dn, rating, ins) in enumerate(zip(dns, ratings, insulations)):
         try:
-            pipes.append({'dn': int(dn), 'rating': _normalize_rating(rating), 'insulation': int(ins)})
+            pipes.append(_build_pipe(dn, rating, ins, has_flanges, support_conditions, i))
         except (ValueError, TypeError):
             return render_template(
                 'rack_calculator.html',
@@ -457,6 +484,8 @@ def rack_calculate_dxf():
     dns = request.form.getlist('dn')
     ratings = request.form.getlist('rating')
     insulations = request.form.getlist('insulation')
+    has_flanges = request.form.getlist('has_flange')
+    support_conditions = request.form.getlist('support_condition')
 
     try:
         expansion_pct = int(request.form.get('expansion_pct', 20))
@@ -485,9 +514,9 @@ def rack_calculate_dxf():
             dxf_profile_label = "HEA 300"
 
     pipes = []
-    for dn, rating, ins in zip(dns, ratings, insulations):
+    for i, (dn, rating, ins) in enumerate(zip(dns, ratings, insulations)):
         try:
-            pipes.append({'dn': int(dn), 'rating': _normalize_rating(rating), 'insulation': int(ins)})
+            pipes.append(_build_pipe(dn, rating, ins, has_flanges, support_conditions, i))
         except (ValueError, TypeError):
             abort(400, description="Invalid rack input.")
 

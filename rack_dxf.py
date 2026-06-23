@@ -34,7 +34,7 @@ LAYER_SPECS = {
     "INSULATION_OD": {"color": 3, "linetype": "DASHED", "lineweight": 13},
     "PIPE_CL": {"color": 4, "linetype": "CENTER", "lineweight": 13},
     "SUPPORT": {"color": 7, "lineweight": 13},
-    "SPARE_ZONE": {"color": 8, "lineweight": 18},
+    "SPARE_ZONE": {"color": 6, "lineweight": 25},
     "HATCH": {"color": 8, "lineweight": 9},
     "DIMENSIONS": {"color": 2, "lineweight": 18},
     "TEXT": {"color": 7, "lineweight": 13},
@@ -54,8 +54,13 @@ DIM_TEXT_HEIGHT = 62
 SCHEDULE_TEXT_HEIGHT = 55
 
 # ── Schematic vertical layout constants (mm) ───────────────────────────────
-PIPE_Y = 0.0              # all pipe centerlines aligned on this schematic line
-REST_GAP = 130            # schematic gap from lowest pipe bottom to beam top
+PIPE_Y = 0.0              # beam-top datum: direct-rest pipe bottoms rest on this line
+# Standard schematic shoe height (mm), identical for every pipe regardless of
+# DN. A pipe on a shoe has its bottom raised by this fixed amount above the
+# beam top, so the elevation difference between shoe and direct-rest pipes is
+# unambiguous and the shoe height never varies. Schematic only -- not a
+# fabrication dimension (nominal 100 mm; acceptable up to 130 mm).
+SHOE_NOMINAL_HEIGHT = 100
 BEAM_HEIGHT = 320         # strong tier beam
 COL_RISE = 320            # column top above the tallest pipe envelope
 COL_DROP = 240            # column bottom below the beam
@@ -66,8 +71,11 @@ TAG_GAP = 150             # pipe tag above the tallest pipe envelope
 
 NOTE_STEP = 90
 SCHEDULE_ROW_H = 150
-LEGEND_GAP = 260
-LEGEND_HEIGHT = 320
+LEGEND_GAP = 320
+LEGEND_HEADER_H = 200      # title row of the legend box
+LEGEND_ROW_H = 165         # per-entry row height
+LEGEND_PAD = 120           # bottom padding inside the legend box
+LEGEND_SAMPLE_W = 360      # length of each colour sample line
 LOWER_ZONE_GAP = 640
 TITLE_BLOCK_W = 2500
 TITLE_BLOCK_H = 1180
@@ -170,14 +178,65 @@ def _notes_list(geometry):
         "NOTES:",
         "1. ALL DIMENSIONS IN MILLIMETRES.",
         "2. PIPE RACK SPACING ARRANGEMENT - SCHEMATIC. NOT FOR CONSTRUCTION.",
-        "3. HORIZONTAL SCALE AS SHOWN; VERTICAL REPRESENTATION IS SCHEMATIC (SINGLE TIER).",
+        "3. HORIZONTAL SPACING IS TRUE SCALE; VERTICAL REPRESENTATION IS "
+        "SCHEMATIC (SINGLE TIER).",
         "4. PIPE SPACING AND RACK WIDTH PER APPROVED RACK WIDTH CALCULATION.",
-        "5. PIPE OD AND INSULATION ENVELOPES SHOWN. FLANGE LOCATIONS AND CLEARANCES "
-        "ARE NOT SHOWN - REFER TO PIPING PLANS.",
+        "5. FLANGE ENVELOPES ARE INCLUDED IN THE SPACING ONLY FOR PIPES MARKED "
+        "AS HAVING A FLANGE AT THE RACK SECTION; FLANGE CIRCLES ARE NOT DRAWN.",
+        "6. SUPPORT REPRESENTATION IS SCHEMATIC - DIRECT REST = PIPE SHOWN ON "
+        "RACK BEAM; PIPE SHOE = NOMINAL SCHEMATIC SHOE (~100 MM). NOT A "
+        "FABRICATION DETAIL.",
+        "7. PIPE OD AND INSULATION ENVELOPES SHOWN; THIS IS A RACK ARRANGEMENT "
+        "DRAWING, NOT A STRUCTURAL SUPPORT DETAIL.",
     ]
-    for i, warning in enumerate(geometry.warnings, start=6):
+    for i, warning in enumerate(geometry.warnings, start=8):
         notes.append(f"{i}. {warning.upper()}")
     return notes
+
+
+# Approximate width of one character at NOTE_TEXT_HEIGHT (mm). Used to wrap
+# notes so they never run past the sheet border.
+NOTE_CHAR_W = NOTE_TEXT_HEIGHT * 0.62
+
+
+def _wrap_notes(notes, max_chars):
+    """Word-wrap each note to ``max_chars``; continuation lines are indented
+    under the note text (past the 'N. ' number) so the block stays readable."""
+    max_chars = max(int(max_chars), 24)
+    wrapped = []
+    for note in notes:
+        # Preserve any 'N. ' numeric prefix as a hanging indent.
+        prefix = ""
+        body = note
+        dot = note.find(". ")
+        if 0 < dot <= 3 and note[:dot].isdigit():
+            prefix = note[: dot + 2]
+            body = note[dot + 2:]
+        indent = " " * len(prefix)
+        line = prefix
+        for word in body.split():
+            if line in (prefix, indent):
+                line += word
+            elif len(line) + 1 + len(word) <= max_chars:
+                line += " " + word
+            else:
+                wrapped.append(line)
+                line = indent + word
+        wrapped.append(line)
+    return wrapped
+
+
+def _legend_entries(geometry):
+    entries = [
+        ("PIPE OD", "PIPE_OD"),
+        ("INSULATION OD", "INSULATION_OD"),
+        ("PIPE CENTERLINE", "PIPE_CL"),
+        ("FUTURE SPARE", "SPARE_ZONE"),
+    ]
+    if any(getattr(p, "support_condition", "direct_rest") == "pipe_shoe"
+           for p in geometry.pipes):
+        entries.append(("PIPE SHOE", "SUPPORT"))
+    return entries
 
 
 def _layout(geometry):
@@ -188,10 +247,13 @@ def _layout(geometry):
     rack_mid = (rack_left + rack_right) / 2
     rack_span = rack_right - rack_left
 
-    max_top = max((max(p.pipe_od, p.ins_od) / 2 for p in pipes), default=150)
-    low_pipe_bottom = min((-p.pipe_od / 2 for p in pipes), default=-150)
+    # Every direct-rest pipe bottom rests exactly on the beam-top datum
+    # (PIPE_Y); shoe pipes are raised by the fixed nominal shoe height. The
+    # envelope top accounts for that elevation so raised pipes/insulation are
+    # never clipped.
+    max_top = max((_pipe_cl_y(p) + max(p.pipe_od, p.ins_od) / 2 for p in pipes), default=150)
 
-    beam_top = low_pipe_bottom - REST_GAP
+    beam_top = PIPE_Y
     beam_bottom = beam_top - BEAM_HEIGHT
     col_top = max_top + COL_RISE
     col_bottom = beam_bottom - COL_DROP
@@ -202,7 +264,17 @@ def _layout(geometry):
 
     bottom_dim_y0 = col_bottom - BOTTOM_DIM_GAP
 
-    notes = _notes_list(geometry)
+    # ── Sheet width is known up-front (depends only on the rack span), so
+    #    notes can be wrapped to fit inside the borders before sizing the
+    #    note block. Leave room at the right for the graphic scale bar. ──
+    sheet_width = max(rack_span + 2 * SHEET_SIDE_MARGIN, MIN_SHEET_WIDTH)
+    sheet_left = rack_mid - sheet_width / 2
+    sheet_right = rack_mid + sheet_width / 2
+    notes_x = sheet_left + 160
+    notes_avail = (sheet_right - 160 - 1200) - notes_x   # keep clear of scale bar
+    max_note_chars = notes_avail / NOTE_CHAR_W
+
+    notes = _wrap_notes(_notes_list(geometry), max_note_chars)
     notes_block_h = len(notes) * NOTE_STEP
     notes_top = top_dim_high + 220 + notes_block_h
 
@@ -214,15 +286,14 @@ def _layout(geometry):
     sched_rows = len(pipes) + 2
     sched_top = lower_top
     sched_bottom = sched_top - SCHEDULE_ROW_H * sched_rows
+    legend_entries = _legend_entries(geometry)
     legend_top = sched_bottom - LEGEND_GAP
-    legend_bottom = legend_top - LEGEND_HEIGHT
+    legend_height = LEGEND_HEADER_H + len(legend_entries) * LEGEND_ROW_H + LEGEND_PAD
+    legend_bottom = legend_top - legend_height
     title_top = lower_top
     title_bottom = title_top - TITLE_BLOCK_H
     content_bottom = min(legend_bottom, title_bottom)
 
-    sheet_width = max(rack_span + 2 * SHEET_SIDE_MARGIN, MIN_SHEET_WIDTH)
-    sheet_left = rack_mid - sheet_width / 2
-    sheet_right = rack_mid + sheet_width / 2
     sheet_top = notes_top + SHEET_TOP_MARGIN
     sheet_bottom = content_bottom - SHEET_BOTTOM_MARGIN
 
@@ -242,8 +313,10 @@ def _layout(geometry):
         "bottom_dim_y0": bottom_dim_y0,
         "notes": notes,
         "notes_top": notes_top,
+        "notes_x": notes_x,
         "sched_top": sched_top,
         "sched_bottom": sched_bottom,
+        "legend_entries": legend_entries,
         "legend_top": legend_top,
         "legend_bottom": legend_bottom,
         "title_top": title_top,
@@ -335,7 +408,9 @@ def _draw_spare_band(msp, geometry, layout):
     for zone in geometry.spare_zones:
         _rect(msp, zone.x1, top_y, zone.x2, bottom_y, "SPARE_ZONE")
         try:
-            hatch = msp.add_hatch(color=8, dxfattribs={"layer": "HATCH"})
+            # Magenta hatch so the future spare zone reads instantly against
+            # the red pipes and grey structure.
+            hatch = msp.add_hatch(color=6, dxfattribs={"layer": "SPARE_ZONE"})
             hatch.paths.add_polyline_path(
                 [(zone.x1, top_y), (zone.x2, top_y), (zone.x2, bottom_y), (zone.x1, bottom_y)],
                 is_closed=True,
@@ -363,36 +438,71 @@ def _draw_pipes(msp, geometry, layout):
 
     for pipe in geometry.pipes:
         x = pipe.cl_x
+        cy = _pipe_cl_y(pipe)
         env_r = max(pipe.pipe_od, pipe.ins_od) / 2
 
-        # Centerlines (vertical + short horizontal through the pipe).
+        # Centerlines (vertical + short horizontal through the pipe at its
+        # schematic elevation).
         msp.add_line((x, cl_top), (x, cl_bottom), dxfattribs={"layer": "PIPE_CL"})
         msp.add_line(
-            (x - env_r - 110, PIPE_Y),
-            (x + env_r + 110, PIPE_Y),
+            (x - env_r - 110, cy),
+            (x + env_r + 110, cy),
             dxfattribs={"layer": "PIPE_CL"},
         )
 
         if pipe.insulation > 0 and pipe.ins_od > pipe.pipe_od:
-            msp.add_circle((x, PIPE_Y), pipe.ins_od / 2, dxfattribs={"layer": "INSULATION_OD"})
+            msp.add_circle((x, cy), pipe.ins_od / 2, dxfattribs={"layer": "INSULATION_OD"})
 
-        msp.add_circle((x, PIPE_Y), pipe.pipe_od / 2, dxfattribs={"layer": "PIPE_OD"})
+        msp.add_circle((x, cy), pipe.pipe_od / 2, dxfattribs={"layer": "PIPE_OD"})
 
-        _draw_rest_tick(msp, pipe, layout["beam_top"])
+        _draw_pipe_support(msp, pipe, layout["beam_top"])
         _add_text(msp, pipe.label_main, (x, tag_y), height=TAG_TEXT_HEIGHT, layer="TEXT")
 
 
-def _draw_rest_tick(msp, pipe, beam_top):
-    """Light symbolic rest mark from the pipe bottom down to the beam top."""
-    pipe_bottom = PIPE_Y - pipe.pipe_od / 2
+def _pipe_cl_y(pipe):
+    """Schematic centerline elevation (mm) for a pipe above the beam top.
+
+    Direct-rest pipes have their OD bottom resting *directly on* the beam-top
+    datum (``PIPE_Y``), so the centerline sits at ``PIPE_Y + r`` — no gap.
+    Pipe-shoe pipes have their bottom raised by the fixed nominal shoe height,
+    so the shoe height is identical for every pipe regardless of DN and the
+    elevation difference between shoe and direct-rest pipes is unmistakable.
+    Vertical only; the horizontal geometry stays true-scale.
+    """
+    r = pipe.pipe_od / 2
+    if getattr(pipe, "support_condition", "direct_rest") == "pipe_shoe":
+        return PIPE_Y + SHOE_NOMINAL_HEIGHT + r
+    return PIPE_Y + r
+
+
+def _draw_pipe_support(msp, pipe, beam_top):
+    """Schematic support under a pipe, per its support condition.
+
+    * ``direct_rest`` -- nothing fabricated is drawn; the pipe is shown
+      resting directly on the rack beam (honest, schematic).
+    * ``pipe_shoe``   -- a simple inverted-T shoe (base plate on the beam +
+      a narrow vertical web up to the pipe bottom). Schematic only; not a
+      fabrication detail.
+    """
+    if getattr(pipe, "support_condition", "direct_rest") != "pipe_shoe":
+        return
+
+    pipe_bottom = _pipe_cl_y(pipe) - pipe.pipe_od / 2
     if pipe_bottom <= beam_top + 10:
         return
+
+    # Compact inverted-T, kept deliberately small so it reads cleanly when
+    # printed without dominating the drawing. Height is fixed by the standard
+    # shoe height (pipe_bottom - beam_top); only the footprint scales slightly.
     x = pipe.cl_x
-    w = min(max(pipe.pipe_od * 0.10, 45), 95)
-    msp.add_lwpolyline(
-        [(x - w, beam_top), (x + w, beam_top), (x, pipe_bottom), (x - w, beam_top)],
-        dxfattribs={"layer": "SUPPORT"},
-    )
+    web_half = min(max(pipe.pipe_od * 0.045, 22), 42)
+    base_half = min(web_half * 1.7, 75)
+    base_thickness = min(max(pipe_bottom - beam_top, 0) * 0.18, 22)
+
+    # Base plate sitting on the beam top.
+    _rect(msp, x - base_half, beam_top + base_thickness, x + base_half, beam_top, "SUPPORT")
+    # Vertical web rising from the base plate to the pipe bottom.
+    _rect(msp, x - web_half, pipe_bottom, x + web_half, beam_top + base_thickness, "SUPPORT")
 
 
 # ── Dimensions (real DIMENSION entities) ───────────────────────────────────
@@ -418,7 +528,7 @@ def _draw_dimensions(msp, geometry, layout):
 # ── Notes, scale bar ───────────────────────────────────────────────────────
 
 def _draw_notes(msp, geometry, layout):
-    x = layout["sheet_left"] + 160
+    x = layout["notes_x"]
     y = layout["notes_top"]
     for i, note in enumerate(layout["notes"]):
         _add_text(msp, note, (x, y - i * NOTE_STEP), height=NOTE_TEXT_HEIGHT, layer="NOTES", align="LEFT")
@@ -483,20 +593,31 @@ def _draw_pipe_schedule(msp, geometry, layout):
 # ── Legend strip (under schedule) ──────────────────────────────────────────
 
 def _draw_legend(msp, layout):
+    """Bordered legend box with one stacked row per entry: a colour sample on
+    its own layer + an aligned label. Easy to read, clear colour hierarchy."""
+    entries = layout["legend_entries"]
     x1 = layout["sheet_left"] + 160
-    y = layout["legend_top"] - 80
-    _add_text(msp, "LEGEND:", (x1, y), height=NOTE_TEXT_HEIGHT, layer="LEGEND", align="LEFT")
-    entries = [
-        ("PIPE OD", "PIPE_OD"),
-        ("INSULATION OD", "INSULATION_OD"),
-        ("PIPE CENTERLINE", "PIPE_CL"),
-        ("FUTURE SPARE", "SPARE_ZONE"),
-    ]
-    x = x1 + 520
-    for label, layer in entries:
-        msp.add_line((x, y + 15), (x + 230, y + 15), dxfattribs={"layer": layer})
-        _add_text(msp, label, (x + 270, y), height=NOTE_TEXT_HEIGHT, layer="LEGEND", align="LEFT")
-        x += 280 + len(label) * 38
+    y_top = layout["legend_top"]
+    y_bottom = layout["legend_bottom"]
+    box_w = LEGEND_SAMPLE_W + 1600
+    x2 = x1 + box_w
+
+    _rect(msp, x1, y_top, x2, y_bottom, "LEGEND")
+    header_y = y_top - LEGEND_HEADER_H * 0.62
+    _add_text(msp, "LEGEND", ((x1 + x2) / 2, header_y),
+              height=SUBTITLE_TEXT_HEIGHT, layer="LEGEND")
+    msp.add_line((x1, y_top - LEGEND_HEADER_H), (x2, y_top - LEGEND_HEADER_H),
+                 dxfattribs={"layer": "LEGEND"})
+
+    sample_x1 = x1 + 120
+    sample_x2 = sample_x1 + LEGEND_SAMPLE_W
+    label_x = sample_x2 + 160
+    for i, (label, layer) in enumerate(entries):
+        row_mid = y_top - LEGEND_HEADER_H - (i + 0.5) * LEGEND_ROW_H
+        msp.add_line((sample_x1, row_mid), (sample_x2, row_mid),
+                     dxfattribs={"layer": layer})
+        _add_text(msp, label, (label_x, row_mid - NOTE_TEXT_HEIGHT * 0.4),
+                  height=NOTE_TEXT_HEIGHT, layer="LEGEND", align="LEFT")
 
 
 # ── Title block (bottom-right) ─────────────────────────────────────────────

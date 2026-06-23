@@ -64,7 +64,7 @@
     <path d="M7 5 V15 L15 10 Z"/>
   </symbol>
 
-  <!-- Carry forward: workflow handoff -->
+  <!-- Open tool: shared launcher mark -->
   <symbol id="ic-carry" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 10 H15"/>
     <path d="M11 6 l4 4 -4 4"/>

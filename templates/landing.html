@@ -27,11 +27,11 @@
         <span class="wh-hero-seal">JESA</span>
         Piping Engineering · Engineering Tools Platform
       </div>
-      <h1 class="wh-hero-title">Select supports. Verify spans. Arrange racks.</h1>
-      <p class="wh-hero-sub">Engineering decisions you can stand behind.</p>
+      <h1 class="wh-hero-title">Piping engineering tools, organized for daily design work.</h1>
+      <p class="wh-hero-sub">Professional tools in one governed platform.</p>
       <div class="wh-hero-rule"></div>
-      <p class="wh-hero-lede">One governed workflow — grounded in proven standards, traceable from
-        the first input to the final drawing.</p>
+      <p class="wh-hero-lede">Select support types, verify support spans, arrange rack spacing, and
+        access reference data from one governed engineering platform.</p>
     </div>
   </section>
 
@@ -40,11 +40,11 @@
     <div class="wh-continue" id="whContinue">
       <svg class="wh-continue-icon" aria-hidden="true"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-carry"></use></svg>
       <div class="wh-continue-body">
-        <span class="wh-continue-label" id="whContinueLabel">Start your workflow</span>
-        <span class="wh-continue-line" id="whContinueLine"><span class="muted">Set a pipe size and material — the workspace threads it through selection, verification, and arrangement.</span></span>
+        <span class="wh-continue-label" id="whContinueLabel">Choose a tool</span>
+        <span class="wh-continue-line" id="whContinueLine"><span class="muted">Open support selection, span verification, rack arrangement, or the reference library.</span></span>
       </div>
       <a class="wh-continue-act is-empty" id="whContinueAct" href="/support-selector">
-        Start a line <kbd>⏎</kbd>
+        Open a tool <kbd>⏎</kbd>
       </a>
     </div>
   </section>
@@ -53,18 +53,15 @@
   <section class="wh-section">
     <div class="wh-container">
       <div class="wh-section-head">
-        <h2 class="wh-section-title">The Board</h2>
+        <h2 class="wh-section-title">Available Engineering Tools</h2>
         <span class="wh-section-note">4 live · more in development</span>
       </div>
 
-      <div class="wh-spine" aria-label="Engineering workflow: select, verify, arrange, with reference">
-        <span class="wh-spine-step"><span class="wh-spine-num">01</span>Select</span>
-        <span class="wh-spine-arrow" aria-hidden="true">→</span>
-        <span class="wh-spine-step"><span class="wh-spine-num">02</span>Verify</span>
-        <span class="wh-spine-arrow" aria-hidden="true">→</span>
-        <span class="wh-spine-step"><span class="wh-spine-num">03</span>Arrange</span>
-        <span class="wh-spine-sep" aria-hidden="true"></span>
-        <span class="wh-spine-step wh-spine-step--aside"><span class="wh-spine-num">04</span>Reference</span>
+      <div class="wh-spine" aria-label="Engineering tool categories">
+        <span class="wh-spine-step"><span class="wh-spine-num">Tool</span>Support selection</span>
+        <span class="wh-spine-step"><span class="wh-spine-num">Tool</span>Span verification</span>
+        <span class="wh-spine-step"><span class="wh-spine-num">Tool</span>Rack arrangement</span>
+        <span class="wh-spine-step wh-spine-step--aside"><span class="wh-spine-num">Library</span>References</span>
       </div>
 
       <div class="tools-grid">
@@ -76,7 +73,8 @@
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-selection"></use></svg>
           </div>
           <h3 class="tool-card-title">Pipe Support Selector</h3>
-          <p class="tool-card-desc">Select the correct support type per JESA standard, by size, material class, and configuration.</p>
+          <p class="tool-card-desc">Select the applicable support type by size, material class, temperature, and function.</p>
+          <p class="tool-card-output"><strong>Output:</strong> Applicable support type and drawing references.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag">Tables 15 &amp; 16</span>
             <span class="tool-card-arrow">→</span>
@@ -91,7 +89,8 @@
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-verify"></use></svg>
           </div>
           <h3 class="tool-card-title">Span Calculator</h3>
-          <p class="tool-card-desc">Verify maximum support spans per KS-PE-SPC-0073 with temperature and condition inputs.</p>
+          <p class="tool-card-desc">Check maximum support spans per KS-PE-SPC-0073 with temperature and condition inputs.</p>
+          <p class="tool-card-output"><strong>Output:</strong> Recommended support spacing.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag">KS-PE-SPC-0073</span>
             <span class="tool-card-arrow">→</span>
@@ -106,7 +105,8 @@
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-arrange"></use></svg>
           </div>
           <h3 class="tool-card-title">Rack Calculator</h3>
-          <p class="tool-card-desc">Calculate rack width and spacing, then export a designer-ready DXF arrangement drawing.</p>
+          <p class="tool-card-desc">Calculate rack width and pipe spacing, then export a designer-ready DXF drawing.</p>
+          <p class="tool-card-output"><strong>Output:</strong> Rack width, spacing arrangement, and DXF export.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag">DXF export</span>
             <span class="tool-card-arrow">→</span>
@@ -121,7 +121,8 @@
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-reference"></use></svg>
           </div>
           <h3 class="tool-card-title">Reference Tables</h3>
-          <p class="tool-card-desc">Span reference data, assumptions, formulae, and material class lookups.</p>
+          <p class="tool-card-desc">Open the standards library, span data, MPMS mappings, drawing references, and assumptions.</p>
+          <p class="tool-card-output"><strong>Output:</strong> Standards, span data, MPMS classes, and drawing references.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag">Span data &amp; codes</span>
             <span class="tool-card-arrow">→</span>
@@ -134,8 +135,8 @@
           <div class="tool-card-icon">
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-linelist"></use></svg>
           </div>
-          <h3 class="tool-card-title">Critical Line List</h3>
-          <p class="tool-card-desc">Identify and track critical piping systems that need enhanced review and engineering attention.</p>
+          <h3 class="tool-card-title">Critical Systems Register</h3>
+          <p class="tool-card-desc">Identify and track piping systems that need enhanced review and engineering attention.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag tool-card-tag--muted">In development</span>
           </div>
@@ -147,7 +148,7 @@
             <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-report"></use></svg>
           </div>
           <h3 class="tool-card-title">Report Viewer</h3>
-          <p class="tool-card-desc">View and manage engineering reports, calculations, and generated outputs in one place.</p>
+          <p class="tool-card-desc">View and manage engineering reports, calculations, and generated outputs when this module is added.</p>
           <div class="tool-card-foot">
             <span class="tool-card-tag tool-card-tag--muted">In development</span>
           </div>
@@ -211,7 +212,7 @@
         </div>
         <div class="sheet-body">
           <div class="wh-rm-item"><span class="wh-rm-tag wh-rm-tag--new">New</span><span>Rack DXF export — designer-ready arrangement drawings in true millimetre modelspace.</span></div>
-          <div class="wh-rm-item"><span class="wh-rm-tag">Soon</span><span>Critical Line List — identify and track critical piping systems needing enhanced review.</span></div>
+          <div class="wh-rm-item"><span class="wh-rm-tag">Soon</span><span>Critical Systems Register — identify piping systems needing enhanced review.</span></div>
           <div class="wh-rm-item"><span class="wh-rm-tag">Soon</span><span>Report Viewer — centralized viewing of engineering reports, calculations, and outputs.</span></div>
         </div>
       </div>
@@ -236,30 +237,6 @@
       localStorage.setItem('pss-theme', next);
       applyTheme(next);
     });
-  })();
-  </script>
-
-  <!-- Continue band — hydrates from the active Line (sessionStorage; Phase-3 seed). -->
-  <script>
-  (function () {
-    var line = null;
-    try { line = JSON.parse(sessionStorage.getItem('datum-line') || 'null'); } catch (e) {}
-    if (!line || !line.summary) return;            // keep the empty state
-
-    var label = document.getElementById('whContinueLabel');
-    var text  = document.getElementById('whContinueLine');
-    var act   = document.getElementById('whContinueAct');
-    if (!label || !text || !act) return;
-
-    label.textContent = 'Continue your line';
-    text.textContent  = line.summary;             // e.g. 8" · CS · BB3
-    if (line.lastLabel && line.lastPath) {
-      act.href = line.lastPath;
-      act.innerHTML = 'Resume — ' + line.lastLabel + ' <kbd>⏎</kbd>';
-    } else {
-      act.innerHTML = 'Resume <kbd>⏎</kbd>';
-    }
-    act.classList.remove('is-empty');
   })();
   </script>
 

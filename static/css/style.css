@@ -1980,8 +1980,23 @@ a { color: inherit; }
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.5;
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   flex-grow: 1;
+}
+
+.tool-card-output {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  margin: 0 0 2px;
+}
+
+.tool-card-output strong {
+  color: var(--text-primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .tool-card-foot {
@@ -2460,7 +2475,7 @@ a { color: inherit; }
   .wh-continue-act { margin-left: 0; width: 100%; justify-content: center; }
 }
 
-/* ── Workspace Home · workflow spine over the Board ──────────────── */
+/* ── Workspace Home · tool category rail over the Board ──────────── */
 .wh-spine {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
   margin: 2px 0 22px;
@@ -2604,7 +2619,7 @@ a { color: inherit; }
 
 /* ═════════════════════════════════════════════════════════════════
    PHASE 2.5 PLATFORM POLISH — tool-page consistency
-   Markup/CSS only. Keeps the approved shell and workflow model intact.
+   Markup/CSS only. Keeps the approved shell and independent tool model intact.
    ═════════════════════════════════════════════════════════════════ */
 
 .topbar::after {
@@ -2643,64 +2658,6 @@ a { color: inherit; }
 .theme-toggle:hover,
 .topbar-cmdk:hover {
   border-color: rgba(255,255,255,0.34);
-}
-
-.tool-workflow-strip {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  padding: 12px 24px;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border);
-  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-}
-.tool-flow-step {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 5px 11px 5px 8px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.9px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: background var(--anim-fast), border-color var(--anim-fast), color var(--anim-fast);
-}
-.tool-flow-step::after {
-  content: "→";
-  color: var(--datum);
-  margin-left: 2px;
-}
-.tool-flow-step:last-child::after { content: ""; }
-.tool-flow-step span {
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--datum);
-}
-.tool-flow-step:hover,
-.tool-flow-step:focus-visible {
-  background: var(--datum-soft);
-  border-color: var(--datum);
-  color: var(--text-primary);
-  outline: none;
-}
-.tool-flow-step:focus-visible {
-  box-shadow: 0 0 0 2px var(--datum-soft);
-}
-.tool-flow-step.is-active {
-  background: var(--datum-soft);
-  border-color: var(--datum);
-  color: var(--datum);
-}
-.tool-flow-step--aside {
-  background: transparent;
-  border-style: dashed;
 }
 
 .si-item.si-active .si-dot,
@@ -3046,15 +3003,6 @@ a { color: inherit; }
   color: rgba(255,255,255,0.45);
 }
 
-@media (max-width: 760px) {
-  .tool-workflow-strip {
-    padding: 10px 14px;
-  }
-  .tool-flow-step {
-    flex: 1 1 130px;
-    justify-content: center;
-  }
-}
 
 /* Phase 2.5 refinement: tool pages focus on the active engineering task. */
 .step-sidebar {

@@ -26,6 +26,19 @@ MIN_PIPE_R_PX = 4
 # circles are drawn.
 ENVELOPE_CLEARANCE_PX = 6
 
+# Standard schematic pipe-shoe height (px). A pipe on a shoe is lifted by this
+# fixed amount above the beam top, so its centerline sits clearly above the
+# direct-rest pipes. The vertical axis is schematic, so this is a single fixed
+# height for every pipe regardless of DN (visual consistency, not fabrication
+# detailing). Kept compact so the shoe supports the pipe without dominating.
+SHOE_HEIGHT_PX = 22
+
+# Minimum visual clearance (px) kept between a direct-rest pipe's outer
+# envelope (flange/insulation/pipe — whichever is largest) and the rack beam
+# top, so a flange ring never overlaps or touches the beam in the schematic.
+# Schematic readability only; no effect on geometry or dimensions.
+REST_CLEARANCE_PX = 5
+
 
 def generate_diagram(pipes, result, scale_max_width=1100, spare_space_location='right'):
     """
@@ -140,16 +153,51 @@ def render_svg(geometry, scale_max_width=1100):
     top_rows = (max((d.row for d in geometry.top_dimensions), default=0) + 1)
     bottom_rows = (max((d.row for d in geometry.bottom_dimensions), default=0) + 1)
 
+    # ── Per-pipe vertical elevation (schematic axis) ─────────────────────────
+    # The beam top is a single datum line. Each pipe's centerline is raised
+    # above it so that the *outer envelope* (flange/insulation/pipe — whichever
+    # is largest) governs the contact, never just the bare OD:
+    #   - Direct rest: the envelope bottom clears the beam top by a small
+    #     REST_CLEARANCE_PX, so a flange ring never overlaps/touches the beam
+    #     while the pipe still reads as resting close to the rack.
+    #   - Pipe shoe:   the envelope bottom is lifted a full standard shoe height
+    #     (SHOE_HEIGHT_PX) above the beam, leaving a clean band for the shoe.
+    # The two resulting elevations differ (rest lower, shoe higher) and that
+    # distinction is intentional and clearly visible.
+    def _is_shoe(p):
+        return getattr(p, "support_condition", "direct_rest") == "pipe_shoe"
+
+    # Per-pipe outer-envelope radius and the rise of its centerline above the
+    # beam top (cy = beam_y - rise). Both are independent of beam_y itself.
+    pipe_env_r = []
+    pipe_rise = []
+    for (p, pr, ir, fr) in render_pipes:
+        env_r = max(pr, ir, fr)
+        rise = (SHOE_HEIGHT_PX if _is_shoe(p) else REST_CLEARANCE_PX) + env_r
+        pipe_env_r.append(env_r)
+        pipe_rise.append(rise)
+
+    # Headroom above the beam = the tallest stack (centerline rise + envelope
+    # radius up to its top), so no raised pipe/envelope is clipped.
+    headroom = max(
+        (rise + er for rise, er in zip(pipe_rise, pipe_env_r)),
+        default=40,
+    )
+
     margin_top = 60 + top_rows * 22
     rack_top = margin_top + 26
-    pipe_y = rack_top + max_symbol_r + 14
-    beam_y = pipe_y + max_symbol_r + 14
+    # Beam top sits just below the tallest pipe stack.
+    beam_y = rack_top + headroom + 6
     beam_h = 20
     rack_bottom = beam_y + beam_h
 
-    label_h = 31  # max pipe-label block height (with insulation line)
+    # Pipe labels live in their own band BELOW the rack beam so they never
+    # overlap the pipe-shoe graphics (which sit in the pipe->beam gap).
+    label_h = 31  # pipe-label block height (with insulation line)
     label_extra = label_row_h if stagger_labels else 0
-    bottom_y0 = rack_bottom + 50 + label_extra
+    label_band_y = rack_bottom + 26          # baseline of the P# label row
+    label_band_bottom = label_band_y + 27 + label_extra
+    bottom_y0 = label_band_bottom + 26
     bottom_y_for_row = lambda r: bottom_y0 + r * 28
     bottom_limit = bottom_y_for_row(bottom_rows - 1) + 8
     margin_bottom = (bottom_limit - rack_bottom) + 20
@@ -301,6 +349,11 @@ def render_svg(geometry, scale_max_width=1100):
 
     for idx, (pipe, pipe_r_px, ins_r_px, flange_r_px) in enumerate(render_pipes):
         cx = cx_list[idx]
+        is_shoe = _is_shoe(pipe)
+        # Per-pipe centerline elevation (envelope-based, so a flange ring never
+        # clashes with the beam). Direct rest: envelope bottom clears the beam
+        # by REST_CLEARANCE_PX. Shoe: envelope bottom lifted SHOE_HEIGHT_PX.
+        cy = beam_y - pipe_rise[idx]
 
         # Pipe centerline (vertical + horizontal)
         parts.append(
@@ -308,38 +361,62 @@ def render_svg(geometry, scale_max_width=1100):
             f'stroke="#94a3b8" stroke-width="0.7" stroke-dasharray="4,4"/>'
         )
         parts.append(
-            f'<line x1="{cx - max(flange_r_px, ins_r_px) - 5}" y1="{pipe_y}" '
-            f'x2="{cx + max(flange_r_px, ins_r_px) + 5}" y2="{pipe_y}" '
+            f'<line x1="{cx - max(flange_r_px, ins_r_px) - 5}" y1="{cy}" '
+            f'x2="{cx + max(flange_r_px, ins_r_px) + 5}" y2="{cy}" '
             f'stroke="#94a3b8" stroke-width="0.6" stroke-dasharray="4,4"/>'
         )
 
         if pipe.insulation > 0:
             parts.append(
-                f'<circle cx="{cx}" cy="{pipe_y}" r="{ins_r_px}" '
+                f'<circle cx="{cx}" cy="{cy}" r="{ins_r_px}" '
                 f'fill="url(#insulGrad)" stroke="#b69b57" stroke-width="0.7" opacity="0.9"/>'
             )
 
-        bolt_circle_r = max(flange_r_px * 0.72, pipe_r_px + 4)
-        bolt_r        = max(min(flange_r_px * 0.075, 2.5), 1.25)
+        # Flange ring/face/bolts only when the pipe is flanged at the section.
+        if pipe.has_flange:
+            bolt_circle_r = max(flange_r_px * 0.72, pipe_r_px + 4)
+            bolt_r        = max(min(flange_r_px * 0.075, 2.5), 1.25)
+            parts.append(
+                f'<circle cx="{cx}" cy="{cy}" r="{flange_r_px}" '
+                f'fill="url(#flangeGrad)" stroke="#475569" stroke-width="1.1"/>'
+            )
+            parts.append(
+                f'<circle cx="{cx}" cy="{cy}" r="{max(pipe_r_px + 3, flange_r_px * 0.42)}" '
+                f'fill="#f8fafc" stroke="#64748b" stroke-width="0.7"/>'
+            )
+            parts.append(bolt_holes(cx, cy, bolt_circle_r, bolt_r))
         parts.append(
-            f'<circle cx="{cx}" cy="{pipe_y}" r="{flange_r_px}" '
-            f'fill="url(#flangeGrad)" stroke="#475569" stroke-width="1.1"/>'
-        )
-        parts.append(
-            f'<circle cx="{cx}" cy="{pipe_y}" r="{max(pipe_r_px + 3, flange_r_px * 0.42)}" '
-            f'fill="#f8fafc" stroke="#64748b" stroke-width="0.7"/>'
-        )
-        parts.append(bolt_holes(cx, pipe_y, bolt_circle_r, bolt_r))
-        parts.append(
-            f'<circle cx="{cx}" cy="{pipe_y}" r="{pipe_r_px}" '
+            f'<circle cx="{cx}" cy="{cy}" r="{pipe_r_px}" '
             f'fill="url(#pipeGrad)" stroke="#7f1d1d" stroke-width="1.1"/>'
         )
         parts.append(
-            f'<circle cx="{cx}" cy="{pipe_y}" r="{max(pipe_r_px * 0.48, 2)}" '
+            f'<circle cx="{cx}" cy="{cy}" r="{max(pipe_r_px * 0.48, 2)}" '
             f'fill="#fff5f5" stroke="#991b1b" stroke-width="0.7"/>'
         )
 
-        label_y_base = pipe_y + max(flange_r_px, ins_r_px, pipe_r_px) + 22
+        # Schematic pipe shoe (compact inverted-T). Drawn AFTER the pipe/flange
+        # circles so it stays visible in front of the flange envelope. Its top
+        # meets the envelope bottom (a fixed SHOE_HEIGHT_PX above the beam), so
+        # the shoe height is identical for every pipe regardless of DN.
+        if is_shoe:
+            shoe_top = beam_y - SHOE_HEIGHT_PX        # == envelope bottom (cy + env_r)
+            if beam_y - shoe_top > 2:
+                base_t = 3
+                web_half = min(max(pipe_r_px * 0.22, 2.5), 6)
+                base_half = min(max(web_half * 1.8, 6), 12)
+                parts.append(
+                    f'<rect x="{cx - web_half}" y="{shoe_top}" '
+                    f'width="{2 * web_half}" height="{(beam_y - shoe_top) - base_t}" '
+                    f'fill="#cbd5e1" stroke="#64748b" stroke-width="0.6"/>'
+                )
+                parts.append(
+                    f'<rect x="{cx - base_half}" y="{beam_y - base_t}" '
+                    f'width="{2 * base_half}" height="{base_t}" '
+                    f'fill="#94a3b8" stroke="#475569" stroke-width="0.6"/>'
+                )
+
+        # Pipe label block: fixed band below the rack beam (clear of shoes).
+        label_y_base = label_band_y
         if stagger_labels and idx % 2 == 1:
             label_y_base += label_row_h
         label_w = label_widths[idx]

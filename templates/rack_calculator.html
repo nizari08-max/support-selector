@@ -223,9 +223,17 @@
     margin-top: 8px;
   }
   .breakdown th, .breakdown td {
-    padding: 7px 10px;
+    padding: 7px 14px;
     border-bottom: 1px solid var(--border);
     text-align: left;
+  }
+  /* Give the right-aligned value column comfortable breathing room from the
+     table border so numbers are never visually flush against the edge. */
+  .breakdown th.num, .breakdown td.num {
+    text-align: right;
+    padding-right: 22px;
+    width: 1%;
+    white-space: nowrap;
   }
   .breakdown th {
     font-family: var(--font-ui);
@@ -236,7 +244,6 @@
     letter-spacing: 0.8px;
   }
   .breakdown td.num {
-    text-align: right;
     font-family: var(--font-mono);
     color: var(--text-primary);
     font-variant-numeric: tabular-nums;
@@ -280,10 +287,16 @@
   .breakdown-final { background: var(--accent-blue-lt); font-weight: 700; }
 
   @media print {
-    .no-print { display: none; }
+    .no-print { display: none !important; }
     body { background: white; }
     .panel { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
-    .navbar, .footer { display: none; }
+    /* Strip the platform shell so the print output is a standalone engineering
+       document — no top bar, rail, footer, command palette or theme toggle. */
+    .topbar, .rail, .footer, .cmdk-backdrop, .theme-toggle, .navbar { display: none !important; }
+    /* The sticky top bar/rail otherwise leave offsets that overlap content. */
+    .workspace { display: block; }
+    .workspace-main { display: block; }
+    .container { max-width: 100%; padding-top: 0; margin-top: 0; }
   }
 
   @media (max-width: 680px) {
@@ -307,6 +320,15 @@
     <div class="meta">
       ASME B36.10M / B16.5 / B16.47<br>
       Max 16 pipes per tier
+      <div style="margin-top:8px;text-align:right">
+        <a href="/reference#rack-arrangement" class="sc-ref-link">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" width="12" height="12">
+            <circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="8"/>
+            <circle cx="8" cy="11" r=".8" fill="currentColor" stroke="none"/>
+          </svg>
+          Rack Reference
+        </a>
+      </div>
     </div>
   </div>
 
@@ -326,6 +348,8 @@
             <th>Nominal Size (DN)</th>
             <th>Flange Rating</th>
             <th>Insulation (mm)</th>
+            <th title="Does this line have a flange at the considered rack section? Controls whether the flange envelope is included in spacing.">Flange @ Section</th>
+            <th title="How the pipe sits on the rack. Affects the schematic / DXF representation only.">Support</th>
             <th></th>
           </tr>
         </thead>
@@ -342,7 +366,7 @@
               </select>
             </td>
             <td>
-              <select name="rating" required>
+              <select name="rating" class="flange-rating" required>
                 {% for r in flange_ratings %}
                   <option value="{{ r }}" {% if r|string == p.rating|string %}selected{% endif %}>{{ rating_labels[r|string] }}</option>
                 {% endfor %}
@@ -350,6 +374,18 @@
             </td>
             <td>
               <input type="number" name="insulation" min="0" max="500" step="5" value="{{ p.insulation }}" required>
+            </td>
+            <td>
+              <select name="has_flange" class="flange-toggle" required>
+                <option value="yes" {% if p.get('has_flange', True) %}selected{% endif %}>Yes</option>
+                <option value="no" {% if not p.get('has_flange', True) %}selected{% endif %}>No</option>
+              </select>
+            </td>
+            <td>
+              <select name="support_condition" required>
+                <option value="direct_rest" {% if p.get('support_condition', 'direct_rest') != 'pipe_shoe' %}selected{% endif %}>Direct Rest</option>
+                <option value="pipe_shoe" {% if p.get('support_condition', 'direct_rest') == 'pipe_shoe' %}selected{% endif %}>Pipe Shoe</option>
+              </select>
             </td>
             <td>
               <button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">&times;</button>
@@ -519,6 +555,8 @@
       <li>Pipe sizes per ASME B36.10M-2000 (DN 15 to DN 1000).</li>
       <li>Flange ODs per ASME B16.5-2009 (DN 15 to DN 600) and ASME B16.47-2017 Series A & B (DN 650 to DN 1000).</li>
       <li>Adjacent flanges are assumed to be staggered (alternating sides of the support beam).</li>
+      <li><strong>Flange @ Section</strong>: set per line. The flange envelope is included in the spacing only for pipes that have a flange at the considered rack section; lines set to <em>No</em> use the bare pipe OD.</li>
+      <li><strong>Support</strong>: <em>Direct Rest</em> shows the pipe resting on the rack beam; <em>Pipe Shoe</em> shows a nominal schematic shoe (~100&nbsp;mm). Representation only — it does not change the rack width.</li>
       <li>Pipe thermal expansion effects are <strong>not</strong> included.</li>
       <li>All values rounded to nearest 5 mm.</li>
     </ul>
@@ -547,9 +585,21 @@
         </select>
       </td>
       <td>
-        <select name="rating" required>${ratingOpts}</select>
+        <select name="rating" class="flange-rating" required>${ratingOpts}</select>
       </td>
       <td><input type="number" name="insulation" min="0" max="500" step="5" value="0" required></td>
+      <td>
+        <select name="has_flange" class="flange-toggle" required>
+          <option value="yes" selected>Yes</option>
+          <option value="no">No</option>
+        </select>
+      </td>
+      <td>
+        <select name="support_condition" required>
+          <option value="direct_rest" selected>Direct Rest</option>
+          <option value="pipe_shoe">Pipe Shoe</option>
+        </select>
+      </td>
       <td><button type="button" class="remove-btn" onclick="removeRow(this)" title="Remove">&times;</button></td>
     `;
     return tr;
@@ -584,6 +634,44 @@
   }
 
   refreshNumbers();
+
+  // ── Flange Rating field state ───────────────────────────────────────────────
+  // When a line has no flange at the rack section, its rating is irrelevant to
+  // the spacing, so the Flange Rating select is disabled and dimmed. Disabled
+  // controls are omitted from the POST, which would misalign the server-side
+  // per-column lists -- so we re-enable every rating select on submit (the
+  // backend ignores the value for no-flange lines anyway).
+  function syncFlangeRating(row) {
+    const toggle = row.querySelector('.flange-toggle');
+    const rating = row.querySelector('.flange-rating');
+    if (!toggle || !rating) return;
+    const off = toggle.value === 'no';
+    rating.disabled = off;
+    rating.style.opacity = off ? '0.45' : '';
+    rating.style.cursor = off ? 'not-allowed' : '';
+    rating.title = off ? 'Not applicable - this line has no flange at the rack section' : '';
+  }
+
+  function syncAllFlangeRatings() {
+    document.querySelectorAll('#pipeRows tr.pipe-row').forEach(syncFlangeRating);
+  }
+
+  // Event delegation: any Flange @ Section change updates that row.
+  document.getElementById('pipeRows').addEventListener('change', function (e) {
+    if (e.target && e.target.classList.contains('flange-toggle')) {
+      syncFlangeRating(e.target.closest('tr.pipe-row'));
+    }
+  });
+
+  // Re-enable all rating selects right before submit so their values post and
+  // stay aligned with the other per-pipe columns on the server.
+  document.getElementById('rackForm').addEventListener('submit', function () {
+    document.querySelectorAll('#pipeRows .flange-rating').forEach(function (sel) {
+      sel.disabled = false;
+    });
+  });
+
+  syncAllFlangeRatings();
 
 // ── Steel profile selector ────────────────────────────────────────────────────
 const STEEL_PROFILES = {{ profiles_for_js | tojson }};

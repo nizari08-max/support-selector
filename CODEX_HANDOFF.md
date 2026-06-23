@@ -23,8 +23,8 @@ routes, no `app.js`): a workspace shell + command palette, a rebuilt Workspace H
 invented "DATUM" product name, retained JESA endorsement branding, a refined hero, and a
 "version 0.9 → 1.0" professional polish pass. The engine and tests were never touched.
 
-**What's next:** Phase 3 (gated) — a shared **Line object** that threads NPS/material/class across
-tools — plus propagating the polish to the four tool pages, then scaling engineering coverage.
+**What's next:** Phase 3 is paused and remains gated. Continue with independent-tool polish or
+engineering coverage expansion unless the user explicitly re-approves connected workflow work.
 
 ---
 
@@ -57,22 +57,23 @@ tools — plus propagating the polish to the four tool pages, then scaling engin
   Mono / Inter body), motion, radius, hero scrims. No hardcoded hex outside the token layer.
 - Drafting-glyph icon sprite `static/images/icons/datum-icons.svg` (20×20, stroke 1.75, no fills).
 - Reusable primitives: `.sheet` drawing-sheet card, `.result-titleblock` + `.result-traceability`
-  result sheet, `.tool-card` board card, workflow `.wh-spine`.
+  result sheet, `.tool-card` board card, tool category `.wh-spine`.
 - Dual theme (light "vellum" / dark "film"), both first-class.
 
 ### Workspace Home (`landing.html`)
 - **Hero:** desaturated plant photo (`static/images/brand/hero-plant.png` via `--hero-photo`) behind
   navy scrims + faint blueprint grid; minimal confident copy; no document codes in the hero.
-- **Continue band:** "Start your workflow" entry card; hydrates from `sessionStorage['datum-line']`.
-- **Workflow spine:** numbered, connected chips (01 Select → 02 Verify → 03 Arrange · 04 Reference).
-- **The Board:** four tool cards (+ placeholders) with index, status, drafting icon, and a
-  title-block footer carrying an engineering reference tag.
+- **Tool choice band:** "Choose a tool" entry card with a neutral "Open a tool" CTA.
+- **Tool category rail:** independent chips for Support selection, Span verification, Rack
+  arrangement, and References.
+- **Available Engineering Tools:** four tool cards (+ placeholders) with status, drafting icon,
+  purpose, explicit output, and a title-block footer carrying an engineering reference tag.
 - **Standards & Traceability register:** `sheet--authority` panel with a "GOVERNED" seal and
   name↔mono-code rows.
 
 ### Phase 2.5 — Professional Polish Pass (complete)
 A "0.9 → 1.0" finish pass on the Workspace Home (markup/CSS only): trimmed hero copy; inviting entry
-CTA; numbered workflow spine; tool-card footer tags + relocated index (fixed an index/status overlap
+CTA; independent tool category chips; tool-card footer tags + relocated index (fixed an index/status overlap
 defect) + a single coherent `--datum` interaction language + `:focus-visible` rings; Standards
 governance register; more readable (still discreet) footer credit; spacing/density tightening; icon
 review. **502 tests pass; all 5 routes 200.**
@@ -98,8 +99,8 @@ reserved for the authority seal. A faint blueprint grid is the recurring base la
 fully supported.
 
 **Pages (all behind the shared shell):**
-- `/` Workspace Home — hero atmosphere → Continue band → numbered workflow spine → The Board (4 tool
-  cards) → Standards & Traceability register.
+- `/` Workspace Home — hero atmosphere → tool choice band → available engineering tools → Standards
+  & Traceability register.
 - `/support-selector` — input column + result sheet (title block + determination + schematic +
   traceability footer with drawing chips and a `→ Verify span` handoff).
 - `/span` — span check.
@@ -121,12 +122,12 @@ the first follow-up after Phase 3 readiness.
 - Optional: reduce the Board hover wash to border + corner marks + lift if a more restrained hover is
   preferred (open question raised with the user).
 
-### Phase 3 — Workflow spine / Line object (GATED — needs explicit user go-ahead)
-- Shared **Line object** (NPS / material / class) persisted via additive inline scripts +
-  `sessionStorage['datum-line']` — **no `app.js` edits**.
-- Cross-tool handoff: Selector → Span → Rack carry-forward; the Continue band lights up from the
-  stored line; query-param/observer prefill on the next tool.
-- Unified Result Sheet treatment across all four tools.
+### Phase 3 — Connected workflow / Line object (PAUSED + GATED)
+- Do not implement the shared **Line object**, cross-tool handoff, or connected workflow language
+  until the user explicitly re-approves it.
+- The current live product is a governed collection of independent engineering tools.
+- If Phase 3 is resumed later, keep the historical constraint: additive inline scripts only and
+  **no `app.js` edits**.
 
 ### Future tools (engine expansion, pages 74–190 of the standard)
 - WL01/WL02 special welded lug attachment details (Phase 2.2B).
@@ -165,15 +166,7 @@ the first follow-up after Phase 3 readiness.
 
 ## Recommended Next Step
 
-**Do not start Phase 3 or any UI change without explicit user approval** — Phase 3 is gated.
+**Do not start Phase 3 without explicit user approval** — Phase 3 is paused and gated.
 
-When the user gives the go-ahead, the highest-value first task is the **Phase 3 Line object
-foundation**: an additive, observer-based inline script that writes/reads
-`sessionStorage['datum-line']` (NPS/material/class) **without touching `app.js`**, so the existing
-Continue band on the Workspace Home lights up and Selector → Span → Rack can carry a line forward.
-Prototype the persistence mechanism first (it is the one real architectural unknown), verify all 502
-tests stay green and all 5 routes return 200 in both themes, then build the cross-tool handoff.
-
-If the user instead wants a smaller next step, the **tool-page polish propagation** (apply the
-Workspace Home card/focus/spacing language to `/support-selector`, `/span`, `/rack-calculator`,
-`/reference`) is low-risk and self-contained.
+The best next low-risk step is **tool-page polish propagation**: apply the Workspace Home
+card/focus/spacing language to `/support-selector`, `/span`, `/rack-calculator`, and `/reference`.

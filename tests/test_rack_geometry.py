@@ -16,8 +16,54 @@ from rack_geometry import build_geometry_model
 from rack_diagram import generate_diagram
 
 
-def _pipe(dn, rating=150, insulation=0):
-    return {"dn": dn, "rating": rating, "insulation": insulation}
+def _pipe(dn, rating=150, insulation=0, has_flange=True, support_condition="direct_rest"):
+    return {
+        "dn": dn,
+        "rating": rating,
+        "insulation": insulation,
+        "has_flange": has_flange,
+        "support_condition": support_condition,
+    }
+
+
+# =============================================================================
+# Per-pipe flange presence + support condition propagate into the model
+# =============================================================================
+
+class TestPerPipeFlangeAndSupport:
+
+    def test_defaults_when_keys_absent(self):
+        pipes = [{"dn": 100, "rating": 150, "insulation": 0}]
+        result = calculate_rack(pipes)
+        geo = build_geometry_model(pipes, result)
+        assert geo.pipes[0].has_flange is True
+        assert geo.pipes[0].support_condition == "direct_rest"
+
+    def test_no_flange_collapses_flange_od_to_pipe_od(self):
+        pipes = [_pipe(200, rating=600, has_flange=False)]
+        result = calculate_rack(pipes)
+        geo = build_geometry_model(pipes, result)
+        assert geo.pipes[0].flange_od == geo.pipes[0].pipe_od
+
+    def test_flange_present_keeps_flange_od(self):
+        pipes = [_pipe(200, rating=600, has_flange=True)]
+        result = calculate_rack(pipes)
+        geo = build_geometry_model(pipes, result)
+        assert geo.pipes[0].flange_od > geo.pipes[0].pipe_od
+
+    def test_support_condition_propagates(self):
+        pipes = [_pipe(100, support_condition="pipe_shoe"),
+                 _pipe(200, rating=300, support_condition="direct_rest")]
+        result = calculate_rack(pipes)
+        geo = build_geometry_model(pipes, result)
+        assert geo.pipes[0].support_condition == "pipe_shoe"
+        assert geo.pipes[1].support_condition == "direct_rest"
+
+    def test_unknown_support_condition_falls_back_to_direct_rest(self):
+        pipes = [_pipe(100, support_condition="bracket")]
+        result = calculate_rack(pipes)
+        geo = build_geometry_model(pipes, result)
+        assert geo.pipes[0].support_condition == "direct_rest"
 
 
 # =============================================================================

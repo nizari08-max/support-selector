@@ -38,6 +38,8 @@ class PipeGeom:
     label_main: str
     label_spec: str
     label_ins: str = ""
+    has_flange: bool = True             # flange present at the rack section
+    support_condition: str = "direct_rest"   # "direct_rest" | "pipe_shoe"
 
 
 @dataclass
@@ -74,10 +76,23 @@ class RackGeometry:
     warnings: list = field(default_factory=list)
 
 
+def _pipe_flange_od(pipe):
+    """Effective flange OD for a pipe, honoring its per-pipe ``has_flange`` flag.
+
+    Defaults to True when absent (backward compatible). A pipe without a
+    flange at the rack section contributes no flange envelope -- its bare
+    pipe OD governs instead.
+    """
+    pipe_od = get_pipe_od(pipe['dn'])
+    if not pipe.get('has_flange', True):
+        return pipe_od
+    return get_flange_od(pipe['dn'], pipe['rating']) or pipe_od
+
+
 def _envelope_radius(pipe):
     """Outer-envelope radius (mm) of a pipe = max(pipe, flange, insulation) OD / 2."""
     pipe_od = get_pipe_od(pipe['dn'])
-    flange_od = get_flange_od(pipe['dn'], pipe['rating']) or pipe_od
+    flange_od = _pipe_flange_od(pipe)
     ins_od = pipe_od + 2 * pipe['insulation']
     return max(pipe_od, flange_od, ins_od) / 2
 
@@ -203,7 +218,12 @@ def build_geometry_model(pipes, result, spare_space_location='right'):
     pipe_geoms = []
     for i, (pipe, calc_x) in enumerate(zip(pipes, calc_cl)):
         pipe_od = get_pipe_od(pipe['dn'])
-        flange_od = get_flange_od(pipe['dn'], pipe['rating']) or pipe_od
+        has_flange = pipe.get('has_flange', True)
+        flange_od = _pipe_flange_od(pipe)
+        support_condition = (
+            'pipe_shoe' if pipe.get('support_condition') == 'pipe_shoe'
+            else 'direct_rest'
+        )
         ins = pipe['insulation']
         ins_od = pipe_od + 2 * ins
         spec = (
@@ -223,6 +243,8 @@ def build_geometry_model(pipes, result, spare_space_location='right'):
             label_main=f"P{i + 1}",
             label_spec=spec,
             label_ins=f"Ins {ins} mm" if ins else "",
+            has_flange=has_flange,
+            support_condition=support_condition,
         ))
 
     # ── Top dimensions: column CL -> pipe1 CL, then CL-to-CL spacings ──────

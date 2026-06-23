@@ -176,6 +176,69 @@ class TestPairSpacing:
 
 
 # =============================================================================
+# Per-pipe flange presence (Has Flange @ Section)
+# =============================================================================
+
+class TestPerPipeFlange:
+
+    def test_default_includes_flange(self):
+        # Absent has_flange == flange included (backward compatible).
+        with_key = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": True}
+        without_key = {"dn": 100, "rating": 150, "insulation": 0}
+        assert calculate_pair_spacing(with_key, with_key) \
+            == calculate_pair_spacing(without_key, without_key)
+
+    def test_no_flange_uses_bare_pipe_od(self):
+        # Both pipes flangeless => bare-pipe staggered model.
+        # DN100 OD=114, DN200 OD=219
+        # case = (114+219)/2 + 0+0+50 = 166.5+50 = 216.5 -> MROUND(216.5,5)=215
+        a = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": False}
+        b = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": False}
+        assert calculate_pair_spacing(a, b) == 215
+
+    def test_no_flange_spacing_not_greater_than_flanged(self):
+        a_f = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": True}
+        b_f = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": True}
+        a_n = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": False}
+        b_n = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": False}
+        assert calculate_pair_spacing(a_n, b_n) <= calculate_pair_spacing(a_f, b_f)
+
+    def test_mixed_flange_is_between_all_and_none(self):
+        a_f = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": True}
+        b_f = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": True}
+        a_n = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": False}
+        b_n = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": False}
+        # Only the larger-flange pipe (B) keeps its flange.
+        b_only = {"dn": 200, "rating": 300, "insulation": 0, "has_flange": True}
+        mixed = calculate_pair_spacing(a_n, b_only)
+        assert calculate_pair_spacing(a_n, b_n) <= mixed <= calculate_pair_spacing(a_f, b_f)
+
+    def test_no_flange_skips_nonstandard_flange_error(self):
+        # DN90 has no CL900 flange; with has_flange=False it must not raise.
+        a = {"dn": 90, "rating": 900, "insulation": 0, "has_flange": False}
+        b = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": False}
+        spacing = calculate_pair_spacing(a, b)
+        assert spacing > 0
+
+    def test_flanged_nonstandard_still_raises(self):
+        a = {"dn": 90, "rating": 900, "insulation": 0, "has_flange": True}
+        b = {"dn": 100, "rating": 150, "insulation": 0, "has_flange": True}
+        with pytest.raises(ValueError, match="not standardized"):
+            calculate_pair_spacing(a, b)
+
+    def test_full_rack_no_flange_reduces_or_equals_width(self):
+        flanged = [
+            {"dn": 200, "rating": 600, "insulation": 0, "has_flange": True},
+            {"dn": 300, "rating": 600, "insulation": 0, "has_flange": True},
+        ]
+        bare = [
+            {"dn": 200, "rating": 600, "insulation": 0, "has_flange": False},
+            {"dn": 300, "rating": 600, "insulation": 0, "has_flange": False},
+        ]
+        assert calculate_rack(bare)["rack_width"] <= calculate_rack(flanged)["rack_width"]
+
+
+# =============================================================================
 # Full rack calculation — single pipe
 # =============================================================================
 

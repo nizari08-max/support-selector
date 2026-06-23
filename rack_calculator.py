@@ -80,29 +80,53 @@ def mround(value, multiple):
     return -int(-quotient + 0.5) * multiple
 
 
+def _has_flange(pipe):
+    """Whether this pipe carries a flange at the rack section.
+
+    Defaults to True when the key is absent so existing callers (and the
+    full backward-compatible behaviour) are unchanged.
+    """
+    return pipe.get('has_flange', True)
+
+
+def _governing_od(pipe):
+    """
+    Outer diameter that governs spacing on *this* pipe's side of a pair.
+
+    When the pipe has a flange at the rack section, the flange OD governs
+    (the staggered-flange clearance model). When it does not, the bare pipe
+    OD governs instead -- no flange envelope is added for that pipe.
+    """
+    pipe_od = get_pipe_od(pipe['dn'])
+    if not _has_flange(pipe):
+        return pipe_od
+    flange = get_flange_od(pipe['dn'], pipe['rating'])
+    if flange is None:
+        raise ValueError(
+            f"Flange size for DN{pipe['dn']} {pipe['rating']} is not "
+            f"standardized. Please choose a different rating."
+        )
+    return flange
+
+
 def calculate_pair_spacing(pipe_a, pipe_b):
     """
     Calculate center-to-center spacing between two adjacent pipes,
     using the exact reference Excel formula.
 
-    pipe_a, pipe_b are dicts with keys: 'dn', 'rating', 'insulation'.
+    pipe_a, pipe_b are dicts with keys: 'dn', 'rating', 'insulation' and an
+    optional 'has_flange' (default True). When a pipe has no flange at the
+    rack section its bare pipe OD is used in place of the flange OD, so no
+    flange clearance is reserved for that line.
     Returns spacing in mm, rounded to nearest 5 mm.
     """
     pipe_od_a = get_pipe_od(pipe_a['dn'])
     pipe_od_b = get_pipe_od(pipe_b['dn'])
-    flange_a = get_flange_od(pipe_a['dn'], pipe_a['rating'])
-    flange_b = get_flange_od(pipe_b['dn'], pipe_b['rating'])
-
-    if flange_a is None:
-        raise ValueError(
-            f"Flange size for DN{pipe_a['dn']} {pipe_a['rating']} is not "
-            f"standardized. Please choose a different rating."
-        )
-    if flange_b is None:
-        raise ValueError(
-            f"Flange size for DN{pipe_b['dn']} {pipe_b['rating']} is not "
-            f"standardized. Please choose a different rating."
-        )
+    # Governing OD per pipe: flange OD if the pipe is flanged here, else
+    # bare pipe OD. A non-flanged pipe never triggers the non-standard
+    # flange error because its flange is irrelevant to this section.
+    flange_a = _governing_od(pipe_a)
+    flange_b = _governing_od(pipe_b)
 
     ins_a = pipe_a['insulation']
     ins_b = pipe_b['insulation']

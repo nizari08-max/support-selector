@@ -9,8 +9,14 @@ from rack_calculator import calculate_rack
 from rack_dxf import LAYER_SPECS, generate_dxf
 
 
-def _pipe(dn, rating=150, insulation=0):
-    return {"dn": dn, "rating": rating, "insulation": insulation}
+def _pipe(dn, rating=150, insulation=0, has_flange=True, support_condition="direct_rest"):
+    return {
+        "dn": dn,
+        "rating": rating,
+        "insulation": insulation,
+        "has_flange": has_flange,
+        "support_condition": support_condition,
+    }
 
 
 def _doc_from_bytes(dxf_bytes):
@@ -26,6 +32,13 @@ def _lwpolyline_size(entity):
 
 def _texts(doc):
     return [entity.dxf.text for entity in doc.modelspace().query("TEXT")]
+
+
+def _notes_blob(doc):
+    """All note text joined and whitespace-normalised, so assertions are
+    robust to word-wrapping a long note across multiple TEXT entities."""
+    import re
+    return re.sub(r"\s+", " ", " ".join(_texts(doc)))
 
 
 class TestRackDxfExport:
@@ -95,13 +108,28 @@ class TestRackDxfExport:
         # No flange (or any other) circles in the section graphic.
         assert layers <= {"PIPE_OD", "INSULATION_OD"}
 
-    def test_flange_not_shown_note_present(self):
+    def test_flange_envelope_note_present(self):
         pipes = [_pipe(100, rating=300)]
         result = calculate_rack(pipes)
 
         doc = _doc_from_bytes(generate_dxf(pipes, result))
 
-        assert any("FLANGE LOCATIONS" in text for text in _texts(doc))
+        # The notes must explain that flange envelopes are conditional and
+        # that flange circles are not drawn in this arrangement. Notes may be
+        # word-wrapped across multiple TEXT entities, so match the joined blob.
+        blob = _notes_blob(doc)
+        assert "FLANGE ENVELOPES ARE INCLUDED" in blob
+        assert "HAVING A FLANGE AT THE RACK SECTION" in blob
+
+    def test_support_representation_note_present(self):
+        pipes = [_pipe(100), _pipe(200, rating=300)]
+        result = calculate_rack(pipes)
+
+        doc = _doc_from_bytes(generate_dxf(pipes, result))
+        blob = _notes_blob(doc)
+
+        assert "DIRECT REST = PIPE SHOWN ON" in blob
+        assert "PIPE SHOE = NOMINAL SCHEMATIC SHOE" in blob
 
     def test_centerlines_use_pipe_cl_layer(self):
         pipes = [_pipe(100), _pipe(200, rating=300)]
@@ -135,18 +163,62 @@ class TestRackDxfExport:
         assert len(rack_width_hits) == 1
         assert text_hits == []
 
-    def test_rest_ticks_are_light_and_small(self):
+    def test_direct_rest_draws_no_support_geometry(self):
+        # Direct Rest = pipe shown on the beam, no fabricated support symbol.
         pipes = [_pipe(100), _pipe(200, rating=300), _pipe(400, rating=300)]
         result = calculate_rack(pipes)
 
         doc = _doc_from_bytes(generate_dxf(pipes, result))
-        ticks = list(doc.modelspace().query('LWPOLYLINE[layer=="SUPPORT"]'))
+        support_entities = list(doc.modelspace().query('LWPOLYLINE[layer=="SUPPORT"]'))
 
-        assert ticks
-        for tick in ticks:
-            w, h = _lwpolyline_size(tick)
+        assert support_entities == []
+
+    def test_no_triangular_support_symbols(self):
+        # The old triangular rest symbol (a 3-corner polyline) must be gone,
+        # for both direct-rest and pipe-shoe pipes.
+        pipes = [
+            _pipe(100, support_condition="direct_rest"),
+            _pipe(200, rating=300, support_condition="pipe_shoe"),
+            _pipe(400, rating=300, support_condition="pipe_shoe"),
+        ]
+        result = calculate_rack(pipes)
+
+        doc = _doc_from_bytes(generate_dxf(pipes, result))
+        for poly in doc.modelspace().query('LWPOLYLINE[layer=="SUPPORT"]'):
+            distinct_corners = {tuple(round(c, 3) for c in p) for p in poly.get_points("xy")}
+            # Rectangles have 4 distinct corners; triangles would have 3.
+            assert len(distinct_corners) == 4
+
+    def test_pipe_shoe_drawn_as_rectangles(self):
+        # Pipe Shoe = inverted-T (base plate + web) => rectangle polylines.
+        pipes = [
+            _pipe(100, support_condition="pipe_shoe"),
+            _pipe(200, rating=300, support_condition="pipe_shoe"),
+        ]
+        result = calculate_rack(pipes)
+
+        doc = _doc_from_bytes(generate_dxf(pipes, result))
+        shoes = list(doc.modelspace().query('LWPOLYLINE[layer=="SUPPORT"]'))
+
+        # Two pipes => two shoes, each made of a base plate + a web (2 rects).
+        assert len(shoes) == 4
+        for shoe in shoes:
+            w, h = _lwpolyline_size(shoe)
             assert w <= 250
             assert h <= 350
+
+    def test_mixed_support_conditions(self):
+        pipes = [
+            _pipe(100, support_condition="direct_rest"),
+            _pipe(200, rating=300, support_condition="pipe_shoe"),
+        ]
+        result = calculate_rack(pipes)
+
+        doc = _doc_from_bytes(generate_dxf(pipes, result))
+        shoes = list(doc.modelspace().query('LWPOLYLINE[layer=="SUPPORT"]'))
+
+        # Only the pipe-shoe pipe contributes support geometry (2 rects).
+        assert len(shoes) == 2
 
     def test_spare_zone_appears_when_requested(self):
         pipes = [_pipe(100), _pipe(200, rating=300)]
@@ -184,7 +256,7 @@ class TestRackDxfExport:
         assert "PIPE RACK" in texts
         assert any("SPACING ARRANGEMENT" in t for t in texts)
         assert "PIPE SCHEDULE" in texts
-        assert "LEGEND:" in texts
+        assert "LEGEND" in texts
         assert "HEA 300" in texts
         assert "P1" in texts
         assert "DN100" in texts
