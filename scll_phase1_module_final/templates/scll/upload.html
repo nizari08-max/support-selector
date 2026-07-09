@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JESA — Critical Line List Classifier</title>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+{% include "_theme_toggle_script.html" %}
+<style>
+  .container {
+    flex: 1;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+  }
+  .scll-page-header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .scll-page-header h1 {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .scll-page-header p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    max-width: 62ch;
+    line-height: 1.5;
+  }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 9px;
+  }
+  .scll-dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 32px 20px;
+    text-align: center;
+    background: var(--bg-surface);
+  }
+  .scll-dropzone input[type="file"] {
+    display: block;
+    margin: 14px auto 0;
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .scll-dropzone-icon {
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .scll-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+  .btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background var(--anim-fast);
+  }
+  .btn-primary { background: var(--accent-blue); color: white; }
+  .btn-primary:hover { background: var(--accent-blue-dk); }
+  .btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+  .scll-submit-row { margin-top: 18px; text-align: right; }
+  .alert {
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    border-left: 4px solid;
+  }
+  .alert-error { background: var(--red-lt); border-color: var(--red); color: var(--red-dk); }
+  .scope-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .scope-note ul { margin: 6px 0 0 18px; padding: 0; }
+</style>
+</head>
+<body>
+
+{% include "_shell_open.html" %}
+
+<div class="container">
+
+  <div class="scll-page-header">
+    <h1>Critical Line List Classifier</h1>
+    <p>Classify piping lines into Level I, Level II, and Level III with engineering justification and Excel reporting. Upload a line list — column detection is automatic.</p>
+  </div>
+
+  {% if error %}
+    <div class="alert alert-error">{{ error }}</div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Upload Line List</h2>
+    <form class="scll-upload" action="{{ url_for('scll.scll_upload') }}" method="post" enctype="multipart/form-data">
+      <div class="scll-dropzone">
+        <div class="scll-dropzone-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+            <path d="M12 3v12M12 3l-4 4M12 3l4 4"/>
+            <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>
+          </svg>
+        </div>
+        <input type="file" name="line_list" accept=".xlsx,.xlsm" required>
+        <div class="scll-hint">Accepted formats: .xlsx, .xlsm — columns are detected automatically from the sheet header.</div>
+      </div>
+      <div class="scll-submit-row">
+        <button type="submit" class="btn btn-primary">Process Line List</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel scope-note">
+    <h2>Phase 1 Scope</h2>
+    This tool covers:
+    <ul>
+      <li>Dynamic column detection from the uploaded sheet</li>
+      <li>Level I / Level II / Level III criticality classification</li>
+      <li>Classification reason per line</li>
+      <li>Data quality flags for missing or ambiguous fields</li>
+      <li>Excel export of the classified line list</li>
+    </ul>
+  </div>
+
+</div>
+
+{% include "_shell_close.html" %}
+
+<script src="{{ url_for('scll.static', filename='scll/scll.js') }}"></script>
+</body>
+</html>

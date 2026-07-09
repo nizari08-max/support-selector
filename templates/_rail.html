@@ -39,6 +39,16 @@
   </div>
 
   <div class="rail-group">
+    <div class="rail-group-label">Line List</div>
+    <a class="rail-item{% if active_page == 'scll' %} active{% endif %}" href="/scll" title="Critical Line List Classifier">
+      <span class="rail-icon">
+        <svg class="ic"><use href="{{ url_for('static', filename='images/icons/datum-icons.svg') }}#ic-linelist"></use></svg>
+      </span>
+      <span class="rail-label">Line List Classifier</span>
+    </a>
+  </div>
+
+  <div class="rail-group">
     <div class="rail-group-label">Reference</div>
     <a class="rail-item{% if active_page == 'reference' %} active{% endif %}" href="/reference" title="Span Reference Tables">
       <span class="rail-icon">
@@ -50,7 +60,6 @@
 
   <div class="rail-roadmap">
     <div class="rail-group-label">Roadmap</div>
-    <span class="rail-soon">Critical Systems Register</span>
     <span class="rail-soon">Report Viewer</span>
   </div>
 

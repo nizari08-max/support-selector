@@ -30,10 +30,14 @@ from rack_calculator import calculate_rack             # noqa: E402
 from rack_diagram import generate_diagram              # noqa: E402
 from rack_dxf import generate_dxf                      # noqa: E402
 from structural_profiles import get_profile_width, profiles_for_js  # noqa: E402
+from scll_phase1_module_final.routes import scll_bp                 # noqa: E402
 
 _PROFILES_JS = profiles_for_js()   # built once at startup
 
 app = Flask(__name__)
+app.register_blueprint(scll_bp)
+app.config.setdefault("SCLL_UPLOAD_FOLDER", os.path.join(app.instance_path, "scll_uploads"))
+app.config.setdefault("SCLL_OUTPUT_FOLDER", os.path.join(app.instance_path, "scll_outputs"))
 
 
 RATING_LABELS = {str(r): rating_label(r) for r in FLANGE_RATINGS}

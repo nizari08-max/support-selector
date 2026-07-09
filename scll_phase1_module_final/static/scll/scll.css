@@ -1,0 +1,67 @@
+﻿:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #17202a;
+  background: #f5f7fa;
+}
+
+body {
+  margin: 0;
+}
+
+.scll-shell {
+  width: min(960px, calc(100% - 32px));
+  margin: 40px auto;
+}
+
+.scll-panel {
+  background: #ffffff;
+  border: 1px solid #d8dee8;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.scll-upload {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+button,
+.scll-button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #22577a;
+  border-radius: 6px;
+  background: #22577a;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.scll-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.scll-summary div {
+  border: 1px solid #d8dee8;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.scll-summary dt {
+  color: #596575;
+  font-size: 0.85rem;
+}
+
+.scll-summary dd {
+  margin: 4px 0 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}

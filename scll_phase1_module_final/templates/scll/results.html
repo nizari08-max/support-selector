@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JESA — Critical Line List Classifier · Results</title>
+<link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Saira+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+{% include "_theme_toggle_script.html" %}
+<style>
+  .container {
+    flex: 1;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 28px 32px 48px;
+  }
+  .scll-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+    margin-bottom: 22px;
+  }
+  .scll-page-header h1 {
+    margin: 0 0 6px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .scll-page-header .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+    color: var(--accent-blue);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    text-transform: uppercase;
+    opacity: 0.82;
+    transition: opacity var(--anim-fast);
+  }
+  .scll-page-header .back-link:hover { opacity: 1; }
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 9px;
+  }
+  .results-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+  }
+  .summary-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .summary-card .label {
+    font-family: var(--font-ui);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .summary-card .value {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-primary);
+  }
+  .summary-card.level1 .value { color: var(--accent-green, #059669); }
+  .summary-card.level2 .value { color: var(--accent-amber); }
+  .summary-card.level3 .value { color: var(--red); }
+  .summary-card.highlight { background: var(--accent-blue-lt); border-color: var(--accent-blue); }
+  .summary-card.highlight .value { color: var(--accent-blue); }
+  .alert {
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    border-left: 4px solid;
+  }
+  .alert-error { background: var(--red-lt); border-color: var(--red); color: var(--red-dk); }
+  .alert-warn { background: var(--accent-amber-lt); border-color: var(--accent-amber); color: var(--accent-amber-dk); }
+  .scll-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+  }
+  .btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background var(--anim-fast), border-color var(--anim-fast), color var(--anim-fast);
+  }
+  .btn-primary { background: var(--accent-blue); color: white; }
+  .btn-primary:hover { background: var(--accent-blue-dk); }
+  .btn-secondary { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); }
+  .btn-secondary:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
+  .detection-summary {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    white-space: pre-wrap;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+</style>
+</head>
+<body>
+
+{% include "_shell_open.html" %}
+
+<div class="container">
+
+  <div class="scll-page-header">
+    <div>
+      <a href="{{ url_for('scll.scll_home') }}" class="back-link">&larr; Upload Another File</a>
+      <h1>Critical Line List Classifier — Results</h1>
+    </div>
+  </div>
+
+  {% if job.status == 'complete' %}
+    {% set summary = job.summary %}
+
+    {% for w in summary.warnings %}
+      <div class="alert alert-warn">{{ w }}</div>
+    {% endfor %}
+
+    <div class="panel">
+      <h2>Classification Summary</h2>
+      <div class="results-summary">
+        <div class="summary-card highlight">
+          <div class="label">Total Lines</div>
+          <div class="value">{{ summary.total_lines }}</div>
+        </div>
+        <div class="summary-card level1">
+          <div class="label">Level I</div>
+          <div class="value">{{ summary.level_1_count }}</div>
+        </div>
+        <div class="summary-card level2">
+          <div class="label">Level II</div>
+          <div class="value">{{ summary.level_2_count }}</div>
+        </div>
+        <div class="summary-card level3">
+          <div class="label">Level III</div>
+          <div class="value">{{ summary.level_3_count }}</div>
+        </div>
+      </div>
+
+      <div class="scll-actions">
+        <a class="btn btn-primary" href="{{ url_for('scll.scll_download', job_id=job_id) }}">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3v12M12 15l-4-4M12 15l4-4"/>
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+          </svg>
+          Download Excel
+        </a>
+        <a class="btn btn-secondary" href="{{ url_for('scll.scll_home') }}">Upload Another File</a>
+      </div>
+    </div>
+
+    {% if summary.detection_summary %}
+    <div class="panel">
+      <h2>Column Detection Detail</h2>
+      <div class="detection-summary">{{ summary.detection_summary }}</div>
+    </div>
+    {% endif %}
+
+  {% else %}
+    <div class="panel">
+      <div class="alert alert-error">{{ job.error }}</div>
+      <div class="scll-actions">
+        <a class="btn btn-secondary" href="{{ url_for('scll.scll_home') }}">Upload Another File</a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+
+{% include "_shell_close.html" %}
+
+</body>
+</html>

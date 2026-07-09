@@ -1,0 +1,595 @@
+# rules.yaml — JESA Stress Critical Line List engineering rules.
+#
+# This file holds ONLY the engineering spec: temperature/size thresholds, chart
+# tables, exception flags, strain-sensitive equipment taxonomy, and CN grouping
+# parameters. It is format-agnostic and applies to every project unchanged.
+#
+# Column names, scope filters, size units, and Excel layout are discovered at
+# runtime by format_detector.py (using patterns in mapping.yaml). Do NOT add
+# project-specific column names here.
+#
+# Engineers: edit this file to update the JESA spec. Do NOT edit the Python code.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BOOLEAN FLAG PARSING
+# Cell values interpreted as True for all boolean flag columns (case-insensitive).
+# ─────────────────────────────────────────────────────────────────────────────
+true_values:
+  - "Yes"
+  - "Y"
+  - "YES"
+  - "TRUE"
+  - "True"
+  - "1"
+  - "X"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SIZE CONVERSION (mm → NPS inches)
+# Used when format_detector.py determines the size column is in mm.
+# ─────────────────────────────────────────────────────────────────────────────
+size_config:
+  mm_to_nps:
+    15:  0.5
+    20:  0.75
+    25:  1.0
+    32:  1.25
+    40:  1.5
+    50:  2.0
+    65:  2.5
+    80:  3.0
+    100: 4.0
+    125: 5.0
+    150: 6.0
+    200: 8.0
+    250: 10.0
+    300: 12.0
+    350: 14.0
+    400: 16.0
+    450: 18.0
+    500: 20.0
+    600: 24.0
+    700: 28.0
+    750: 30.0
+    800: 32.0
+    900: 36.0
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STEP 2 — EXCEPTION FLAGS (any triggers → Level 1, per spec §3.2.5)
+# Evaluated in listed order; first triggered exception wins.
+# If the 'flag' column is absent from the uploaded file, the rule is skipped.
+# ─────────────────────────────────────────────────────────────────────────────
+exception_flags:
+  - name: relief_line_high_pressure
+    flag: relief_line
+    extra_condition:
+      field: inlet_pressure
+      operator: ">"
+      value: 10
+    reason: "Relief line with inlet pressure > 10 barg → Level 1"
+
+  - name: psv_high_pressure_large
+    description: "PSV/relief connection, P>10 barg, size>4\""
+    detection: "psv_keyword_in_from_to"
+    pressure_threshold: 10
+    size_threshold: 4
+    result: "Level I"
+    reason: "PSV connection ({tag}), P={pressure} barg > 10 barg, D > 4\" -> Level I (dynamic reaction load)"
+
+  - name: psv_high_pressure_small
+    description: "PSV/relief connection, P>10 barg, size<=4\""
+    detection: "psv_keyword_in_from_to"
+    pressure_threshold: 10
+    size_threshold: 4
+    result: "Level II minimum"
+    reason: "PSV connection ({tag}), P={pressure} barg > 10 barg, D <= 4\" -> Level II minimum"
+
+  - name: cement_lined
+    flag: cement_lined
+    extra_condition: null
+    reason: "Cement-brick, refractory, or glass-lined pipe → Level 1"
+
+  - name: vertical_tower_large
+    flag: vertical_tower
+    extra_condition:
+      field: size
+      operator: ">="
+      value: 4
+    reason: "Vertical line connected to tower, diameter >= 4\" → Level 1"
+
+  - name: jacketed
+    flag: jacketed
+    extra_condition: null
+    reason: "Jacketed piping (differential temperature) → Level 1"
+
+  - name: expansion_joint
+    flag: expansion_joint
+    extra_condition: null
+    reason: "Line has expansion joint or flexible connector → Level 1"
+
+  - name: vibration
+    flag: vibration
+    extra_condition: null
+    reason: "Line subjected to vibration or slug flow → Level 1"
+
+  - name: settlement
+    flag: settlement
+    extra_condition: null
+    reason: "Line subjected to differential settlement → Level 1"
+
+  - name: ped_category_3_large
+    flag: ped_category_3
+    extra_condition:
+      field: size
+      operator: ">="
+      value: 4
+    reason: "PED Category III line, diameter >= 4\" → Level 1"
+
+  - name: vacuum
+    flag: vacuum
+    extra_condition: null
+    reason: "Vacuum service, size >= 6\" (stiffening rings may be required) → Level 1"
+
+  - name: underground_high_temp
+    flag: underground
+    extra_condition:
+      field: design_temperature
+      operator: ">="
+      value: 100
+    reason: "Underground piping with design temperature >= 100°C → Level 1"
+
+  - name: nozzle_load_limit
+    flag: nozzle_load_limit
+    extra_condition: null
+    reason: "Equipment with published nozzle load limitations → Level 1"
+
+  - name: heavy_wall_large
+    flag: heavy_wall
+    extra_condition:
+      field: size
+      operator: ">="
+      value: 2
+    reason: "Heavy wall pipe (> standard weight), size >= 2\" → Level 1"
+
+  - name: cyclic_service
+    flag: cyclic_service
+    extra_condition: null
+    reason: "Severe cyclic service (> 7000 cycles) or hydraulic shock → Level 1"
+
+  - name: category_m
+    flag: category_m
+    extra_condition: null
+    reason: "ASME B31.3 Category M fluid service → Level 1"
+
+  - name: schedule_160
+    flag: schedule_160
+    extra_condition: null
+    reason: "Schedule 160 pipe or OD/WT ratio < 10 (heavy wall) → Level 1"
+
+  - name: client_request
+    flag: client_request
+    extra_condition: null
+    reason: "Client request or Project Execution Plan requirement → Level 1"
+
+fluid_service_rules:
+  corrosive:
+    level_1_min_size: 4
+    level_2_min_size: 2
+    level_1_reason: "Corrosive/lethal fluid ({value}), D={size}\" → Level 1 minimum"
+    level_2_reason: "Corrosive/lethal fluid ({value}), D={size}\" → Level 2 minimum"
+
+steam_condensate_rule:
+  enabled: true
+  fluid_keywords:
+    - "steam condensate"
+    - "condensate"
+  min_temp: 150
+  min_size_nps: 4
+  upgrade_to: "I"
+  reason: "Steam condensate >= 150°C, size >= 4\" — two-phase flash and water hammer risk → Level 1"
+
+alloy_rules:
+  - specs: "ALL_SS"
+    name: "Stainless Steel (all grades)"
+    combined_risk_upgrade:
+      enabled: true
+      condition: "chart_4_result == II AND mat == SS"
+      upgrade_to: "I"
+      reason: "SS + non-strain equip (both L2) -> L1"
+
+  - specs: ['BG1', 'BG2', 'CG1', 'CG2']
+    name: "904L Stainless Steel"
+    corrosive_keywords:
+      - sulfuric
+      - phosphoric
+      - scrubber
+      - acid
+      - ammonium phosphate
+      - slurry
+      - liquor
+    min_size_for_level1_corrosive: 6
+    min_size_for_level2_corrosive: 3
+    min_size_for_level2_mild: 3
+    flag_if_mild: true
+    mild_review_flag: "NOTE: 904L alloy ({spec}) — verify if service requires higher criticality"
+
+combined_risk_rule:
+  enabled: true
+  condition_1: "chart_4_result == Level II"
+  condition_2: "material_group == SS"
+  upgrade_to: "I"
+  reason_suffix: "SS alloy + non-strain-sensitive equip, both L2 -> L1"
+
+cold_service:
+  review_flag: "REVIEW: operating at sub-zero temperature — verify cold case thermal analysis required"
+  level1:
+    operating_temp_max: -29
+    reason: "Operating temperature {value}°C — cryogenic service"
+  level2:
+    operating_temp_max: -10
+    reason: "Operating temperature {value}°C — cold service contraction loads must be verified"
+
+vacuum_rule:
+  enabled: true
+  min_size_inches: 6
+  reason: "Vacuum service, size >= 6\" (stiffening rings may be required) → Level 1"
+  review_flag: "REVIEW: vacuum flag present — verify stiffening ring requirement"
+
+high_pressure_review:
+  enabled: true
+  min_size_nps: 6
+  min_pressure_barg: 15
+  levels: ["Level 2", "Level 3"]
+  review_flag: "REVIEW: large bore high pressure (D≥6\", P≥15 barg) — verify Level I"
+
+process_review_flags:
+  - name: coating_colouring
+    fluid_keywords:
+      - coating
+      - colouring
+      - color
+    review_flag: "REVIEW: coating/colouring system — verify if pumping configuration requires Level I"
+
+  - name: chemical_injection
+    fluid_keywords:
+      - defoamer
+      - antifoam
+      - inhibitor
+    review_flag: "REVIEW: chemical injection line — verify criticality with process engineer"
+
+  - name: ammonia_small_bore
+    fluid_keywords:
+      - ammonia
+    max_size_nps: 3
+    max_temp: 50
+    review_flag: "REVIEW: ammonia service small bore — consider conservative upgrade to Level II"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STEP 3 — STRAIN-SENSITIVE EQUIPMENT
+# Two detection methods — format_detector.py decides which one applies:
+#   "tag_prefix" — FROM/TO holds short tag codes like "P-101"
+#   "keyword"    — FROM/TO holds full names like "CONTRACTOR PUMP 02AP02"
+# Keyword patterns live in mapping.yaml (equipment_keywords.*).
+# ─────────────────────────────────────────────────────────────────────────────
+strain_sensitive_equipment:
+  tag_patterns:
+    - prefix: "P-"
+      type:   centrifugal_pump
+    - prefix: "CP-"
+      type:   centrifugal_pump
+    - prefix: "RP-"
+      type:   reciprocating_pump
+    - prefix: "C-"
+      type:   compressor
+    - prefix: "K-"
+      type:   compressor
+    - prefix: "KC-"
+      type:   compressor
+    - prefix: "ST-"
+      type:   turbine
+    - prefix: "GT-"
+      type:   turbine
+    - prefix: "T-"
+      type:   turbine
+    - prefix: "H-"
+      type:   heater
+    - prefix: "F-"
+      type:   heater
+    - prefix: "B-"
+      type:   heater
+    - prefix: "E-A"
+      type:   air_cooler
+    - prefix: "AC-"
+      type:   air_cooler
+    - prefix: "EC-"
+      type:   air_cooler
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# STEP 4 — MATERIAL CHARTS
+# Each chart is a list of size bands, evaluated top-to-bottom.
+# The first band where size <= max_size is used.
+# Within that band: Level 1 if temp >= l1_threshold, Level 2 if temp >= l2_threshold, else Level 3.
+# max_size: 9999 = catch-all for larger sizes.
+# ─────────────────────────────────────────────────────────────────────────────
+
+chart_1:
+  description: "Carbon Steel / Low Alloy Steel"
+  size_bands:
+    - {max_size: 3,    l1_threshold: 300, l2_threshold: 150}
+    - {max_size: 5,    l1_threshold: 300, l2_threshold: 150}
+    - {max_size: 6,    l1_threshold: 250, l2_threshold: 150}
+    - {max_size: 10,   l1_threshold: 250, l2_threshold: 100}
+    - {max_size: 12,   l1_threshold: 175, l2_threshold: 100}
+    - {max_size: 14,   l1_threshold: 150, l2_threshold: 50}
+    - {max_size: 16,   l1_threshold: 100, l2_threshold: 0}
+    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999}
+
+chart_2:
+  description: "SS / Duplex / Other Metallic Materials"
+  size_bands:
+    - max_size: 2
+      l1_threshold: 300
+      l2_threshold: 150
+    - max_size: 3
+      l1_threshold: 200
+      l2_threshold: 100
+    - max_size: 6
+      l1_threshold: 200
+      l2_threshold: 100
+    - max_size: 8
+      l1_threshold: 150
+      l2_threshold: 100
+    - max_size: 14
+      l1_threshold: 100
+      l2_threshold: 50
+    - max_size: 9999
+      l1_threshold: 0
+      l2_threshold: -9999
+
+chart_3_pumps:
+  description: "Lines connected to centrifugal pumps"
+  size_bands:
+    - {max_size: 2,    l1_threshold: 200, l2_threshold: 50}
+    - {max_size: 3,    l1_threshold: 150, l2_threshold: 50}
+    - {max_size: 6,    l1_threshold: 150, l2_threshold: 50}
+    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999}
+
+chart_3_strain:
+  description: "Lines connected to strain sensitive equipment (excluding centrifugal pumps)"
+  size_bands:
+    - {max_size: 6,    l1_threshold: 100, l2_threshold: 50}
+    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999}
+
+chart_4:
+  description: "Lines connected to non-strain-sensitive equipment"
+  size_bands:
+    - max_size: 3
+      l1_threshold: 200
+      l2_threshold: 100
+      l1_min_size_nps: 2
+    - max_size: 8
+      l1_threshold: 150
+      l2_threshold: 0
+    - max_size: 9999
+      l1_threshold: 0
+      l2_threshold: -9999
+
+# Maps material group → default chart when no equipment override applies.
+# FRP short-circuits at Step 1, so no chart needed.
+material_chart_map:
+  CS:  chart_1
+  SS:  chart_2
+  FRP: null
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CN ASSIGNMENT SETTINGS
+# Only Level 1 lines get CNs. Sequential numbering CN-001, CN-002…
+# CN-900+ is reserved for standalone / missing-data lines.
+# ─────────────────────────────────────────────────────────────────────────────
+cn_settings:
+  include_levels: ["Level 1", "Level 2"]
+  max_lines_per_cn: 15          # flag (not split) CNs larger than this
+  max_lines_hard_limit: 30      # hard cap; try to split above this
+  temp_split_threshold: 80      # split component if T range exceeds this (°C)
+  header_branch_min_repeats: 3  # repeated endpoint count that indicates a header
+  branch_key_clip_chars: 24     # normalized endpoint chars used for branch keys
+  standalone_cn_start: 90       # standalone CNs start at this number
+  cn_format: "CN-{number:02d}"
+  cn_train_suffixes: ["", " (TYP)", " (TYP2)", " (TYP3)"]
+  cn_number_format: "CN-{number:03d}"  # {project_code} optional if UI supplies one
+
+  # Equipment type prefixes for tag recognition (case-insensitive).
+  # Used when FROM/TO contains short tag codes (e.g. P-101, RP-202A).
+  # Matches tag.upper().startswith(prefix).
+  equipment_type_prefixes:
+    centrifugal_pump:   ["P-", "CP-"]
+    reciprocating_pump: ["RP-"]
+    compressor:         ["C-", "K-", "KC-"]
+    turbine:            ["T-", "ST-", "GT-"]
+    air_cooler:         ["A-", "ACC-", "ACE-", "E-A"]
+    vessel:             ["V-", "D-", "TK-", "VE-"]
+    exchanger:          ["E-", "HE-", "X-"]
+    heater:             ["H-", "F-"]
+
+train_settings:
+  enabled: true
+  cn_suffixes: ["", " (TYP)", " (TYP2)", " (TYP3)"]
+  tag_patterns:
+    - {match: "5228J", train: "J"}
+    - {match: "5228K", train: "K"}
+  equip_patterns: []
+  split_by_area: false
+
+train_detection:
+  enabled: true
+  # Project-specific line-tag substrings that identify a train.
+  # Format: {match: "<substring>", train: "<label>"}
+  # Example for the Q37027 / 5228 plant (Trains J and K):
+  tag_patterns:
+    - {match: "5228J", train: "J"}
+    - {match: "5228K", train: "K"}
+  equip_tag_patterns: []
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FLUID SYNONYM NORMALIZATION
+# Maps free-text or coded fluid service values to stable group keys.
+# Each entry: group (string key) + matches (list, case-insensitive).
+# Lines whose fluid service matches any entry in a group share that group key.
+# If no synonym matches, the first 8 chars of the normalized string are used.
+# ─────────────────────────────────────────────────────────────────────────────
+fluid_synonyms:
+  - group: steam_lp
+    matches:
+      - LP STEAM
+      - LOW PRESSURE STEAM
+      - LPS
+      - SLP
+      - STEAM LP
+      - LOW PRESS STEAM
+      - L.P. STEAM
+  - group: steam_mp
+    matches:
+      - MP STEAM
+      - MEDIUM PRESSURE STEAM
+      - MPS
+      - SMP
+      - STEAM MP
+      - MED PRESS STEAM
+  - group: steam_hp
+    matches:
+      - HP STEAM
+      - HIGH PRESSURE STEAM
+      - HPS
+      - STEAM HP
+      - HIGH PRESS STEAM
+  - group: condensate
+    matches:
+      - STEAM CONDENSATE
+      - CONDENSATE
+      - SCL
+      - COND
+      - STEAM COND
+      - CONDENSAT
+  - group: cooling_water
+    matches:
+      - COOLING WATER
+      - CW
+      - COOLING WATER SUPPLY
+      - COOLING WATER RETURN
+      - CWS
+      - CWR
+      - SEA WATER
+      - SEAWATER
+      - RAW WATER
+      - SERVICE WATER
+  - group: scrubber_liquor
+    matches:
+      - SCRUBBER LIQUOR
+      - LWA
+      - LIQUOR
+      - SCRUBBER LIQUID
+      - WASH LIQUOR
+      - PHOSPHORIC ACID LIQUOR
+      - PAL
+  - group: ammonia_liquid
+    matches:
+      - LIQUID AMMONIA
+      - AMMONIA LIQUID
+      - AGL
+      - LIQ AMMONIA
+      - NH3 LIQUID
+  - group: ammonia_vapor
+    matches:
+      - AMMONIA VAPOR
+      - AMMONIA VAPOUR
+      - ADV
+      - GAS AMMONIA
+      - AMMONIA GAS
+      - NH3 GAS
+      - AMMONIA VENT
+      - AMV
+  - group: instrument_air
+    matches:
+      - INSTRUMENT AIR
+      - IA
+      - INSTR AIR
+      - AI
+  - group: plant_air
+    matches:
+      - PLANT AIR
+      - PA
+      - SERVICE AIR
+      - AP
+  - group: process_water
+    matches:
+      - PROCESS WATER
+      - PW
+      - DEMINERALIZED WATER
+      - DEMIN WATER
+      - DW
+      - POTABLE WATER
+
+# Compatible fluid pairs: lines sharing these fluid groups may stay in the same
+# CN if physically connected (e.g. steam trap circuit).
+fluid_compatible_pairs:
+  - ["steam_lp", "condensate"]
+  - ["steam_mp", "condensate"]
+  - ["steam_hp", "condensate"]
+  - ["ammonia_liquid", "ammonia_vapor"]
+
+equipment_ignore_codes:
+  - PSV
+  - PRV
+  - BDV
+  - SDV
+  - MOV
+  - XV
+  - HV
+  - CV
+  - RV
+  - FV
+
+# Legacy key kept for backward compatibility with old rules files.
+fluid_compatibility_pairs:
+  - ["steam", "steam condensate"]
+  - ["liquid ammonia", "ammonia vapor", "gas ammonia", "ammonia vent"]
+  - ["coating oil", "coloured coating oil", "colored coating oil", "colour coating oil", "color coating oil"]
+
+equipment_ignore_keywords:
+  - HEADER
+  - VARIOUS
+  - ATMOSPHERE
+  - FLARE
+  - DRAIN
+  - TRENCH
+  - SEWER
+  - VENT STACK
+  - VENTSTACK
+  - STORAGE
+  - TANKER
+  - MOBILE TANKER
+
+battery_limit_keywords:
+  - BL
+  - BATTERY LIMIT
+  - B/L
+  - OFFSITE
+  - TIE-IN
+  - TIE IN
+  - IMPORT
+  - EXPORT
+
+special_collection_fluids:
+  - vent
+  - drain
+  - flare
+  - blowdown
+  - blow down
+  - relief
+
+collection_fluid_keywords:
+  - vent
+  - drain
+  - flare
+  - blowdown
+  - relief
