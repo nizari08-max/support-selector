@@ -5,6 +5,7 @@ Run:  python app.py   then open  http://localhost:5000
 import os
 import sys
 import re
+import tempfile
 from urllib.parse import quote
 
 # Load .env.local (local dev overrides) before anything else.
@@ -36,8 +37,33 @@ _PROFILES_JS = profiles_for_js()   # built once at startup
 
 app = Flask(__name__)
 app.register_blueprint(scll_bp)
-app.config.setdefault("SCLL_UPLOAD_FOLDER", os.path.join(app.instance_path, "scll_uploads"))
-app.config.setdefault("SCLL_OUTPUT_FOLDER", os.path.join(app.instance_path, "scll_outputs"))
+
+
+def _scll_storage_base() -> str:
+    """Pick a writable base directory for SCLL uploads/outputs.
+
+    Vercel (and most serverless platforms) deploy a read-only code bundle —
+    only /tmp is writable at runtime, and it does not persist project-root
+    writes. Use /tmp directly when running on a known serverless platform;
+    otherwise prefer the Flask instance folder, but fall back to /tmp if it
+    turns out not to be writable (covers any other read-only-root host).
+    """
+    if os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"):
+        return os.path.join(tempfile.gettempdir(), "scll")
+    try:
+        os.makedirs(app.instance_path, exist_ok=True)
+        probe_path = os.path.join(app.instance_path, ".write_test")
+        with open(probe_path, "w") as probe_file:
+            probe_file.write("ok")
+        os.remove(probe_path)
+        return app.instance_path
+    except OSError:
+        return os.path.join(tempfile.gettempdir(), "scll")
+
+
+_SCLL_STORAGE_BASE = _scll_storage_base()
+app.config.setdefault("SCLL_UPLOAD_FOLDER", os.path.join(_SCLL_STORAGE_BASE, "scll_uploads"))
+app.config.setdefault("SCLL_OUTPUT_FOLDER", os.path.join(_SCLL_STORAGE_BASE, "scll_outputs"))
 
 
 RATING_LABELS = {str(r): rating_label(r) for r in FLANGE_RATINGS}

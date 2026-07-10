@@ -10,8 +10,11 @@ final standalone tool's source, so results match the standalone exactly:
 
 - `backend/format_detector.py` — verbatim `format_detector.py` (dynamic sheet /
   header / units-row / column / scope / size-unit detection).
-- `backend/parser.py` — verbatim `parser.py` (reading, column normalization,
-  scope filtering, mm→NPS conversion).
+- `backend/parser.py` — `parser.py` (reading, column normalization, scope
+  filtering, mm→NPS conversion), verbatim except that `read_linelist()` raises
+  `ValueError` on a bad file instead of calling `sys.exit()` — required so a
+  corrupt upload fails only that one web request instead of raising
+  `SystemExit` inside the server process. No classification behavior changed.
 - `backend/rules_engine.py` — verbatim `classifier.py` (deterministic 5-step
   Level I / II / III waterfall + reasons + data-quality flags).
 - `backend/config/rules.yaml`, `mapping.yaml`, `material_mapping.yaml` — verbatim

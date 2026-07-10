@@ -9,13 +9,18 @@ splits rows into (in_scope, excluded) using the detected scope strategy.
 This module performs NO classification and has NO hardcoded column names,
 scope values, or project knowledge. Every project-variable setting comes
 from detected_config.
+
+NOTE: unlike the standalone CLI tool, read errors here raise ValueError
+instead of calling sys.exit() — this module runs inside a web request
+handler, where sys.exit() would raise SystemExit (uncatchable by
+`except Exception`) and could tear down the whole server process instead
+of just failing the one request.
 """
 
 from __future__ import annotations
 
 import os
 import re
-import sys
 from typing import Optional
 
 import pandas as pd
@@ -69,12 +74,12 @@ def read_linelist(filepath: str, detected_config: dict, rules: dict) -> pd.DataF
             skiprows=skip_rows if skip_rows else None,
             dtype=str,
         )
-    except FileNotFoundError:
-        print(f"ERROR: Input file not found: {filepath}", file=sys.stderr)
-        sys.exit(2)
+    except FileNotFoundError as exc:
+        raise ValueError(f"Input file not found: {filepath}") from exc
     except Exception as exc:
-        print(f"ERROR reading '{filepath}': {exc}", file=sys.stderr)
-        sys.exit(2)
+        raise ValueError(
+            f"Could not read '{os.path.basename(filepath)}' as an Excel line list: {exc}"
+        ) from exc
 
     df.columns = [str(c).strip() for c in df.columns]
     df = df.map(lambda x: x.strip() if isinstance(x, str) else x)
