@@ -111,6 +111,11 @@ exception_flags:
     extra_condition: null
     reason: "Line subjected to vibration or slug flow → Level 1"
 
+  - name: large_deflection
+    flag: large_deflection
+    extra_condition: null
+    reason: "Line subjected to external moments from large deflections (platform, pipe bridge, X-mas tree) → Level 1"
+
   - name: settlement
     flag: settlement
     extra_condition: null
@@ -127,7 +132,7 @@ exception_flags:
   - name: vacuum
     flag: vacuum
     extra_condition: null
-    reason: "Vacuum service, size >= 6\" (stiffening rings may be required) → Level 1"
+    reason: "Vacuum condition (stiffening rings may be required), any size → Level 1"
 
   - name: underground_high_temp
     flag: underground
@@ -230,9 +235,8 @@ cold_service:
 
 vacuum_rule:
   enabled: true
-  min_size_inches: 6
-  reason: "Vacuum service, size >= 6\" (stiffening rings may be required) → Level 1"
-  review_flag: "REVIEW: vacuum flag present — verify stiffening ring requirement"
+  # Reference document specifies no size limit: any vacuum line -> Level 1.
+  reason: "Vacuum condition (stiffening rings may be required), any size → Level 1"
 
 high_pressure_review:
   enabled: true
@@ -308,43 +312,61 @@ strain_sensitive_equipment:
 # STEP 4 — MATERIAL CHARTS
 # Each chart is a list of size bands, evaluated top-to-bottom.
 # The first band where size <= max_size is used.
-# Within that band: Level 1 if temp >= l1_threshold, Level 2 if temp >= l2_threshold, else Level 3.
-# max_size: 9999 = catch-all for larger sizes.
+#
+# Boundary semantics depend on `threshold_boundary`:
+#   inclusive (default, charts 3/4): Level 1 if temp >= l1_threshold,
+#             Level 2 if temp >= l2_threshold, else Level 3.
+#   exclusive (charts 1/2, per reference chart tables): Level 1 if temp > l1_threshold,
+#             Level 2 if l2_threshold < temp <= l1_threshold, else Level 3.
+# So for the exclusive charts: l1_threshold = B where L1 is "T > B",
+# and l2_threshold = A where L2 is "A < T <= B" and L3 is "T <= A".
+#
+# max_size: 9999 = catch-all for larger sizes. l1_threshold: 0 = always Level 1.
+#
+# Chart 1 and Chart 2 values below are the EXACT translated table values from the
+# JESA criticality reference document (charts.docx), NOT read off the diagram.
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Chart 1 — Carbon Steel / Low Alloy Steel (reference document, table 1).
+#   DN50/80/100 (2-4"):  L3 T<=140 | L2 140<T<=270 | L1 T>270
+#   DN150 (6"):          L3 T<=140 | L2 140<T<=240 | L1 T>240
+#   DN200/250/300 (8-12"): L3 T<=80 | L2 80<T<=240 | L1 T>240
+#   DN350 (14"):         L3 T<=40  | L2 40<T<=180  | L1 T>180  (see note)
+#   DN400 (16"):         L3 T<=40  | L2 40<T<=140  | L1 T>140
+#   DN450 (18") and up:  always L1
+# NOTE (DN350/14"): the source table lists L2 as "40<T<=140" but L1 as "T>180",
+# leaving 140<T<=180 undefined. Everywhere else in the table the L2 ceiling equals
+# the L1 floor; DN350 is the only inconsistency. We honor the explicit L1 floor
+# (T>180, which fits the monotonic L1 staircase 270->240->180->140) and extend
+# Level 2 up to it (40<T<=180). Flagged for engineer confirmation.
 chart_1:
   description: "Carbon Steel / Low Alloy Steel"
+  threshold_boundary: exclusive
   size_bands:
-    - {max_size: 3,    l1_threshold: 300, l2_threshold: 150}
-    - {max_size: 5,    l1_threshold: 300, l2_threshold: 150}
-    - {max_size: 6,    l1_threshold: 250, l2_threshold: 150}
-    - {max_size: 10,   l1_threshold: 250, l2_threshold: 100}
-    - {max_size: 12,   l1_threshold: 175, l2_threshold: 100}
-    - {max_size: 14,   l1_threshold: 150, l2_threshold: 50}
-    - {max_size: 16,   l1_threshold: 100, l2_threshold: 0}
-    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999}
+    - {max_size: 4,    l1_threshold: 270, l2_threshold: 140}   # DN50/80/100  (2-4")
+    - {max_size: 6,    l1_threshold: 240, l2_threshold: 140}   # DN150        (6")
+    - {max_size: 12,   l1_threshold: 240, l2_threshold: 80}    # DN200/250/300 (8-12")
+    - {max_size: 14,   l1_threshold: 180, l2_threshold: 40}    # DN350        (14", see NOTE)
+    - {max_size: 16,   l1_threshold: 140, l2_threshold: 40}    # DN400        (16")
+    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999} # DN450+ (18"+) always L1
 
+# Chart 2 — Materials other than carbon / low alloy steel (reference document, table 2).
+#   DN50 (2"):           L3 T<=140 | L2 140<T<=270 | L1 T>270
+#   DN80 (3"):           L3 T<=140 | L2 140<T<=180 | L1 T>180
+#   DN100 (4"):          L3 T<=80  | L2 80<T<=180  | L1 T>180
+#   DN150/200 (6-8"):    L3 T<=80  | L2 80<T<=140  | L1 T>140
+#   DN250/300/350 (10-14"): L3 T<=40 | L2 40<T<=80 | L1 T>80
+#   DN400/450 (16-18") and up: always L1
 chart_2:
   description: "SS / Duplex / Other Metallic Materials"
+  threshold_boundary: exclusive
   size_bands:
-    - max_size: 2
-      l1_threshold: 300
-      l2_threshold: 150
-    - max_size: 3
-      l1_threshold: 200
-      l2_threshold: 100
-    - max_size: 6
-      l1_threshold: 200
-      l2_threshold: 100
-    - max_size: 8
-      l1_threshold: 150
-      l2_threshold: 100
-    - max_size: 14
-      l1_threshold: 100
-      l2_threshold: 50
-    - max_size: 9999
-      l1_threshold: 0
-      l2_threshold: -9999
+    - {max_size: 2,    l1_threshold: 270, l2_threshold: 140}   # DN50         (2")
+    - {max_size: 3,    l1_threshold: 180, l2_threshold: 140}   # DN80         (3")
+    - {max_size: 4,    l1_threshold: 180, l2_threshold: 80}    # DN100        (4")
+    - {max_size: 8,    l1_threshold: 140, l2_threshold: 80}    # DN150/200    (6-8")
+    - {max_size: 14,   l1_threshold: 80,  l2_threshold: 40}    # DN250/300/350 (10-14")
+    - {max_size: 9999, l1_threshold: 0,   l2_threshold: -9999} # DN400+ (16"+) always L1
 
 chart_3_pumps:
   description: "Lines connected to centrifugal pumps"

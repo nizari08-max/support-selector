@@ -415,10 +415,9 @@ def _check_exception_flags(
             vacuum_rule = rules.get("vacuum_rule", {})
             if not vacuum_rule.get("enabled", True):
                 continue
+            # Reference document: "lines with vacuum condition (stiffening rings)"
+            # -> Level I unconditionally, with NO size limit.
             size = _to_size_float(row.get("size"))
-            min_size = float(vacuum_rule.get("min_size_inches", 0))
-            if size is None or size < min_size:
-                continue
             return True, (
                 f"{_base_reason_prefix(material_group, material_code, size, temp)} | "
                 "Exception: vacuum service detected (JESA §3.3 item 12) -> Level I unconditional"
@@ -486,6 +485,7 @@ def _short_exception_reason(
         "jacketed": "jacketed piping",
         "expansion_joint": "expansion joint",
         "vibration": "vibration/slug flow",
+        "large_deflection": "external moment / large deflection",
         "settlement": "settlement",
         "ped_category_3_large": "PED Category III",
         "underground_high_temp": "underground high temperature",
@@ -503,6 +503,7 @@ def _short_exception_reason(
         "jacketed": 4,
         "expansion_joint": 5,
         "vibration": 6,
+        "large_deflection": 7,
         "settlement": 7,
         "ped_category_3_large": 8,
         "underground_high_temp": 9,
@@ -671,6 +672,15 @@ def _threshold_summary(chart_name: str, size: float, rules: dict) -> str:
     if l1 == 0:
         limit = f"D<={_fmt_size(max_size)}\"" if max_size < 9999 else "largest band"
         return f"{limit} -> always L1"
+    if _chart_is_exclusive(chart_name, rules):
+        # Exact reference-table band: L3 T<=A, L2 A<T<=B, L1 T>B.
+        if l1 == l2:
+            return f"L1 T>{_fmt_temp(l1)}°C, no L2, L3 T<={_fmt_temp(l1)}°C"
+        return (
+            f"L1 T>{_fmt_temp(l1)}°C, "
+            f"L2 {_fmt_temp(l2)}<T<={_fmt_temp(l1)}°C, "
+            f"L3 T<={_fmt_temp(l2)}°C"
+        )
     if l1 == l2:
         return f"L1>={_fmt_temp(l1)}°C, no L2"
     return f"L1>={_fmt_temp(l1)}°C, L2>={_fmt_temp(l2)}°C"
@@ -1046,14 +1056,8 @@ def _check_review_flags(row: pd.Series, size: float, level: str, rules: dict) ->
     fluid_service = row.get("fluid_service")
     temp = _to_float(row.get("design_temperature"))
 
-    vacuum_rule = rules.get("vacuum_rule", {})
-    if (
-        vacuum_rule.get("enabled", True)
-        and "vacuum" in row.index
-        and _is_true_flag(row.get("vacuum"), rules)
-        and size < float(vacuum_rule.get("min_size_inches", 0))
-    ):
-        data_quality = _append_quality(data_quality, vacuum_rule.get("review_flag", ""))
+    # Vacuum lines are now handled unconditionally as a Level 1 exception (Step 2,
+    # no size limit), so there is no longer a "vacuum below min-size" review case.
 
     hp_rule = rules.get("high_pressure_review", {})
     pressure = _to_float(row.get("design_pressure", row.get("inlet_pressure")))
@@ -1143,18 +1147,28 @@ def _apply_combined_risk_upgrade(
     return upgraded
 
 
+def _chart_is_exclusive(chart_name: str, rules: dict) -> bool:
+    """Charts 1 & 2 use exclusive boundaries (L1 = T > l1, L2 = l2 < T <= l1)
+    to exactly match the reference criticality tables; charts 3 & 4 keep the
+    original inclusive (>=) semantics."""
+    return str(rules[chart_name].get("threshold_boundary", "inclusive")).lower() == "exclusive"
+
+
 def _lookup_chart(chart_name: str, size: float, temp: float, rules: dict) -> str:
+    exclusive = _chart_is_exclusive(chart_name, rules)
     for band in rules[chart_name]["size_bands"]:
         if size <= float(band["max_size"]):
             l1_threshold = float(band["l1_threshold"])
             l2_threshold = float(band["l2_threshold"])
             if l1_threshold == 0:
                 return "Level 1"
-            if temp >= l1_threshold:
+            l1_hit = temp > l1_threshold if exclusive else temp >= l1_threshold
+            if l1_hit:
                 return "Level 1"
             if l1_threshold == l2_threshold:
                 return "Level 3"
-            if temp >= l2_threshold:
+            l2_hit = temp > l2_threshold if exclusive else temp >= l2_threshold
+            if l2_hit:
                 return "Level 2"
             return "Level 3"
     return "Level 3"
@@ -1215,6 +1229,23 @@ def classify_row(row: pd.Series, material_map: dict, rules: dict) -> dict:
         missing.append("Material")
 
     if missing:
+        # Vacuum is an unconditional Level 1 exception with no size/temp/material
+        # dependency (reference document), so it must win even when those cells are
+        # blank — otherwise a vacuum line would slip through as "MISSING".
+        vacuum_rule = rules.get("vacuum_rule", {})
+        if (
+            vacuum_rule.get("enabled", True)
+            and "vacuum" in row.index
+            and _is_true_flag(row.get("vacuum"), rules)
+        ):
+            return {
+                "level":        "Level 1",
+                "reason":       (
+                    f"{_base_reason_prefix(material_group, material_str, size, temp)} | "
+                    "Exception: vacuum service detected (JESA §3.3 item 12) -> Level I unconditional"
+                ),
+                "data_quality": f"MISSING: {', '.join(missing)}",
+            }
         return {
             "level":        "",
             "reason":       _missing_reason(missing),

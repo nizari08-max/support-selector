@@ -15,10 +15,18 @@ final standalone tool's source, so results match the standalone exactly:
   `ValueError` on a bad file instead of calling `sys.exit()` — required so a
   corrupt upload fails only that one web request instead of raising
   `SystemExit` inside the server process. No classification behavior changed.
-- `backend/rules_engine.py` — verbatim `classifier.py` (deterministic 5-step
-  Level I / II / III waterfall + reasons + data-quality flags).
-- `backend/config/rules.yaml`, `mapping.yaml`, `material_mapping.yaml` — verbatim
-  standalone config (the three separate files the standalone loads).
+- `backend/rules_engine.py` — `classifier.py` (deterministic 5-step Level I / II /
+  III waterfall + reasons + data-quality flags), verbatim except that Chart 1 /
+  Chart 2 now use exclusive boundary semantics (see below).
+- `backend/config/rules.yaml`, `mapping.yaml`, `material_mapping.yaml` — standalone
+  config. **Intentional divergence:** `chart_1` and `chart_2` were replaced with the
+  EXACT translated threshold tables from the JESA criticality reference document
+  (charts.docx) instead of the earlier approximate values read off the diagram, and
+  now carry `threshold_boundary: exclusive` (Level 1 = T > l1, Level 2 = l2 < T <= l1,
+  Level 3 = T <= l2). Charts 3/4 are unchanged (still inclusive). A `large_deflection`
+  Level 1 exception flag (external moments from large deflections) was also added.
+  These are deliberate corrections; to keep the standalone tool in sync, apply the
+  same chart edits there.
 - `backend/column_mapper.py` — thin backward-compat shim re-exporting
   `format_detector`.
 - `backend/classifier.py` — Phase 1 orchestrator (`process_scll_phase1`).
